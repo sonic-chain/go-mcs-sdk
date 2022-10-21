@@ -13,20 +13,24 @@ import (
 	"math/big"
 )
 
-const (
-	ChainId            = 80001
-	USDCSpenderAddress = "0x80a186DCD922175019913b274568ab172F6E20b1"
-	Erc20Address       = "0xe11A86849d99F524cAC3E7A0Ec1241828e332C62"
-	SwanPaymentAddress = "0x80a186DCD922175019913b274568ab172F6E20b1"
-	MintAddress        = "0x1A1e5AC88C493e0608C84c60b7bb5f04D9cF50B3"
-)
-
 type ContractApproveUSDCService struct {
-	c             *Client
-	WalletAddress string
-	PrivateKey    string
-	Amount        *big.Int
-	RpcEndpoint   string
+	c                      *Client
+	WalletAddress          string
+	PrivateKey             string
+	Amount                 *big.Int
+	RpcEndpoint            string
+	USDCAddress            string
+	PaymentContractAddress string
+}
+
+func (s *ContractApproveUSDCService) SetUSDCAddress(USDCAddress string) *ContractApproveUSDCService {
+	s.USDCAddress = USDCAddress
+	return s
+}
+
+func (s *ContractApproveUSDCService) SetPaymentContractAddress(PaymentContractAddress string) *ContractApproveUSDCService {
+	s.PaymentContractAddress = PaymentContractAddress
+	return s
 }
 
 func (s *ContractApproveUSDCService) SetWalletAddress(WalletAddress string) *ContractApproveUSDCService {
@@ -50,20 +54,23 @@ func (s *ContractApproveUSDCService) SetRpcEndpoint(RpcEndpoint string) *Contrac
 }
 
 func (s *ContractApproveUSDCService) Do(ctx context.Context, opts ...RequestOption) (TX string, err error) {
-	USDCSpender := common.HexToAddress(USDCSpenderAddress)
+	USDCSpender := common.HexToAddress(s.PaymentContractAddress)
 	WalletAddress := common.HexToAddress(s.WalletAddress)
 	privateKey, err := crypto.HexToECDSA(s.PrivateKey)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	auth, err := bind.NewKeyedTransactorWithChainID(privateKey, new(big.Int).SetInt64(ChainId))
-
 	client, err := ethclient.Dial(s.RpcEndpoint)
+
 	if err != nil {
 		log.Fatal(err)
 	}
-	ERC20, err := contract.NewERC20(common.HexToAddress(Erc20Address), client)
+	ChainId, _ := client.ChainID(context.Background())
+
+	auth, err := bind.NewKeyedTransactorWithChainID(privateKey, ChainId)
+
+	ERC20, err := contract.NewERC20(common.HexToAddress(s.USDCAddress), client)
 	if err != nil {
 		fmt.Println("Get ERC20 USDC contract error", err)
 	}
@@ -163,13 +170,15 @@ func (s *ContractUploadFilePayService) Do(ctx context.Context, opts ...RequestOp
 		log.Fatal(err)
 	}
 
-	auth, err := bind.NewKeyedTransactorWithChainID(privateKey, new(big.Int).SetInt64(ChainId))
-
 	client, err := ethclient.Dial(s.RpcEndpoint)
 	if err != nil {
 		log.Fatal(err)
 	}
-	SwanPayment, err := contract.NewSwanPayment(common.HexToAddress(SwanPaymentAddress), client)
+	ChainId, _ := client.ChainID(context.Background())
+
+	auth, err := bind.NewKeyedTransactorWithChainID(privateKey, ChainId)
+
+	SwanPayment, err := contract.NewSwanPayment(common.HexToAddress(s.PaymentContractAddress), client)
 	if err != nil {
 		log.Fatal("Get SwanPayment contract error", err)
 	}
@@ -204,6 +213,12 @@ type ContractMintNftService struct {
 	PrivateKey    string
 	RpcEndpoint   string
 	NftMetaUrl    string
+	MintAddress   string
+}
+
+func (s *ContractMintNftService) SetMintAddress(MintAddress string) *ContractMintNftService {
+	s.MintAddress = MintAddress
+	return s
 }
 
 func (s *ContractMintNftService) SetWalletAddress(WalletAddress string) *ContractMintNftService {
@@ -231,17 +246,16 @@ func (s *ContractMintNftService) Do(ctx context.Context, opts ...RequestOption) 
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	auth, err := bind.NewKeyedTransactorWithChainID(privateKey, new(big.Int).SetInt64(ChainId))
 	client, err := ethclient.Dial(s.RpcEndpoint)
 	if err != nil {
 		log.Fatal(err)
 	}
-	Minter, err := contract.NewMinter(common.HexToAddress(MintAddress), client)
+	ChainId, _ := client.ChainID(context.Background())
+	auth, err := bind.NewKeyedTransactorWithChainID(privateKey, ChainId)
+	Minter, err := contract.NewContract(common.HexToAddress(s.MintAddress), client)
 	if err != nil {
 		log.Fatal("Get SwanPayment contract error", err)
 	}
-
 	tx, err := Minter.MintData(&bind.TransactOpts{
 		From:   auth.From,
 		Signer: auth.Signer,
@@ -249,9 +263,9 @@ func (s *ContractMintNftService) Do(ctx context.Context, opts ...RequestOption) 
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	bind.WaitMined(context.Background(), client, tx)
 	tx, _, err = client.TransactionByHash(context.Background(), tx.Hash())
+
 	if err != nil {
 		log.Fatal(err)
 	}

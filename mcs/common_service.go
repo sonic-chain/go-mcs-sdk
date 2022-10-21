@@ -11,13 +11,14 @@ type GetParamsService struct {
 }
 
 type ParamsData struct {
-	GasLimit                big.Int `json:"GAS_LIMIT"`
-	LockTime                int     `json:"LOCK_TIME"`
-	MintContractAddress     string  `json:"MINT_CONTRACT_ADDRESS"`
-	PaymentContractAddress  string  `json:"PAYMENT_CONTRACT_ADDRESS"`
-	PaymentRecipientAddress string  `json:"PAYMENT_RECIPIENT_ADDRESS"`
-	PayMultiplyFactor       float64 `json:"PAY_MULTIPLY_FACTOR"`
-	USDCAddress             string  `json:"USDC_ADDRESS"`
+	ChainName               string  `json:"chain_name"`
+	GasLimit                big.Int `json:"gas_limit"`
+	LockTime                int     `json:"lock_time"`
+	MintContractAddress     string  `json:"mint_contract_address"`
+	PaymentContractAddress  string  `json:"payment_contract_address"`
+	PaymentRecipientAddress string  `json:"payment_recipient_address"`
+	PayMultiplyFactor       float64 `json:"pay_multiply_factor"`
+	USDCAddress             string  `json:"usdc_address"`
 }
 
 type Params struct {

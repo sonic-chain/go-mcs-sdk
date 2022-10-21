@@ -256,7 +256,7 @@ func (s *UploadIpfsService) SetWalletAddress(WalletAddress string) *UploadIpfsSe
 	return s
 }
 
-type UploadIpfs struct {
+type UploadIpfsData struct {
 	Status string `json:"status"`
 	Data   struct {
 		SourceFileUploadID int64  `json:"source_file_upload_id"`
@@ -264,10 +264,11 @@ type UploadIpfs struct {
 		IpfsURL            string `json:"ipfs_url"`
 		FileSize           int64  `json:"file_size"`
 		WCid               string `json:"w_cid"`
+		Status             string `json:"status"`
 	} `json:"data"`
 }
 
-func (s *UploadIpfsService) Do(ctx context.Context, opts ...RequestOption) (res *UploadIpfs, err error) {
+func (s *UploadIpfsService) Do(ctx context.Context, opts ...RequestOption) (res *UploadIpfsData, err error) {
 	r := &request{
 		method:   http.MethodPost,
 		endpoint: "/storage/ipfs/upload",
@@ -298,13 +299,13 @@ func (s *UploadIpfsService) Do(ctx context.Context, opts ...RequestOption) (res 
 	r.header = header
 	data, err := s.c.callAPI(ctx, r, opts...)
 	if err != nil {
-		return &UploadIpfs{}, err
+		return &UploadIpfsData{}, err
 	}
-	res = new(UploadIpfs)
+	res = new(UploadIpfsData)
 	err = json.Unmarshal(data, res)
 
 	if err != nil {
-		return &UploadIpfs{}, err
+		return &UploadIpfsData{}, err
 	}
 
 	return res, nil

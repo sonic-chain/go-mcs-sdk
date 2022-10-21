@@ -14,7 +14,6 @@ import (
 )
 
 const (
-	mcsApi         = "https://mcs-api.filswan.com/api/"
 	restApiVersion = "v1"
 )
 
@@ -33,9 +32,6 @@ func (c *Client) debug(format string, v ...interface{}) {
 		c.Logger.Printf(format, v...)
 	}
 }
-func getAPIEndpoint() string {
-	return mcsApi + restApiVersion
-}
 
 type doFunc func(req *http.Request) (*http.Response, error)
 
@@ -47,11 +43,16 @@ type Client struct {
 	Logger     *log.Logger
 	TimeOffset int64
 	do         doFunc
+	JwtToken   string
 }
 
-func NewClient() *Client {
+func (c *Client) SetJwtToken(JwtToken string) {
+	c.JwtToken = JwtToken
+}
+
+func NewClient(mcsApi string) *Client {
 	return &Client{
-		BaseURL:    getAPIEndpoint(),
+		BaseURL:    mcsApi + restApiVersion,
 		UserAgent:  "mcs/go",
 		HTTPClient: http.DefaultClient,
 		Logger:     log.New(os.Stderr, "mcs-go ", log.LstdFlags),
@@ -96,10 +97,15 @@ func (c *Client) parseRequest(r *request, opts ...RequestOption) (err error) {
 }
 
 func (c *Client) callAPI(ctx context.Context, r *request, opts ...RequestOption) (data []byte, err error) {
+	if c.JwtToken != "" {
+		r.header.Add("Authorization", "Bearer "+c.JwtToken)
+	}
+
 	err = c.parseRequest(r, opts...)
 	if err != nil {
 		return []byte{}, err
 	}
+
 	//fmt.Println(r.method)
 	//fmt.Println(r.fullURL)
 	//fmt.Println(r.body)
@@ -152,21 +158,27 @@ func (c *Client) NewGetParamsService() *GetParamsService {
 func (c *Client) NewGetPriceRateService() *GetPriceRateService {
 	return &GetPriceRateService{c: c}
 }
+
 func (c *Client) NewGetUserTaskDealsService() *GetUserTaskDealsService {
 	return &GetUserTaskDealsService{c: c}
 }
+
 func (c *Client) NewGetPaymentInfoService() *GetPaymentInfoService {
 	return &GetPaymentInfoService{c: c}
 }
+
 func (c *Client) NewGetMintInfoService() *GetMintInfoService {
 	return &GetMintInfoService{c: c}
 }
+
 func (c *Client) NewGetDealDetailService() *GetDealDetailService {
 	return &GetDealDetailService{c: c}
 }
+
 func (c *Client) NewUploadIpfsService() *UploadIpfsService {
 	return &UploadIpfsService{c: c}
 }
+
 func (c *Client) NewUploadNftMetadataService() *UploadNftMetadataService {
 	return &UploadNftMetadataService{c: c}
 }
@@ -178,6 +190,15 @@ func (c *Client) NewContractContractApproveUSDCService() *ContractApproveUSDCSer
 func (c *Client) NewContractUploadFilePayService() *ContractUploadFilePayService {
 	return &ContractUploadFilePayService{c: c}
 }
+
 func (c *Client) NewContractMintNftService() *ContractMintNftService {
 	return &ContractMintNftService{c: c}
+}
+
+func (c *Client) NewUserRegisterService() *UserRegisterService {
+	return &UserRegisterService{c: c}
+}
+
+func (c *Client) NewUserLoginService() *UserLoginService {
+	return &UserLoginService{c: c}
 }
