@@ -3,6 +3,7 @@ package mcs
 import (
 	"context"
 	"fmt"
+	"math"
 	"math/big"
 	"testing"
 )
@@ -14,18 +15,31 @@ const (
 	FilePath      = "*"
 )
 
+func TestContractApproveUSDCService_Do(t *testing.T) {
+	p := NewMcsParams("polygon.mumbai")
+	client := NewClient(p.McsApi)
+	res, err := client.NewContractContractApproveUSDCService().SetWalletAddress(WalletAddress).
+		SetUSDCAddress(p.USDCAddress).SetPaymentContractAddress(p.PaymentContractAddress).
+		SetRpcEndpoint(RpcEndpoint).SetPrivateKey(PrivateKey).SetAmount(big.NewInt(100 * int64(math.Pow(10, 18)))).Do(context.Background())
+	if err != nil {
+		return
+	}
+	fmt.Println("test approve:", res)
+
+}
 func TestUploadFilePayService_Do(t *testing.T) {
-	client := NewClient()
+	p := NewMcsParams("polygon.mumbai")
+	client := NewClient(p.McsApi)
 	res, err := client.NewUploadIpfsService().SetWalletAddress(WalletAddress).
 		SetFilePath(FilePath).Do(context.Background())
 	if err != nil {
 		return
 	}
 	fmt.Println("file upload:", res.Data)
-	resParams, err := client.NewGetParamsService().Do(context.Background())
-	if err != nil {
-		return
-	}
+	//resParams, err := client.NewGetParamsService().Do(context.Background())
+	//if err != nil {
+	//	return
+	//}
 	resPrice, err := client.NewGetPriceRateService().Do(context.Background())
 	if err != nil {
 		return
