@@ -2,7 +2,6 @@ package mcs
 
 import (
 	"context"
-	"fmt"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
@@ -70,26 +69,23 @@ func (s *ContractApproveUSDCService) Do(ctx context.Context, opts ...RequestOpti
 
 	auth, err := bind.NewKeyedTransactorWithChainID(privateKey, ChainId)
 
-	ERC20, err := contract.NewERC20(common.HexToAddress(s.USDCAddress), client)
-	if err != nil {
-		fmt.Println("Get ERC20 USDC contract error", err)
-	}
-	balance, err := ERC20.BalanceOf(&bind.CallOpts{
+	ERC20, _ := contract.NewERC20(common.HexToAddress(s.USDCAddress), client)
+
+	balance, _ := ERC20.BalanceOf(&bind.CallOpts{
 		Pending:     false,
 		From:        common.Address{},
 		BlockNumber: nil,
 		Context:     nil,
 	}, WalletAddress)
-	if err != nil {
-		fmt.Println("BalanceOf error", err)
+
+	if s.Amount.Int64() > balance.Int64() {
+		log.Fatal("BalanceOf error")
 	}
-	fmt.Println("balance:", balance)
 
 	tx, err := ERC20.Approve(&bind.TransactOpts{
 		From:   auth.From,
 		Signer: auth.Signer,
 	}, USDCSpender, s.Amount)
-	fmt.Println(tx.Hash())
 
 	bind.WaitMined(context.Background(), client, tx)
 	tx, _, err = client.TransactionByHash(context.Background(), tx.Hash())
@@ -256,7 +252,7 @@ func (s *ContractMintNftService) Do(ctx context.Context, opts ...RequestOption) 
 	if err != nil {
 		log.Fatal("Get SwanPayment contract error", err)
 	}
-	tx, err := Minter.MintData(&bind.TransactOpts{
+	tx, err := Minter.MintUnique(&bind.TransactOpts{
 		From:   auth.From,
 		Signer: auth.Signer,
 	}, common.HexToAddress(s.WalletAddress), s.NftMetaUrl)
@@ -265,11 +261,10 @@ func (s *ContractMintNftService) Do(ctx context.Context, opts ...RequestOption) 
 	}
 	bind.WaitMined(context.Background(), client, tx)
 	tx, _, err = client.TransactionByHash(context.Background(), tx.Hash())
-
 	if err != nil {
 		log.Fatal(err)
 	}
-	TokenId, _ = Minter.TotalSupply(&bind.CallOpts{})
-	fmt.Println("tokenid", TokenId)
+
+	TokenId, _ = Minter.IdCount(&bind.CallOpts{})
 	return tx.Hash().String(), TokenId, nil
 }

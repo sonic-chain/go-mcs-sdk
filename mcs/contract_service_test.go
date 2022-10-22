@@ -59,7 +59,6 @@ func TestUploadFilePayService_Do(t *testing.T) {
 func TestContractMintNftService_Do(t *testing.T) {
 	p := NewMcsParams("polygon.mumbai")
 	client := NewClient(p.McsApi)
-	client.SetJwtToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NjY0MzQ5NzksImlhdCI6MTY2NjM0ODU3OSwic3ViIjoiNzEyLHBvbHlnb24ubXVtYmFpIn0.AgnLYTjlxhlm4OvYixdzFk9uFZfXRHFcq8TYQAzVUvQ")
 	res, err := client.NewUploadIpfsService().SetWalletAddress(WalletAddress).
 		SetFilePath(FilePath).Do(context.Background())
 	if err != nil {
@@ -97,7 +96,7 @@ func TestContractMintNftService_Do(t *testing.T) {
 	fmt.Println(NftContractRes)
 
 	client.NewGetMintInfoService().SetMintAddress(WalletAddress).
-		SetPayloadCid(res.Data.PayloadCid).SetTxHash(NftContractRes).SetTokenId(TokenID.String()).
+		SetTxHash(NftContractRes).SetTokenId(TokenID.Int64()).
 		SetSourceFileUploadId(res.Data.SourceFileUploadID).Do(context.Background())
 
 }

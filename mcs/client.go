@@ -80,9 +80,12 @@ func (c *Client) parseRequest(r *request, opts ...RequestOption) (err error) {
 		c.debug("request post body: %#v", r.postBody)
 	}
 	header := http.Header{}
+
 	if r.header != nil {
 		header = r.header.Clone()
 	}
+	header.Set("Authorization", "Bearer "+c.JwtToken)
+
 	if queryString != "" {
 		fullURL = fmt.Sprintf("%s?%s", fullURL, queryString)
 	}
@@ -97,18 +100,11 @@ func (c *Client) parseRequest(r *request, opts ...RequestOption) (err error) {
 }
 
 func (c *Client) callAPI(ctx context.Context, r *request, opts ...RequestOption) (data []byte, err error) {
-	if c.JwtToken != "" {
-		r.header.Add("Authorization", "Bearer "+c.JwtToken)
-	}
-
 	err = c.parseRequest(r, opts...)
 	if err != nil {
 		return []byte{}, err
 	}
 
-	//fmt.Println(r.method)
-	//fmt.Println(r.fullURL)
-	//fmt.Println(r.body)
 	req, err := http.NewRequest(r.method, r.fullURL, r.body)
 	if err != nil {
 		return []byte{}, err

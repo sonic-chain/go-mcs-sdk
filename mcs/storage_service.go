@@ -87,16 +87,10 @@ func (s *GetUserTaskDealsService) Do(ctx context.Context, opts ...RequestOption)
 
 type GetMintInfoService struct {
 	c                  *Client
-	PayloadCid         string
 	SourceFileUploadId int64
 	TxHash             string
-	TokenId            string
+	TokenId            int64
 	MintAddress        string
-}
-
-func (s *GetMintInfoService) SetPayloadCid(PayloadCid string) *GetMintInfoService {
-	s.PayloadCid = PayloadCid
-	return s
 }
 
 func (s *GetMintInfoService) SetSourceFileUploadId(SourceFileUploadId int64) *GetMintInfoService {
@@ -109,7 +103,7 @@ func (s *GetMintInfoService) SetTxHash(TxHash string) *GetMintInfoService {
 	return s
 }
 
-func (s *GetMintInfoService) SetTokenId(TokenId string) *GetMintInfoService {
+func (s *GetMintInfoService) SetTokenId(TokenId int64) *GetMintInfoService {
 	s.TokenId = TokenId
 	return s
 }
@@ -126,7 +120,7 @@ type MintInfo struct {
 		SourceFileUploadID int64  `json:"source_file_upload_id"`
 		NftTxHash          string `json:"nft_tx_hash"`
 		MintAddress        string `json:"mint_address"`
-		TokenID            string `json:"token_id"`
+		TokenID            int64  `json:"token_id"`
 		CreateAt           int64  `json:"create_at"`
 		UpdateAt           int64  `json:"update_at"`
 	} `json:"data"`
@@ -139,7 +133,6 @@ func (s *GetMintInfoService) Do(ctx context.Context, opts ...RequestOption) (res
 	}
 	r.postBody = params{
 		"source_file_upload_id": s.SourceFileUploadId,
-		"payload_cid":           s.PayloadCid,
 		"tx_hash":               s.TxHash,
 		"token_id":              s.TokenId,
 		"mint_address":          s.MintAddress,
