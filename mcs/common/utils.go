@@ -1,8 +1,11 @@
 package common
 
 import (
+	"crypto/ecdsa"
 	"encoding/json"
 	"fmt"
+	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/ethereum/go-ethereum/crypto"
 	"io/ioutil"
 	"math/big"
 	"net/http"
@@ -52,4 +55,15 @@ func Bigint2int64(num big.Int) int64 {
 	str := num.String()
 	numInt, _ := strconv.ParseInt(str, 10, 64)
 	return numInt
+}
+
+func PersonalSign(message string, privateKey *ecdsa.PrivateKey) (string, error) {
+	fullMessage := fmt.Sprintf("\x19Ethereum Signed Message:\n%d%s", len(message), message)
+	hash := crypto.Keccak256Hash([]byte(fullMessage))
+	signatureBytes, err := crypto.Sign(hash.Bytes(), privateKey)
+	if err != nil {
+		return "", err
+	}
+	signatureBytes[64] += 27
+	return hexutil.Encode(signatureBytes), nil
 }
