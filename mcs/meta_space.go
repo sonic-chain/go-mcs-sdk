@@ -10,7 +10,7 @@ import (
 const (
 	McsBackendBaseUrl               = "http://192.168.199.61:8889/api/"
 	UserWalletAddressForRegisterMcs = "0x7d2C017e20Ee3D86047727197094fCD197656168"
-	UserWalletAddressPK             = "9197b7d31cb4548aa4bba82d3a15bdf9f35814d130e9077b4b0ed8a7235addbe"
+	UserWalletAddressPK             = ""
 	ChainNameForRegisterOnMcs       = "polygon.mumbai"
 )
 
