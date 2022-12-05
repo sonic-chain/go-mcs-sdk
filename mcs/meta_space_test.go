@@ -9,6 +9,7 @@ import (
 const (
 	MetaSpaceBackendBaseUrl = "http://192.168.199.61:5212/api/"
 	BucketNameForTest       = "zzq-1105"
+	FileNameForTest         = "1.jpeg"
 )
 
 func TestMetaSpaceGetBuckets(t *testing.T) {
@@ -31,10 +32,11 @@ func TestMetaSpaceGetBucketInfo(t *testing.T) {
 	if err != nil {
 		log.Println(err)
 	}
-	err = metaClient.GetBucketInfoByBucketName(BucketNameForTest)
+	resp, err := metaClient.GetBucketInfoByBucketName(BucketNameForTest)
 	if err != nil {
 		log.Println(err)
 	}
+	log.Println(*(*string)(unsafe.Pointer(&resp)))
 }
 
 func TestMetaSpaceGetBucketID(t *testing.T) {
@@ -48,4 +50,30 @@ func TestMetaSpaceGetBucketID(t *testing.T) {
 		log.Println(err)
 	}
 	log.Println(bucketId)
+}
+
+func TestMetaSpaceGetFileID(t *testing.T) {
+	metaClient := NewMetaSpaceClient(MetaSpaceBackendBaseUrl)
+	err := metaClient.GetToken()
+	if err != nil {
+		log.Println(err)
+	}
+	fileId, err := metaClient.GetFileIDByBucketNameAndFileName(BucketNameForTest, FileNameForTest)
+	if err != nil {
+		log.Println(err)
+	}
+	log.Println(fileId)
+}
+
+func TestMetaSpaceCreateBucket(t *testing.T) {
+	metaClient := NewMetaSpaceClient(MetaSpaceBackendBaseUrl)
+	err := metaClient.GetToken()
+	if err != nil {
+		log.Println(err)
+	}
+	fileId, err := metaClient.CreateBucket(BucketNameForCreate)
+	if err != nil {
+		log.Println(err)
+	}
+	log.Println(fileId)
 }

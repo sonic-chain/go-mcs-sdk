@@ -14,6 +14,7 @@ const (
 	UserWalletAddressForRegisterMcs = "0x7d2C017e20Ee3D86047727197094fCD197656168"
 	UserWalletAddressPK             = "9197b7d31cb4548aa4bba82d3a15bdf9f35814d130e9077b4b0ed8a7235addbe"
 	ChainNameForRegisterOnMcs       = "polygon.mumbai"
+	BucketNameForCreate             = "zzq-test"
 )
 
 type MetaSpaceClient struct {
@@ -64,15 +65,15 @@ func (client *MetaSpaceClient) GetBuckets() ([]byte, error) {
 	return bucketListInfoBytes, nil
 }
 
-func (client *MetaSpaceClient) GetBucketInfoByBucketName(bucketName string) error {
+func (client *MetaSpaceClient) GetBucketInfoByBucketName(bucketName string) ([]byte, error) {
 	httpRequestUrl := client.MetaSpaceUrl + common.DIRECTORY + "/" + bucketName
 	bucketListInfoBytes, err := common.HttpGet(httpRequestUrl, client.JwtToken, nil)
 	if err != nil {
 		log.Println(err)
-		return err
+		return nil, err
 	}
 	log.Println(*(*string)(unsafe.Pointer(&bucketListInfoBytes)))
-	return err
+	return bucketListInfoBytes, nil
 }
 
 func (client *MetaSpaceClient) GetBucketIDByBucketName(bucketName string) (string, error) {
@@ -100,6 +101,46 @@ func (client *MetaSpaceClient) GetBucketIDByBucketName(bucketName string) (strin
 		}
 	}
 	return bucketId, nil
+}
+
+func (client *MetaSpaceClient) GetFileIDByBucketNameAndFileName(bucketName, fileName string) (string, error) {
+	response, err := client.GetBucketInfoByBucketName(bucketName)
+	bucketId := ""
+	if err != nil {
+		log.Println(err)
+		return bucketId, err
+	}
+	//var objectList *ObjectList
+	var dict map[string]interface{}
+	err = json.Unmarshal(response, &dict)
+	if err != nil {
+		log.Println(err)
+		return bucketId, err
+	}
+	log.Println(dict)
+	dataInReturn := dict["data"].(map[string]interface{})
+	objectInData := dataInReturn["objects"].([]interface{})
+	for _, v := range objectInData {
+		vObject := v.(map[string]interface{})
+		fileNameInReturn := vObject["name"].(string)
+		if fileName == fileNameInReturn {
+			bucketId = vObject["id"].(string)
+		}
+	}
+	return bucketId, nil
+}
+
+func (client *MetaSpaceClient) CreateBucket(bucketName string) ([]byte, error) {
+	httpRequestUrl := client.MetaSpaceUrl + common.DIRECTORY
+	params := make(map[string]string)
+	params["path"] = "/" + bucketName
+	response, err := common.HttpPut(httpRequestUrl, client.JwtToken, params)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	log.Println(*(*string)(unsafe.Pointer(&response)))
+	return response, nil
 }
 
 type ObjectList struct {
