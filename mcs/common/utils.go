@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/joho/godotenv"
 	"io/ioutil"
+	"log"
 	"math/big"
 	"net/http"
 	"regexp"
@@ -66,4 +68,13 @@ func PersonalSign(message string, privateKey *ecdsa.PrivateKey) (string, error) 
 	}
 	signatureBytes[64] += 27
 	return hexutil.Encode(signatureBytes), nil
+}
+
+func LoadEnv() error {
+	err := godotenv.Load()
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	return nil
 }

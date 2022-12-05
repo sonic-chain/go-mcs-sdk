@@ -2,24 +2,26 @@ package mcs
 
 import (
 	"context"
+	"fmt"
 	"github.com/ethereum/go-ethereum/crypto"
 	"go-mcs-sdk/mcs/common"
 	"log"
+	"os"
 	"time"
 	"unsafe"
 )
 
 const (
-	McsBackendBaseUrl               = "http://192.168.199.61:8889/api/"
-	UserWalletAddressForRegisterMcs = "0x7d2C017e20Ee3D86047727197094fCD197656168"
-	UserWalletAddressPK             = "9197b7d31cb4548aa4bba82d3a15bdf9f35814d130e9077b4b0ed8a7235addbe"
-	ChainNameForRegisterOnMcs       = "polygon.mumbai"
-	BucketNameForCreate             = "zzq-test"
+	McsBackendBaseUrl   = "http://192.168.199.61:8889/api/"
+	BucketNameForCreate = "zzq-test"
 )
 
 type MetaSpaceClient struct {
-	MetaSpaceUrl string `json:"meta_space_url"`
-	JwtToken     string `json:"jwt_token"`
+	MetaSpaceUrl                    string `json:"meta_space_url"`
+	JwtToken                        string `json:"jwt_token"`
+	UserWalletAddressForRegisterMcs string `json:"user_wallet_address_for_register_mcs"`
+	UserWalletAddressPK             string `json:"user_wallet_address_pk"`
+	ChainNameForRegisterOnMcs       string `json:"chain_name_for_register_on_mcs"`
 }
 
 func NewMetaSpaceClient(metaSpaceUrl string) *MetaSpaceClient {
@@ -34,17 +36,47 @@ func (client *MetaSpaceClient) SetJwtToken(jwtToken string) *MetaSpaceClient {
 	return client
 }
 
+func (client *MetaSpaceClient) GetConfig() *MetaSpaceClient {
+	err := common.LoadEnv()
+	if err != nil {
+		log.Fatal(err)
+		return client
+	}
+	walletAddress := os.Getenv("USER_WALLET_ADDRESS_FOR_REGISTER_MCS")
+	if walletAddress == "" {
+		err = fmt.Errorf("user wallet address is null in .env file")
+		log.Fatal(err)
+		return client
+	}
+	client.UserWalletAddressForRegisterMcs = walletAddress
+	walletAddressPK := os.Getenv("USER_WALLET_ADDRESS_PK")
+	if walletAddressPK == "" {
+		err = fmt.Errorf("user wallet address private key is null in .env file")
+		log.Fatal(err)
+		return client
+	}
+	client.UserWalletAddressPK = walletAddressPK
+	chainNetworkName := os.Getenv("CHAIN_NAME_FOR_REGISTER_ON_MCS")
+	if chainNetworkName == "" {
+		err = fmt.Errorf("chain network name is null in .env file")
+		log.Fatal(err)
+		return client
+	}
+	client.ChainNameForRegisterOnMcs = chainNetworkName
+	return client
+}
+
 func (client *MetaSpaceClient) GetToken() error {
 	mcsClient := NewClient(McsBackendBaseUrl)
-	user, err := mcsClient.NewUserRegisterService().SetWalletAddress(UserWalletAddressForRegisterMcs).Do(context.Background())
+	user, err := mcsClient.NewUserRegisterService().SetWalletAddress(client.UserWalletAddressForRegisterMcs).Do(context.Background())
 	if err != nil {
 		log.Println(err)
 		return err
 	}
 	nonce := user.Data.Nonce
-	privateKey, _ := crypto.HexToECDSA(UserWalletAddressPK)
+	privateKey, _ := crypto.HexToECDSA(client.UserWalletAddressPK)
 	signature, _ := common.PersonalSign(nonce, privateKey)
-	jwt, err := mcsClient.NewUserLoginService().SetNetwork(ChainNameForRegisterOnMcs).SetNonce(nonce).SetWalletAddress(UserWalletAddressForRegisterMcs).
+	jwt, err := mcsClient.NewUserLoginService().SetNetwork(client.ChainNameForRegisterOnMcs).SetNonce(nonce).SetWalletAddress(client.UserWalletAddressForRegisterMcs).
 		SetSignature(signature).Do(context.Background())
 	if err != nil {
 		log.Println(err)

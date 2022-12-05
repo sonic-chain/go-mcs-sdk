@@ -15,7 +15,7 @@ const (
 
 func TestMetaSpaceGetBuckets(t *testing.T) {
 	metaClient := NewMetaSpaceClient(MetaSpaceBackendBaseUrl)
-	err := metaClient.GetToken()
+	err := metaClient.GetConfig().GetToken()
 	if err != nil {
 		log.Println(err)
 	}
@@ -29,7 +29,7 @@ func TestMetaSpaceGetBuckets(t *testing.T) {
 
 func TestMetaSpaceGetBucketInfo(t *testing.T) {
 	metaClient := NewMetaSpaceClient(MetaSpaceBackendBaseUrl)
-	err := metaClient.GetToken()
+	err := metaClient.GetConfig().GetToken()
 	if err != nil {
 		log.Println(err)
 	}
@@ -42,7 +42,7 @@ func TestMetaSpaceGetBucketInfo(t *testing.T) {
 
 func TestMetaSpaceGetBucketID(t *testing.T) {
 	metaClient := NewMetaSpaceClient(MetaSpaceBackendBaseUrl)
-	err := metaClient.GetToken()
+	err := metaClient.GetConfig().GetToken()
 	if err != nil {
 		log.Println(err)
 	}
@@ -55,7 +55,7 @@ func TestMetaSpaceGetBucketID(t *testing.T) {
 
 func TestMetaSpaceGetFileID(t *testing.T) {
 	metaClient := NewMetaSpaceClient(MetaSpaceBackendBaseUrl)
-	err := metaClient.GetToken()
+	err := metaClient.GetConfig().GetToken()
 	if err != nil {
 		log.Println(err)
 	}
@@ -68,7 +68,7 @@ func TestMetaSpaceGetFileID(t *testing.T) {
 
 func TestMetaSpaceCreateBucket(t *testing.T) {
 	metaClient := NewMetaSpaceClient(MetaSpaceBackendBaseUrl)
-	err := metaClient.GetToken()
+	err := metaClient.GetConfig().GetToken()
 	if err != nil {
 		log.Println(err)
 	}
@@ -81,7 +81,7 @@ func TestMetaSpaceCreateBucket(t *testing.T) {
 
 func TestMetaSpaceDeleteBucket(t *testing.T) {
 	metaClient := NewMetaSpaceClient(MetaSpaceBackendBaseUrl)
-	err := metaClient.GetToken()
+	err := metaClient.GetConfig().GetToken()
 	if err != nil {
 		log.Println(err)
 	}
