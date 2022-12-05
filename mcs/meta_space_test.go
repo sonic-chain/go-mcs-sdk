@@ -72,7 +72,7 @@ func TestMetaSpaceCreateBucket(t *testing.T) {
 	if err != nil {
 		log.Println(err)
 	}
-	fileId, err := metaClient.CreateBucket(BucketNameForCreate)
+	fileId, err := metaClient.CreateBucket(BucketNameForTest)
 	if err != nil {
 		log.Println(err)
 	}

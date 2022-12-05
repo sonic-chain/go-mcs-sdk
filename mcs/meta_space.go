@@ -12,8 +12,7 @@ import (
 )
 
 const (
-	McsBackendBaseUrl   = "http://192.168.199.61:8889/api/"
-	BucketNameForCreate = "zzq-test"
+	McsBackendBaseUrl = "http://192.168.199.61:8889/api/"
 )
 
 type MetaSpaceClient struct {
