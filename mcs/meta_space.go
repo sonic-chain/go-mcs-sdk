@@ -143,6 +143,20 @@ func (client *MetaSpaceClient) CreateBucket(bucketName string) ([]byte, error) {
 	return response, nil
 }
 
+func (client *MetaSpaceClient) DeleteBucket(dirs []string) ([]byte, error) {
+	httpRequestUrl := client.MetaSpaceUrl + common.DELETE_OBJECT
+	params := make(map[string][]string)
+	params["item"] = []string{}
+	params["dirs"] = dirs
+	response, err := common.HttpDelete(httpRequestUrl, client.JwtToken, params)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	log.Println(*(*string)(unsafe.Pointer(&response)))
+	return response, nil
+}
+
 type ObjectList struct {
 	Parent        string         `json:"parent,omitempty"`
 	Objects       []*Object      `json:"objects"`

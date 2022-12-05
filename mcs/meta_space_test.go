@@ -8,8 +8,9 @@ import (
 
 const (
 	MetaSpaceBackendBaseUrl = "http://192.168.199.61:5212/api/"
-	BucketNameForTest       = "zzq-1105"
+	BucketNameForTest       = "zzq-test"
 	FileNameForTest         = "1.jpeg"
+	BucketIdForTest         = "VbDH2"
 )
 
 func TestMetaSpaceGetBuckets(t *testing.T) {
@@ -76,4 +77,19 @@ func TestMetaSpaceCreateBucket(t *testing.T) {
 		log.Println(err)
 	}
 	log.Println(fileId)
+}
+
+func TestMetaSpaceDeleteBucket(t *testing.T) {
+	metaClient := NewMetaSpaceClient(MetaSpaceBackendBaseUrl)
+	err := metaClient.GetToken()
+	if err != nil {
+		log.Println(err)
+	}
+	var dirs []string
+	dirs = append(dirs, BucketIdForTest)
+	resp, err := metaClient.DeleteBucket(dirs)
+	if err != nil {
+		log.Println(err)
+	}
+	log.Println(*(*string)(unsafe.Pointer(&resp)))
 }
