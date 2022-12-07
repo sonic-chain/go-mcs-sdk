@@ -7,14 +7,13 @@ import (
 )
 
 const (
-	MetaSpaceBackendBaseUrl = "http://192.168.199.61:5212/api/"
-	BucketNameForTest       = "zzq-test"
-	FileNameForTest         = "1.jpeg"
-	BucketIdForTest         = "VbDH2"
+	BucketNameForTest = "zzq-test"
+	FileNameForTest   = "1.jpeg"
+	BucketIdForTest   = "VbDH2"
 )
 
 func TestMetaSpaceGetBuckets(t *testing.T) {
-	metaClient := NewMetaSpaceClient(MetaSpaceBackendBaseUrl)
+	metaClient := NewMetaSpaceClient()
 	err := metaClient.GetConfig().GetToken()
 	if err != nil {
 		log.Println(err)
@@ -28,7 +27,7 @@ func TestMetaSpaceGetBuckets(t *testing.T) {
 }
 
 func TestMetaSpaceGetBucketInfo(t *testing.T) {
-	metaClient := NewMetaSpaceClient(MetaSpaceBackendBaseUrl)
+	metaClient := NewMetaSpaceClient()
 	err := metaClient.GetConfig().GetToken()
 	if err != nil {
 		log.Println(err)
@@ -41,7 +40,7 @@ func TestMetaSpaceGetBucketInfo(t *testing.T) {
 }
 
 func TestMetaSpaceGetBucketID(t *testing.T) {
-	metaClient := NewMetaSpaceClient(MetaSpaceBackendBaseUrl)
+	metaClient := NewMetaSpaceClient()
 	err := metaClient.GetConfig().GetToken()
 	if err != nil {
 		log.Println(err)
@@ -54,7 +53,7 @@ func TestMetaSpaceGetBucketID(t *testing.T) {
 }
 
 func TestMetaSpaceGetFileID(t *testing.T) {
-	metaClient := NewMetaSpaceClient(MetaSpaceBackendBaseUrl)
+	metaClient := NewMetaSpaceClient()
 	err := metaClient.GetConfig().GetToken()
 	if err != nil {
 		log.Println(err)
@@ -67,7 +66,7 @@ func TestMetaSpaceGetFileID(t *testing.T) {
 }
 
 func TestMetaSpaceCreateBucket(t *testing.T) {
-	metaClient := NewMetaSpaceClient(MetaSpaceBackendBaseUrl)
+	metaClient := NewMetaSpaceClient()
 	err := metaClient.GetConfig().GetToken()
 	if err != nil {
 		log.Println(err)
@@ -80,7 +79,7 @@ func TestMetaSpaceCreateBucket(t *testing.T) {
 }
 
 func TestMetaSpaceDeleteBucket(t *testing.T) {
-	metaClient := NewMetaSpaceClient(MetaSpaceBackendBaseUrl)
+	metaClient := NewMetaSpaceClient()
 	err := metaClient.GetConfig().GetToken()
 	if err != nil {
 		log.Println(err)
@@ -95,7 +94,7 @@ func TestMetaSpaceDeleteBucket(t *testing.T) {
 }
 
 func TestMetaSpaceCreateUploadSession(t *testing.T) {
-	metaClient := NewMetaSpaceClient(MetaSpaceBackendBaseUrl)
+	metaClient := NewMetaSpaceClient()
 	err := metaClient.GetConfig().GetToken()
 	if err != nil {
 		log.Println(err)
@@ -108,7 +107,7 @@ func TestMetaSpaceCreateUploadSession(t *testing.T) {
 }
 
 func TestMetaSpaceUploadToBucket(t *testing.T) {
-	metaClient := NewMetaSpaceClient(MetaSpaceBackendBaseUrl)
+	metaClient := NewMetaSpaceClient()
 	err := metaClient.GetConfig().GetToken()
 	if err != nil {
 		log.Println(err)

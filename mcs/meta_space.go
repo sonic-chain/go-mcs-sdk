@@ -13,22 +13,17 @@ import (
 	"unsafe"
 )
 
-const (
-	McsBackendBaseUrl = "http://192.168.199.61:8889/api/"
-)
-
 type MetaSpaceClient struct {
 	MetaSpaceUrl                    string `json:"meta_space_url"`
 	JwtToken                        string `json:"jwt_token"`
 	UserWalletAddressForRegisterMcs string `json:"user_wallet_address_for_register_mcs"`
 	UserWalletAddressPK             string `json:"user_wallet_address_pk"`
 	ChainNameForRegisterOnMcs       string `json:"chain_name_for_register_on_mcs"`
+	McsBackendBaseUrl               string `json:"mcs_backend_base_url"`
 }
 
-func NewMetaSpaceClient(metaSpaceUrl string) *MetaSpaceClient {
-	metaSpaceClient := MetaSpaceClient{
-		MetaSpaceUrl: metaSpaceUrl,
-	}
+func NewMetaSpaceClient() *MetaSpaceClient {
+	metaSpaceClient := MetaSpaceClient{}
 	return &metaSpaceClient
 }
 
@@ -64,11 +59,25 @@ func (client *MetaSpaceClient) GetConfig() *MetaSpaceClient {
 		return client
 	}
 	client.ChainNameForRegisterOnMcs = chainNetworkName
+	mcsBackendBaseUrl := os.Getenv("MCS_BACKEND_BASE_URL")
+	if mcsBackendBaseUrl == "" {
+		err = fmt.Errorf("mcs backend base url is null in .env file")
+		log.Fatal(err)
+		return client
+	}
+	client.McsBackendBaseUrl = mcsBackendBaseUrl
+	metaSpaceUrl := os.Getenv("META_SPACE_URL")
+	if metaSpaceUrl == "" {
+		err = fmt.Errorf("meta space url is null in .env file")
+		log.Fatal(err)
+		return client
+	}
+	client.MetaSpaceUrl = metaSpaceUrl
 	return client
 }
 
 func (client *MetaSpaceClient) GetToken() error {
-	mcsClient := NewClient(McsBackendBaseUrl)
+	mcsClient := NewClient(client.McsBackendBaseUrl)
 	user, err := mcsClient.NewUserRegisterService().SetWalletAddress(client.UserWalletAddressForRegisterMcs).Do(context.Background())
 	if err != nil {
 		log.Println(err)
