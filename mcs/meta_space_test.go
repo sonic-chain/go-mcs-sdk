@@ -113,7 +113,7 @@ func TestMetaSpaceUploadToBucket(t *testing.T) {
 	if err != nil {
 		log.Println(err)
 	}
-	resp, err := metaClient.UploadToBucket("zzq-test", "4444.jpeg", "/home/zzq/Pictures/4.jpeg")
+	resp, err := metaClient.UploadToBucket("zzq-test", "4444.jpeg", "/home/zzq/Pictures/4'#.jpeg")
 	if err != nil {
 		log.Println(err)
 	}

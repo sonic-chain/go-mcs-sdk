@@ -8,6 +8,8 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
+	"regexp"
 	"unsafe"
 )
 
@@ -189,6 +191,11 @@ func (client *MetaSpaceClient) DeleteBucket(dirs []string) ([]byte, error) {
 }
 
 func (client *MetaSpaceClient) CreateUploadSession(bucketName, fileName, filePath string) ([]byte, error) {
+	err := CheckSpecialChar(fileName, filePath)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
 	bucketInfoBytes, err := client.GetBucketInfoByBucketName(bucketName)
 	if err != nil {
 		log.Println(err)
@@ -223,6 +230,11 @@ func (client *MetaSpaceClient) CreateUploadSession(bucketName, fileName, filePat
 }
 
 func (client *MetaSpaceClient) UploadToBucket(bucketName, fileName, filePath string) ([]byte, error) {
+	err := CheckSpecialChar(fileName, filePath)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
 	fileInfo, err := os.Stat(filePath)
 	if err != nil {
 		log.Println(err)
@@ -261,4 +273,30 @@ func (client *MetaSpaceClient) UploadToBucket(bucketName, fileName, filePath str
 	}
 	log.Println(*(*string)(unsafe.Pointer(&response)))
 	return response, nil
+}
+
+func CheckSpecialChar(fileName, filePath string) error {
+	if SpecialChar(fileName) {
+		err := fmt.Errorf("file alias has special characters")
+		log.Println(err)
+		return err
+	}
+	_, fileNameInPath := filepath.Split(filePath)
+	if SpecialChar(fileNameInPath) {
+		err := fmt.Errorf("file name in path has special characters")
+		log.Println(err)
+		return err
+	}
+	return nil
+}
+
+func SpecialChar(line string) bool {
+	specialCharacters := "[!@#$%^&*()-+?=,<>/'\" \n\t\v\f\r]"
+	reg := regexp.MustCompile(specialCharacters)
+	matchStr := reg.FindAllString(line, -1)
+	if len(matchStr) > 0 {
+		return true
+	} else {
+		return false
+	}
 }
