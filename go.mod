@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/bitly/go-simplejson v0.5.0
 	github.com/ethereum/go-ethereum v1.10.21
+	github.com/joho/godotenv v1.4.0
 	github.com/json-iterator/go v1.1.12
 )
 
