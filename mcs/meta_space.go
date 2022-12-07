@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"github.com/ethereum/go-ethereum/crypto"
 	"go-mcs-sdk/mcs/common"
+	"io/ioutil"
 	"log"
 	"os"
-	"time"
 	"unsafe"
 )
 
@@ -188,37 +188,77 @@ func (client *MetaSpaceClient) DeleteBucket(dirs []string) ([]byte, error) {
 	return response, nil
 }
 
-type ObjectList struct {
-	Parent        string         `json:"parent,omitempty"`
-	Objects       []*Object      `json:"objects"`
-	Policy        *PolicySummary `json:"policy,omitempty"`
-	FolderCnt     int64          `json:"folder_cnt"`
-	FreeFolderCnt int64          `json:"free_folder_cnt"`
-	FileCnt       int64          `json:"file_cnt"`
+func (client *MetaSpaceClient) CreateUploadSession(bucketName, fileName, filePath string) ([]byte, error) {
+	bucketInfoBytes, err := client.GetBucketInfoByBucketName(bucketName)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	var dict map[string]interface{}
+	err = json.Unmarshal(bucketInfoBytes, &dict)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	dataInReturn := dict["data"].(map[string]interface{})
+	policyId := dataInReturn["policy"].(map[string]interface{})["id"]
+
+	params := make(map[string]interface{})
+	_, currentTIme := common.GetCurrentUtcSec()
+	fileInfo, err := os.Stat(filePath)
+	fileSize := fileInfo.Size()
+	params["path"] = fmt.Sprintf("/%s", bucketName)
+	params["size"] = fileSize
+	params["name"] = fileName
+	params["policy_id"] = policyId
+	params["last_modified"] = currentTIme
+	httpRequestUrl := client.MetaSpaceUrl + common.UPLOAD_SESSION
+	response, err := common.HttpPut(httpRequestUrl, client.JwtToken, params)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	log.Println(*(*string)(unsafe.Pointer(&response)))
+	return response, nil
 }
 
-// Object 文件或者目录
-type Object struct {
-	ID            string    `json:"id"`
-	Name          string    `json:"name"`
-	Path          string    `json:"path"`
-	Pic           string    `json:"pic"`
-	Size          uint64    `json:"size"`
-	Type          string    `json:"type"`
-	PayloadCid    string    `json:"payload_cid"`
-	IpfsUrl       string    `json:"ipfs_url"`
-	PinStatus     string    `json:"pin_status"`
-	Date          time.Time `json:"date"`
-	FilesCount    int       `json:"files_count"`
-	CreateDate    time.Time `json:"create_date"`
-	UpdateDate    time.Time `json:"update_date"`
-	Key           string    `json:"key,omitempty"`
-	SourceEnabled bool      `json:"source_enabled"`
-}
-type PolicySummary struct {
-	ID       string   `json:"id"`
-	Name     string   `json:"name"`
-	Type     string   `json:"type"`
-	MaxSize  uint64   `json:"max_size"`
-	FileType []string `json:"file_type"`
+func (client *MetaSpaceClient) UploadToBucket(bucketName, fileName, filePath string) ([]byte, error) {
+	fileInfo, err := os.Stat(filePath)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	if fileInfo.Size() == 0 {
+		err = fmt.Errorf("please upload a file larger than 0 byte")
+		log.Println(err)
+		return nil, err
+	}
+	uploadSession, err := client.CreateUploadSession(bucketName, fileName, filePath)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	var dict map[string]interface{}
+	err = json.Unmarshal(uploadSession, &dict)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	sessionId := dict["data"].(map[string]interface{})["sessionID"].(string)
+	log.Println(sessionId)
+	httpRequestUrl := client.MetaSpaceUrl + common.UPLOAD_SESSION + "/" + sessionId + "/0"
+	fileContent, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	params := make(map[string][]byte)
+	params["file"] = fileContent
+	response, err := common.HttpPost(httpRequestUrl, client.JwtToken, params)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	log.Println(*(*string)(unsafe.Pointer(&response)))
+	return response, nil
 }

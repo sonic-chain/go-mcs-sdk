@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"regexp"
 	"strconv"
+	"time"
 )
 
 const (
@@ -77,4 +78,9 @@ func LoadEnv() error {
 		return err
 	}
 	return nil
+}
+
+func GetCurrentUtcSec() (string, int64) {
+	currentUtcSec := time.Now().UnixNano() / 1e9
+	return strconv.FormatInt(currentUtcSec, 10), currentUtcSec
 }

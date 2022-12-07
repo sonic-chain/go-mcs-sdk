@@ -93,3 +93,29 @@ func TestMetaSpaceDeleteBucket(t *testing.T) {
 	}
 	log.Println(*(*string)(unsafe.Pointer(&resp)))
 }
+
+func TestMetaSpaceCreateUploadSession(t *testing.T) {
+	metaClient := NewMetaSpaceClient(MetaSpaceBackendBaseUrl)
+	err := metaClient.GetConfig().GetToken()
+	if err != nil {
+		log.Println(err)
+	}
+	resp, err := metaClient.CreateUploadSession("zzq-test", "111.jpeg", "/home/zzq/Pictures/1.jpeg")
+	if err != nil {
+		log.Println(err)
+	}
+	log.Println(*(*string)(unsafe.Pointer(&resp)))
+}
+
+func TestMetaSpaceUploadToBucket(t *testing.T) {
+	metaClient := NewMetaSpaceClient(MetaSpaceBackendBaseUrl)
+	err := metaClient.GetConfig().GetToken()
+	if err != nil {
+		log.Println(err)
+	}
+	resp, err := metaClient.UploadToBucket("zzq-test", "4444.jpeg", "/home/zzq/Pictures/4.jpeg")
+	if err != nil {
+		log.Println(err)
+	}
+	log.Println(*(*string)(unsafe.Pointer(&resp)))
+}
