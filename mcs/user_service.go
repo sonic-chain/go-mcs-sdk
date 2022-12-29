@@ -2,6 +2,7 @@ package mcs
 
 import (
 	"context"
+	"go-mcs-sdk/mcs/common"
 	"net/http"
 )
 
@@ -24,7 +25,7 @@ func (s *UserRegisterService) SetWalletAddress(WalletAddress string) *UserRegist
 func (s *UserRegisterService) Do(ctx context.Context, opts ...RequestOption) (res *UserRegisterData, err error) {
 	r := &request{
 		method:   http.MethodPost,
-		endpoint: "/user/register",
+		endpoint: common.USER_REGISTER,
 	}
 	r.postBody = params{
 		"public_key_address": s.WalletAddress,
@@ -80,7 +81,7 @@ func (s *UserLoginService) SetNetwork(Network string) *UserLoginService {
 func (s *UserLoginService) Do(ctx context.Context, opts ...RequestOption) (res *UserLoginData, err error) {
 	r := &request{
 		method:   http.MethodPost,
-		endpoint: "/user/login_by_metamask_signature",
+		endpoint: common.USER_LOGIN,
 	}
 	r.postBody = params{
 		"public_key_address": s.WalletAddress,

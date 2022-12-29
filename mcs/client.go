@@ -52,7 +52,7 @@ func (c *Client) SetJwtToken(JwtToken string) {
 
 func NewClient(mcsApi string) *Client {
 	return &Client{
-		BaseURL:    mcsApi + restApiVersion,
+		BaseURL:    mcsApi,
 		UserAgent:  "mcs/go",
 		HTTPClient: http.DefaultClient,
 		Logger:     log.New(os.Stderr, "mcs-go ", log.LstdFlags),
