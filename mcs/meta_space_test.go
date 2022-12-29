@@ -11,6 +11,7 @@ const (
 	FileNameForTest   = "1.jpeg"
 	BucketUidForTest  = "cb9063b5-1fbb-4efa-b23f-fcaa7fbecfd4"
 	FileIdForTest     = 4064
+	FolderNameForTest = "test-folder2"
 	Limit             = "10"
 	Offset            = "0"
 )
@@ -98,6 +99,21 @@ func TestMetaSpaceDeleteFile(t *testing.T) {
 		return
 	}
 	resp, err := metaClient.DeleteFile(FileIdForTest)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	log.Println(*(*string)(unsafe.Pointer(&resp)))
+}
+
+func TestMetaSpaceCreateFolder(t *testing.T) {
+	metaClient := NewMetaSpaceClient()
+	err := metaClient.GetConfig().GetToken()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	resp, err := metaClient.CreateFolder(FolderNameForTest, "", BucketUidForTest)
 	if err != nil {
 		log.Println(err)
 		return

@@ -160,6 +160,21 @@ func (client *MetaSpaceClient) GetFileList(fileUid, limit, offset string) ([]byt
 	return response, nil
 }
 
+func (client *MetaSpaceClient) CreateFolder(fileName, prefix, bucketUid string) ([]byte, error) {
+	httpRequestUrl := client.McsBackendBaseUrl + common.CREATE_FOLDER
+	params := make(map[string]string)
+	params["file_name"] = fileName
+	params["prefix"] = prefix
+	params["bucket_uid"] = bucketUid
+	response, err := common.HttpPost(httpRequestUrl, client.JwtToken, params)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	log.Println(*(*string)(unsafe.Pointer(&response)))
+	return response, nil
+}
+
 func (client *MetaSpaceClient) GetBucketIDByBucketName(bucketName string) (string, error) {
 	response, err := client.GetBuckets()
 	bucketId := ""
