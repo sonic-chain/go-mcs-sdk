@@ -9,7 +9,10 @@ import (
 const (
 	BucketNameForTest = "zzq-test"
 	FileNameForTest   = "1.jpeg"
-	BucketUuidForTest = "c87e2640-a936-4a32-981d-3ea037040e29"
+	BucketUidForTest  = "cb9063b5-1fbb-4efa-b23f-fcaa7fbecfd4"
+	FileIdForTest     = 4064
+	Limit             = "10"
+	Offset            = "0"
 )
 
 func TestMetaSpaceGetBuckets(t *testing.T) {
@@ -49,8 +52,52 @@ func TestMetaSpaceDeleteBucket(t *testing.T) {
 		log.Println(err)
 		return
 	}
-	bucketUid := BucketUuidForTest
-	resp, err := metaClient.DeleteBucket(bucketUid)
+	resp, err := metaClient.DeleteBucket(BucketUidForTest)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	log.Println(*(*string)(unsafe.Pointer(&resp)))
+}
+
+func TestMetaSpaceGetFileInfo(t *testing.T) {
+	metaClient := NewMetaSpaceClient()
+	err := metaClient.GetConfig().GetToken()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	resp, err := metaClient.GetFileInfo(FileIdForTest)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	log.Println(*(*string)(unsafe.Pointer(&resp)))
+}
+
+func TestMetaSpaceGetFileList(t *testing.T) {
+	metaClient := NewMetaSpaceClient()
+	err := metaClient.GetConfig().GetToken()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	resp, err := metaClient.GetFileList("cb9063b5-1fbb-4efa-b23f-fcaa7fbecfd4", Limit, Offset)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	log.Println(*(*string)(unsafe.Pointer(&resp)))
+}
+
+func TestMetaSpaceDeleteFile(t *testing.T) {
+	metaClient := NewMetaSpaceClient()
+	err := metaClient.GetConfig().GetToken()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	resp, err := metaClient.DeleteFile(FileIdForTest)
 	if err != nil {
 		log.Println(err)
 		return

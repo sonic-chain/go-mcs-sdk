@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"unsafe"
 )
 
@@ -113,6 +114,43 @@ func (client *MetaSpaceClient) CreateBucket(bucketName string) ([]byte, error) {
 
 func (client *MetaSpaceClient) DeleteBucket(bucketUid string) ([]byte, error) {
 	httpRequestUrl := client.McsBackendBaseUrl + common.DELETE_BUCKET + bucketUid
+	response, err := common.HttpGet(httpRequestUrl, client.JwtToken, nil)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	log.Println(*(*string)(unsafe.Pointer(&response)))
+	return response, nil
+}
+
+func (client *MetaSpaceClient) GetFileInfo(fileId int) ([]byte, error) {
+	httpRequestUrl := client.McsBackendBaseUrl + common.FILE_INFO + strconv.Itoa(fileId)
+	params := make(map[string]int)
+	params["file_id"] = fileId
+	response, err := common.HttpGet(httpRequestUrl, client.JwtToken, params)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	log.Println(*(*string)(unsafe.Pointer(&response)))
+	return response, nil
+}
+
+func (client *MetaSpaceClient) DeleteFile(fileId int) ([]byte, error) {
+	httpRequestUrl := client.McsBackendBaseUrl + common.DELETE_FILE + strconv.Itoa(fileId)
+	params := make(map[string]int)
+	params["file_id"] = fileId
+	response, err := common.HttpGet(httpRequestUrl, client.JwtToken, params)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	log.Println(*(*string)(unsafe.Pointer(&response)))
+	return response, nil
+}
+
+func (client *MetaSpaceClient) GetFileList(fileUid, limit, offset string) ([]byte, error) {
+	httpRequestUrl := client.McsBackendBaseUrl + common.FILE_LIST + fileUid + "&limit=" + limit + "&offset=" + offset
 	response, err := common.HttpGet(httpRequestUrl, client.JwtToken, nil)
 	if err != nil {
 		log.Println(err)
