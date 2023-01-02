@@ -200,42 +200,40 @@ func (client *MetaSpaceClient) CheckFile(bucketUid, fileHash, fileName, prefix s
 func (client *MetaSpaceClient) UploadChunk(fileHash, uploadFilePath string) ([]byte, error) {
 	httpRequestUrl := client.McsBackendBaseUrl + common.UPLOAD_CHUNK
 	fileNameWithSuffix := path.Base(uploadFilePath)
-	bodyBuffer := &bytes.Buffer{}
-	bodyWriter := multipart.NewWriter(bodyBuffer)
-	err := bodyWriter.WriteField("hash", fileHash)
+	payload := &bytes.Buffer{}
+	writer := multipart.NewWriter(payload)
+	file, err := os.Open(uploadFilePath)
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
-	err = bodyWriter.WriteField("file", fileHash)
+	part1, err := writer.CreateFormFile("file", fileNameWithSuffix)
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
-	writer, err := bodyWriter.CreateFormFile("chunk_form", fileNameWithSuffix)
+	_, err = io.Copy(part1, file)
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
-	chunkFile, err := os.Open(uploadFilePath)
-	defer chunkFile.Close()
+	err = writer.WriteField("hash", fileHash)
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
-	_, err = io.Copy(writer, chunkFile)
+	err = writer.Close()
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
-	defer bodyWriter.Close()
-	request, err := http.NewRequest("POST", httpRequestUrl, bodyBuffer)
+	request, err := http.NewRequest("POST", httpRequestUrl, payload)
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
 	request.Header.Add("Authorization", fmt.Sprintf("Bearer %s", client.JwtToken))
-	request.Header.Add("Content-Type", bodyWriter.FormDataContentType())
+	request.Header.Add("Content-Type", writer.FormDataContentType())
 	response, err := http.DefaultClient.Do(request)
 	//response, err := httpClient.Post(httpRequestUrl,bodyWriter.FormDataContentType(),bodyBuffer)
 	if err != nil {
