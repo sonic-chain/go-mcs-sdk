@@ -1,12 +1,18 @@
 package mcs
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"github.com/ethereum/go-ethereum/crypto"
 	"go-mcs-sdk/mcs/common"
+	"io"
+	"io/ioutil"
 	"log"
+	"mime/multipart"
+	"net/http"
 	"os"
+	"path"
 	"path/filepath"
 	"regexp"
 	"strconv"
@@ -175,31 +181,75 @@ func (client *MetaSpaceClient) CreateFolder(fileName, prefix, bucketUid string) 
 	return response, nil
 }
 
-func (client *MetaSpaceClient) GetBucketIDByBucketName(bucketName string) (string, error) {
-	response, err := client.GetBuckets()
-	bucketId := ""
+func (client *MetaSpaceClient) CheckFile(bucketUid, fileHash, fileName, prefix string) ([]byte, error) {
+	httpRequestUrl := client.McsBackendBaseUrl + common.CHECK_UPLOAD
+	params := make(map[string]string)
+	params["bucket_uid"] = bucketUid
+	params["file_hash"] = fileHash
+	params["file_name"] = fileName
+	params["prefix"] = prefix
+	response, err := common.HttpPost(httpRequestUrl, client.JwtToken, params)
 	if err != nil {
 		log.Println(err)
-		return bucketId, err
+		return nil, err
 	}
-	//var objectList *ObjectList
-	var dict map[string]interface{}
-	err = json.Unmarshal(response, &dict)
+	log.Println(*(*string)(unsafe.Pointer(&response)))
+	return response, nil
+}
+
+func (client *MetaSpaceClient) UploadChunk(fileHash, uploadFilePath string) ([]byte, error) {
+	httpRequestUrl := client.McsBackendBaseUrl + common.UPLOAD_CHUNK
+	fileNameWithSuffix := path.Base(uploadFilePath)
+	bodyBuffer := &bytes.Buffer{}
+	bodyWriter := multipart.NewWriter(bodyBuffer)
+	err := bodyWriter.WriteField("hash", fileHash)
 	if err != nil {
 		log.Println(err)
-		return bucketId, err
+		return nil, err
 	}
-	log.Println(dict)
-	dataInReturn := dict["data"].(map[string]interface{})
-	objectInData := dataInReturn["objects"].([]interface{})
-	for _, v := range objectInData {
-		vObject := v.(map[string]interface{})
-		bucketNameInReturn := vObject["name"].(string)
-		if bucketName == bucketNameInReturn {
-			bucketId = vObject["id"].(string)
-		}
+	err = bodyWriter.WriteField("file", fileHash)
+	if err != nil {
+		log.Println(err)
+		return nil, err
 	}
-	return bucketId, nil
+	writer, err := bodyWriter.CreateFormFile("chunk_form", fileNameWithSuffix)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	chunkFile, err := os.Open(uploadFilePath)
+	defer chunkFile.Close()
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	_, err = io.Copy(writer, chunkFile)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	defer bodyWriter.Close()
+	request, err := http.NewRequest("POST", httpRequestUrl, bodyBuffer)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	request.Header.Add("Authorization", fmt.Sprintf("Bearer %s", client.JwtToken))
+	request.Header.Add("Content-Type", bodyWriter.FormDataContentType())
+	response, err := http.DefaultClient.Do(request)
+	//response, err := httpClient.Post(httpRequestUrl,bodyWriter.FormDataContentType(),bodyBuffer)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	defer response.Body.Close()
+	responseBytes, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	log.Println(*(*string)(unsafe.Pointer(&responseBytes)))
+	return responseBytes, nil
 }
 
 func (client *MetaSpaceClient) UploadToBucket(bucketName, fileName, filePath string) ([]byte, error) {

@@ -8,12 +8,15 @@ import (
 
 const (
 	BucketNameForTest = "zzq-test"
-	FileNameForTest   = "1.jpeg"
+	FileNameForTest   = "index.jpeg"
 	BucketUidForTest  = "cb9063b5-1fbb-4efa-b23f-fcaa7fbecfd4"
 	FileIdForTest     = 4064
 	FolderNameForTest = "test-folder2"
 	Limit             = "10"
 	Offset            = "0"
+	FileHashForTest   = "c09dbca3794c26051e0fa938fface360"
+	FilePathForTest   = "/home/zzq/Pictures/index.jpeg"
+	PrefixForTest     = ""
 )
 
 func TestMetaSpaceGetBuckets(t *testing.T) {
@@ -121,13 +124,28 @@ func TestMetaSpaceCreateFolder(t *testing.T) {
 	log.Println(*(*string)(unsafe.Pointer(&resp)))
 }
 
-func TestMetaSpaceGetBucketID(t *testing.T) {
+func TestMetaSpaceCheckFile(t *testing.T) {
+	metaClient := NewMetaSpaceClient()
+	err := metaClient.GetConfig().GetToken()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	resp, err := metaClient.CheckFile(BucketUidForTest, FileHashForTest, FileNameForTest, PrefixForTest)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	log.Println(*(*string)(unsafe.Pointer(&resp)))
+}
+
+func TestMetaSpaceUploadChunk(t *testing.T) {
 	metaClient := NewMetaSpaceClient()
 	err := metaClient.GetConfig().GetToken()
 	if err != nil {
 		log.Println(err)
 	}
-	bucketId, err := metaClient.GetBucketIDByBucketName(BucketNameForTest)
+	bucketId, err := metaClient.UploadChunk(FileHashForTest, FilePathForTest)
 	if err != nil {
 		log.Println(err)
 	}
