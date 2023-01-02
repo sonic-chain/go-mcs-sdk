@@ -144,23 +144,27 @@ func TestMetaSpaceUploadChunk(t *testing.T) {
 	err := metaClient.GetConfig().GetToken()
 	if err != nil {
 		log.Println(err)
+		return
 	}
-	bucketId, err := metaClient.UploadChunk(FileHashForTest, FilePathForTest)
+	resp, err := metaClient.UploadChunk(FileHashForTest, FilePathForTest)
 	if err != nil {
 		log.Println(err)
+		return
 	}
-	log.Println(bucketId)
+	log.Println(resp)
 }
 
-func TestMetaSpaceUploadToBucket(t *testing.T) {
+func TestMetaSpaceMergeRequest(t *testing.T) {
 	metaClient := NewMetaSpaceClient()
 	err := metaClient.GetConfig().GetToken()
 	if err != nil {
 		log.Println(err)
+		return
 	}
-	resp, err := metaClient.UploadToBucket("zzq-test", "4444.jpeg", "/home/zzq/Pictures/4'#.jpeg")
+	resp, err := metaClient.MergeRequest(BucketUidForTest, FileHashForTest, FileNameForTest, PrefixForTest)
 	if err != nil {
 		log.Println(err)
+		return
 	}
-	log.Println(*(*string)(unsafe.Pointer(&resp)))
+	log.Println(resp)
 }

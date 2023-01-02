@@ -250,8 +250,20 @@ func (client *MetaSpaceClient) UploadChunk(fileHash, uploadFilePath string) ([]b
 	return responseBytes, nil
 }
 
-func (client *MetaSpaceClient) UploadToBucket(bucketName, fileName, filePath string) ([]byte, error) {
-	return nil, nil
+func (client *MetaSpaceClient) MergeRequest(bucketUid, fileHash, fileName, prefix string) ([]byte, error) {
+	httpRequestUrl := client.McsBackendBaseUrl + common.MERGE_FILE
+	params := make(map[string]string)
+	params["bucket_uid"] = bucketUid
+	params["file_hash"] = fileHash
+	params["file_name"] = fileName
+	params["prefix"] = prefix
+	response, err := common.HttpPost(httpRequestUrl, client.JwtToken, params)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	log.Println(*(*string)(unsafe.Pointer(&response)))
+	return response, nil
 }
 
 func CheckSpecialChar(fileName, filePath string) error {
