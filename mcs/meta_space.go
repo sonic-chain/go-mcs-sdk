@@ -2,9 +2,7 @@ package mcs
 
 import (
 	"bytes"
-	"context"
 	"fmt"
-	"github.com/ethereum/go-ethereum/crypto"
 	"go-mcs-sdk/mcs/common"
 	"io"
 	"io/ioutil"
@@ -20,11 +18,7 @@ import (
 )
 
 type MetaSpaceClient struct {
-	JwtToken                        string `json:"jwt_token"`
-	UserWalletAddressForRegisterMcs string `json:"user_wallet_address_for_register_mcs"`
-	UserWalletAddressPK             string `json:"user_wallet_address_pk"`
-	ChainNameForRegisterOnMcs       string `json:"chain_name_for_register_on_mcs"`
-	McsBackendBaseUrl               string `json:"mcs_backend_base_url"`
+	McsClient
 }
 
 func NewMetaSpaceClient() *MetaSpaceClient {
@@ -32,70 +26,8 @@ func NewMetaSpaceClient() *MetaSpaceClient {
 	return &metaSpaceClient
 }
 
-func (client *MetaSpaceClient) SetJwtToken(jwtToken string) *MetaSpaceClient {
-	client.JwtToken = jwtToken
-	return client
-}
-
-func (client *MetaSpaceClient) GetConfig() *MetaSpaceClient {
-	err := common.LoadEnv()
-	if err != nil {
-		log.Fatal(err)
-		return client
-	}
-	walletAddress := os.Getenv("USER_WALLET_ADDRESS_FOR_REGISTER_MCS")
-	if walletAddress == "" {
-		err = fmt.Errorf("user wallet address is null in .env file")
-		log.Fatal(err)
-		return client
-	}
-	client.UserWalletAddressForRegisterMcs = walletAddress
-	walletAddressPK := os.Getenv("USER_WALLET_ADDRESS_PK")
-	if walletAddressPK == "" {
-		err = fmt.Errorf("user wallet address private key is null in .env file")
-		log.Fatal(err)
-		return client
-	}
-	client.UserWalletAddressPK = walletAddressPK
-	chainNetworkName := os.Getenv("CHAIN_NAME_FOR_REGISTER_ON_MCS")
-	if chainNetworkName == "" {
-		err = fmt.Errorf("chain network name is null in .env file")
-		log.Fatal(err)
-		return client
-	}
-	client.ChainNameForRegisterOnMcs = chainNetworkName
-	mcsBackendBaseUrl := os.Getenv("MCS_BACKEND_BASE_URL")
-	if mcsBackendBaseUrl == "" {
-		err = fmt.Errorf("mcs backend base url is null in .env file")
-		log.Fatal(err)
-		return client
-	}
-	client.McsBackendBaseUrl = mcsBackendBaseUrl
-	return client
-}
-
-func (client *MetaSpaceClient) GetToken() error {
-	mcsClient := NewClient(client.McsBackendBaseUrl)
-	user, err := mcsClient.NewUserRegisterService().SetWalletAddress(client.UserWalletAddressForRegisterMcs).Do(context.Background())
-	if err != nil {
-		log.Println(err)
-		return err
-	}
-	nonce := user.Data.Nonce
-	privateKey, _ := crypto.HexToECDSA(client.UserWalletAddressPK)
-	signature, _ := common.PersonalSign(nonce, privateKey)
-	jwt, err := mcsClient.NewUserLoginService().SetNetwork(client.ChainNameForRegisterOnMcs).SetNonce(nonce).SetWalletAddress(client.UserWalletAddressForRegisterMcs).
-		SetSignature(signature).Do(context.Background())
-	if err != nil {
-		log.Println(err)
-		return err
-	}
-	client.SetJwtToken(jwt.Data.JwtToken)
-	return nil
-}
-
 func (client *MetaSpaceClient) GetBuckets() ([]byte, error) {
-	httpRequestUrl := client.McsBackendBaseUrl + common.BUCKET_LIST
+	httpRequestUrl := client.BaseURL + common.BUCKET_LIST
 	bucketListInfoBytes, err := common.HttpGet(httpRequestUrl, client.JwtToken, nil)
 	if err != nil {
 		log.Println(err)
@@ -106,7 +38,7 @@ func (client *MetaSpaceClient) GetBuckets() ([]byte, error) {
 }
 
 func (client *MetaSpaceClient) CreateBucket(bucketName string) ([]byte, error) {
-	httpRequestUrl := client.McsBackendBaseUrl + common.CREATE_BUCKET
+	httpRequestUrl := client.BaseURL + common.CREATE_BUCKET
 	params := make(map[string]string)
 	params["bucket_name"] = bucketName
 	response, err := common.HttpPost(httpRequestUrl, client.JwtToken, params)
@@ -119,7 +51,7 @@ func (client *MetaSpaceClient) CreateBucket(bucketName string) ([]byte, error) {
 }
 
 func (client *MetaSpaceClient) DeleteBucket(bucketUid string) ([]byte, error) {
-	httpRequestUrl := client.McsBackendBaseUrl + common.DELETE_BUCKET + bucketUid
+	httpRequestUrl := client.BaseURL + common.DELETE_BUCKET + bucketUid
 	response, err := common.HttpGet(httpRequestUrl, client.JwtToken, nil)
 	if err != nil {
 		log.Println(err)
@@ -130,7 +62,7 @@ func (client *MetaSpaceClient) DeleteBucket(bucketUid string) ([]byte, error) {
 }
 
 func (client *MetaSpaceClient) GetFileInfo(fileId int) ([]byte, error) {
-	httpRequestUrl := client.McsBackendBaseUrl + common.FILE_INFO + strconv.Itoa(fileId)
+	httpRequestUrl := client.BaseURL + common.FILE_INFO + strconv.Itoa(fileId)
 	params := make(map[string]int)
 	params["file_id"] = fileId
 	response, err := common.HttpGet(httpRequestUrl, client.JwtToken, params)
@@ -143,7 +75,7 @@ func (client *MetaSpaceClient) GetFileInfo(fileId int) ([]byte, error) {
 }
 
 func (client *MetaSpaceClient) DeleteFile(fileId int) ([]byte, error) {
-	httpRequestUrl := client.McsBackendBaseUrl + common.DELETE_FILE + strconv.Itoa(fileId)
+	httpRequestUrl := client.BaseURL + common.DELETE_FILE + strconv.Itoa(fileId)
 	params := make(map[string]int)
 	params["file_id"] = fileId
 	response, err := common.HttpGet(httpRequestUrl, client.JwtToken, params)
@@ -156,7 +88,7 @@ func (client *MetaSpaceClient) DeleteFile(fileId int) ([]byte, error) {
 }
 
 func (client *MetaSpaceClient) GetFileList(fileUid, limit, offset string) ([]byte, error) {
-	httpRequestUrl := client.McsBackendBaseUrl + common.FILE_LIST + fileUid + "&limit=" + limit + "&offset=" + offset
+	httpRequestUrl := client.BaseURL + common.FILE_LIST + fileUid + "&limit=" + limit + "&offset=" + offset
 	response, err := common.HttpGet(httpRequestUrl, client.JwtToken, nil)
 	if err != nil {
 		log.Println(err)
@@ -167,7 +99,7 @@ func (client *MetaSpaceClient) GetFileList(fileUid, limit, offset string) ([]byt
 }
 
 func (client *MetaSpaceClient) CreateFolder(fileName, prefix, bucketUid string) ([]byte, error) {
-	httpRequestUrl := client.McsBackendBaseUrl + common.CREATE_FOLDER
+	httpRequestUrl := client.BaseURL + common.CREATE_FOLDER
 	params := make(map[string]string)
 	params["file_name"] = fileName
 	params["prefix"] = prefix
@@ -182,7 +114,7 @@ func (client *MetaSpaceClient) CreateFolder(fileName, prefix, bucketUid string) 
 }
 
 func (client *MetaSpaceClient) CheckFile(bucketUid, fileHash, fileName, prefix string) ([]byte, error) {
-	httpRequestUrl := client.McsBackendBaseUrl + common.CHECK_UPLOAD
+	httpRequestUrl := client.BaseURL + common.CHECK_UPLOAD
 	params := make(map[string]string)
 	params["bucket_uid"] = bucketUid
 	params["file_hash"] = fileHash
@@ -198,7 +130,7 @@ func (client *MetaSpaceClient) CheckFile(bucketUid, fileHash, fileName, prefix s
 }
 
 func (client *MetaSpaceClient) UploadChunk(fileHash, uploadFilePath string) ([]byte, error) {
-	httpRequestUrl := client.McsBackendBaseUrl + common.UPLOAD_CHUNK
+	httpRequestUrl := client.BaseURL + common.UPLOAD_CHUNK
 	fileNameWithSuffix := path.Base(uploadFilePath)
 	payload := &bytes.Buffer{}
 	writer := multipart.NewWriter(payload)
@@ -251,7 +183,7 @@ func (client *MetaSpaceClient) UploadChunk(fileHash, uploadFilePath string) ([]b
 }
 
 func (client *MetaSpaceClient) MergeRequest(bucketUid, fileHash, fileName, prefix string) ([]byte, error) {
-	httpRequestUrl := client.McsBackendBaseUrl + common.MERGE_FILE
+	httpRequestUrl := client.BaseURL + common.MERGE_FILE
 	params := make(map[string]string)
 	params["bucket_uid"] = bucketUid
 	params["file_hash"] = fileHash

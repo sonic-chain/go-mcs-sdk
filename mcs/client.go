@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"github.com/bitly/go-simplejson"
 	jsoniter "github.com/json-iterator/go"
 	"go-mcs-sdk/mcs/common"
 	"io/ioutil"
@@ -13,19 +12,7 @@ import (
 	"os"
 )
 
-const (
-	restApiVersion = "v1"
-)
-
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
-
-func newJSON(data []byte) (j *simplejson.Json, err error) {
-	j, err = simplejson.NewJson(data)
-	if err != nil {
-		return nil, err
-	}
-	return j, nil
-}
 
 func (c *Client) debug(format string, v ...interface{}) {
 	if c.Debug {
@@ -41,7 +28,6 @@ type Client struct {
 	HTTPClient *http.Client
 	Debug      bool
 	Logger     *log.Logger
-	TimeOffset int64
 	do         doFunc
 	JwtToken   string
 }
@@ -115,17 +101,21 @@ func (c *Client) callAPI(ctx context.Context, r *request, opts ...RequestOption)
 	f := c.do
 	if f == nil {
 		f = c.HTTPClient.Do
+		fmt.Println(f)
 	}
 	res, err := f(req)
 	if err != nil {
+		fmt.Println(err)
 		return []byte{}, err
 	}
 	data, err = ioutil.ReadAll(res.Body)
 	if err != nil {
+		fmt.Println(err)
 		return []byte{}, err
 	}
 	defer func() {
 		cerr := res.Body.Close()
+		fmt.Println(cerr)
 		// Only overwrite the retured error if the original error was nil and an
 		// error occurred while closing the body.
 		if err == nil && cerr != nil {
