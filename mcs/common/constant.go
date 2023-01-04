@@ -3,7 +3,7 @@ package common
 const (
 	MCS_PARAMS      = "/api/v1/common/system/params"
 	PRICE_RATE      = "/api/v1/billing/price/filecoin"
-	PAYMENT_INFO    = "/api/v1/billing/deal/lockpayment/info"
+	PAYMENT_INFO    = "/api/v1/billing/deal/lockpayment/info?source_file_upload_id="
 	TASKS_DEALS     = "/api/v1/storage/tasks/deals"
 	MINT_INFO       = "/api/v1/storage/mint/info"
 	UPLOAD_FILE     = "/api/v1/storage/ipfs/upload"

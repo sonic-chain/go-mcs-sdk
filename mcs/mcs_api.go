@@ -7,6 +7,7 @@ import (
 	"go-mcs-sdk/mcs/common"
 	"log"
 	"os"
+	"strconv"
 	"unsafe"
 )
 
@@ -118,27 +119,63 @@ func (client *McsClient) UserRegister(walletAddress string) (*string, error) {
 	return &objectInData, nil
 }
 
-func (client *McsClient) GetJwtToken() (*string, error) {
+func (client *McsClient) GetJwtToken() error {
 	nonce, err := client.UserRegister(client.UserWalletAddressForRegisterMcs)
 	if err != nil {
 		log.Println(err)
-		return nil, err
+		return err
 	}
 	privateKey, _ := crypto.HexToECDSA(client.UserWalletAddressPK)
 	signature, _ := common.PersonalSign(*nonce, privateKey)
 	resp, err := client.UserLogin(client.UserWalletAddressForRegisterMcs, signature, *nonce, client.ChainNameForRegisterOnMcs)
 	if err != nil {
 		log.Println(err)
-		return nil, err
+		return err
 	}
 	var dict map[string]interface{}
 	err = json.Unmarshal(resp, &dict)
 	if err != nil {
 		log.Println(err)
-		return nil, err
+		return err
 	}
 	log.Println(dict)
 	dataInReturn := dict["data"].(map[string]interface{})
 	jwtToken := dataInReturn["jwt_token"].(string)
-	return &jwtToken, nil
+	client.SetJwtToken(jwtToken)
+	return nil
+}
+
+func (client *McsClient) GetParams() ([]byte, error) {
+	httpRequestUrl := client.BaseURL + common.MCS_PARAMS
+	response, err := common.HttpGet(httpRequestUrl, client.JwtToken, nil)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	log.Println(*(*string)(unsafe.Pointer(&response)))
+	return response, nil
+}
+
+func (client *McsClient) GetPriceRate() ([]byte, error) {
+	httpRequestUrl := client.BaseURL + common.PRICE_RATE
+	response, err := common.HttpGet(httpRequestUrl, client.JwtToken, nil)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	log.Println(*(*string)(unsafe.Pointer(&response)))
+	return response, nil
+}
+
+func (client *McsClient) GetPaymentInfo(sourceFileUploadId int) ([]byte, error) {
+	httpRequestUrl := client.BaseURL + common.PAYMENT_INFO + strconv.Itoa(sourceFileUploadId)
+	params := make(map[string]int)
+	params["source_file_upload_id"] = sourceFileUploadId
+	response, err := common.HttpGet(httpRequestUrl, client.JwtToken, nil)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	log.Println(*(*string)(unsafe.Pointer(&response)))
+	return response, nil
 }
