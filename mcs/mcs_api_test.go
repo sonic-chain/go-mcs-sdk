@@ -12,6 +12,11 @@ const (
 	SourceFileUploadId = 2123
 	FileName           = "4.jpeg"
 	Status             = "Pending"
+	TokenId            = 111
+	PayLoadCid         = "ewrew"
+	txHash             = "fdgdfgdfg"
+	MintAddress        = "gfhfghfghf"
+	FilePathForUpload  = "/home/zzq/Pictures/5.jpeg"
 	PageNumber         = 1
 	PageSize           = 10
 )
@@ -93,6 +98,36 @@ func TestMcsGetUserTasksDeals(t *testing.T) {
 		return
 	}
 	resp, err := mcsClient.GetUserTasksDeals(FileName, Status, PageNumber, PageSize)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	log.Println(*(*string)(unsafe.Pointer(&resp)))
+}
+
+func TestMcsGetMintInfo(t *testing.T) {
+	mcsClient := NewMcsClient()
+	err := mcsClient.GetJwtToken()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	resp, err := mcsClient.GetMintInfo(SourceFileUploadId, TokenId, PayLoadCid, txHash, MintAddress)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	log.Println(*(*string)(unsafe.Pointer(&resp)))
+}
+
+func TestMcsUploadFile(t *testing.T) {
+	mcsClient := NewMcsClient()
+	err := mcsClient.GetJwtToken()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	resp, err := mcsClient.UploadFile(FilePathForUpload)
 	if err != nil {
 		log.Println(err)
 		return

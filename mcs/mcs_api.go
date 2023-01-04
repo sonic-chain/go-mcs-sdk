@@ -1,12 +1,18 @@
 package mcs
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"github.com/ethereum/go-ethereum/crypto"
 	"go-mcs-sdk/mcs/common"
+	"io"
+	"io/ioutil"
 	"log"
+	"mime/multipart"
+	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 	"unsafe"
 )
@@ -190,4 +196,83 @@ func (client *McsClient) GetUserTasksDeals(fileName, status string, pageNumber, 
 	}
 	log.Println(*(*string)(unsafe.Pointer(&response)))
 	return response, nil
+}
+
+func (client *McsClient) GetMintInfo(sourceFileUploadId, tokenId int, payloadCid, txHash, mintAddress string) ([]byte, error) {
+	httpRequestUrl := client.BaseURL + common.MINT_INFO
+	params := make(map[string]interface{})
+	params["source_file_upload_id"] = sourceFileUploadId
+	params["payload_cid"] = payloadCid
+	params["tx_hash"] = txHash
+	params["token_id"] = tokenId
+	params["mint_address"] = mintAddress
+	response, err := common.HttpPost(httpRequestUrl, client.JwtToken, params)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	log.Println(*(*string)(unsafe.Pointer(&response)))
+	return response, nil
+}
+
+func (client *McsClient) UploadFile(filePath string) ([]byte, error) {
+	httpRequestUrl := client.BaseURL + common.UPLOAD_FILE
+	payload := &bytes.Buffer{}
+	writer := multipart.NewWriter(payload)
+	file, errFile1 := os.Open(filePath)
+	defer file.Close()
+	part1, err := writer.CreateFormFile("file", filepath.Base(filePath))
+	if errFile1 != nil {
+		fmt.Println(errFile1)
+		return nil, err
+	}
+	_, err = io.Copy(part1, file)
+	if err != nil {
+		fmt.Println(errFile1)
+		return nil, err
+	}
+	err = writer.WriteField("duration", "525")
+	if err != nil {
+		fmt.Println(errFile1)
+		return nil, err
+	}
+	err = writer.WriteField("storage_copy", "5")
+	if err != nil {
+		fmt.Println(errFile1)
+		return nil, err
+	}
+	err = writer.WriteField("wallet_address", client.UserWalletAddressForRegisterMcs)
+	if err != nil {
+		fmt.Println(errFile1)
+		return nil, err
+	}
+	err = writer.Close()
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	httpClient := &http.Client{}
+	req, err := http.NewRequest("POST", httpRequestUrl, payload)
+
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", client.JwtToken))
+	req.Header.Set("Content-Type", writer.FormDataContentType())
+	res, err := httpClient.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	fmt.Println(string(body))
+	return body, nil
 }
