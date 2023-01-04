@@ -179,3 +179,15 @@ func (client *McsClient) GetPaymentInfo(sourceFileUploadId int) ([]byte, error) 
 	log.Println(*(*string)(unsafe.Pointer(&response)))
 	return response, nil
 }
+
+func (client *McsClient) GetUserTasksDeals(fileName, status string, pageNumber, pageSize int) ([]byte, error) {
+	requestParam := "?file_name=" + fileName + "status=" + status + "page_number=" + strconv.Itoa(pageNumber) + "page_size=" + strconv.Itoa(pageSize)
+	httpRequestUrl := client.BaseURL + common.TASKS_DEALS + requestParam
+	response, err := common.HttpGet(httpRequestUrl, client.JwtToken, nil)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	log.Println(*(*string)(unsafe.Pointer(&response)))
+	return response, nil
+}

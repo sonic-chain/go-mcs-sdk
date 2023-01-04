@@ -10,6 +10,10 @@ const (
 	Nonce              = "12955819538690153468153899560298852982"
 	Signature          = "0xa77366b42c8d7691d2ec69455897cf8caf502adc319e8d0a2aae587d1e746ba27e29055ca770b8c5d40094165fdfd178cc380cae12536fc7df9182f2ff00133d1b"
 	SourceFileUploadId = 2123
+	FileName           = "4.jpeg"
+	Status             = "Pending"
+	PageNumber         = 1
+	PageSize           = 10
 )
 
 func TestMcsGetJwtToken(t *testing.T) {
@@ -74,6 +78,21 @@ func TestMcsGetPaymentInfo(t *testing.T) {
 		return
 	}
 	resp, err := mcsClient.GetPaymentInfo(SourceFileUploadId)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	log.Println(*(*string)(unsafe.Pointer(&resp)))
+}
+
+func TestMcsGetUserTasksDeals(t *testing.T) {
+	mcsClient := NewMcsClient()
+	err := mcsClient.GetJwtToken()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	resp, err := mcsClient.GetUserTasksDeals(FileName, Status, PageNumber, PageSize)
 	if err != nil {
 		log.Println(err)
 		return
