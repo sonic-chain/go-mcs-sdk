@@ -19,7 +19,7 @@ const (
 	PrefixForTest     = ""
 )
 
-func TestMetaSpaceGetBuckets(t *testing.T) {
+func TestBucketApiGetBuckets(t *testing.T) {
 	metaClient := NewMetaSpaceClient()
 	err := metaClient.GetConfig().GetToken()
 	if err != nil {
@@ -34,7 +34,7 @@ func TestMetaSpaceGetBuckets(t *testing.T) {
 	log.Println(*(*string)(unsafe.Pointer(&resp)))
 }
 
-func TestMetaSpaceCreateBucket(t *testing.T) {
+func TestBucketApiCreateBucket(t *testing.T) {
 	metaClient := NewMetaSpaceClient()
 	err := metaClient.GetConfig().GetToken()
 	if err != nil {
@@ -49,7 +49,7 @@ func TestMetaSpaceCreateBucket(t *testing.T) {
 	log.Println(fileId)
 }
 
-func TestMetaSpaceDeleteBucket(t *testing.T) {
+func TestBucketApiDeleteBucket(t *testing.T) {
 	metaClient := NewMetaSpaceClient()
 	err := metaClient.GetConfig().GetToken()
 	if err != nil {
@@ -64,7 +64,7 @@ func TestMetaSpaceDeleteBucket(t *testing.T) {
 	log.Println(*(*string)(unsafe.Pointer(&resp)))
 }
 
-func TestMetaSpaceGetFileInfo(t *testing.T) {
+func TestBucketApiGetFileInfo(t *testing.T) {
 	metaClient := NewMetaSpaceClient()
 	err := metaClient.GetConfig().GetToken()
 	if err != nil {
@@ -79,7 +79,7 @@ func TestMetaSpaceGetFileInfo(t *testing.T) {
 	log.Println(*(*string)(unsafe.Pointer(&resp)))
 }
 
-func TestMetaSpaceGetFileList(t *testing.T) {
+func TestBucketApiGetFileList(t *testing.T) {
 	metaClient := NewMetaSpaceClient()
 	err := metaClient.GetConfig().GetToken()
 	if err != nil {
@@ -94,7 +94,7 @@ func TestMetaSpaceGetFileList(t *testing.T) {
 	log.Println(*(*string)(unsafe.Pointer(&resp)))
 }
 
-func TestMetaSpaceDeleteFile(t *testing.T) {
+func TestBucketApiDeleteFile(t *testing.T) {
 	metaClient := NewMetaSpaceClient()
 	err := metaClient.GetConfig().GetToken()
 	if err != nil {
@@ -109,7 +109,7 @@ func TestMetaSpaceDeleteFile(t *testing.T) {
 	log.Println(*(*string)(unsafe.Pointer(&resp)))
 }
 
-func TestMetaSpaceCreateFolder(t *testing.T) {
+func TestBucketApiCreateFolder(t *testing.T) {
 	metaClient := NewMetaSpaceClient()
 	err := metaClient.GetConfig().GetToken()
 	if err != nil {
@@ -124,7 +124,7 @@ func TestMetaSpaceCreateFolder(t *testing.T) {
 	log.Println(*(*string)(unsafe.Pointer(&resp)))
 }
 
-func TestMetaSpaceCheckFile(t *testing.T) {
+func TestBucketApiCheckFile(t *testing.T) {
 	metaClient := NewMetaSpaceClient()
 	err := metaClient.GetConfig().GetToken()
 	if err != nil {
@@ -139,7 +139,7 @@ func TestMetaSpaceCheckFile(t *testing.T) {
 	log.Println(*(*string)(unsafe.Pointer(&resp)))
 }
 
-func TestMetaSpaceUploadChunk(t *testing.T) {
+func TestBucketApiUploadChunk(t *testing.T) {
 	metaClient := NewMetaSpaceClient()
 	err := metaClient.GetConfig().GetToken()
 	if err != nil {
@@ -154,7 +154,7 @@ func TestMetaSpaceUploadChunk(t *testing.T) {
 	log.Println(resp)
 }
 
-func TestMetaSpaceMergeRequest(t *testing.T) {
+func TestBucketApiMergeRequest(t *testing.T) {
 	metaClient := NewMetaSpaceClient()
 	err := metaClient.GetConfig().GetToken()
 	if err != nil {
