@@ -2,7 +2,6 @@ package mcs
 
 import (
 	"bytes"
-	"context"
 	"fmt"
 	"github.com/ethereum/go-ethereum/crypto"
 	"go-mcs-sdk/mcs/common"
@@ -65,25 +64,6 @@ func (client *McsClient) GetConfig() *McsClient {
 	}
 	client.BaseURL = mcsBackendBaseUrl
 	return client
-}
-
-func (client *McsClient) GetToken() error {
-	user, err := client.NewUserRegisterService().SetWalletAddress(client.UserWalletAddressForRegisterMcs).Do(context.Background())
-	if err != nil {
-		log.Println(err)
-		return err
-	}
-	nonce := user.Data.Nonce
-	privateKey, _ := crypto.HexToECDSA(client.UserWalletAddressPK)
-	signature, _ := common.PersonalSign(nonce, privateKey)
-	jwt, err := client.NewUserLoginService().SetNetwork(client.ChainNameForRegisterOnMcs).SetNonce(nonce).SetWalletAddress(client.UserWalletAddressForRegisterMcs).
-		SetSignature(signature).Do(context.Background())
-	if err != nil {
-		log.Println(err)
-		return err
-	}
-	client.SetJwtToken(jwt.Data.JwtToken)
-	return nil
 }
 
 func (client *McsClient) UserLogin(walletAddress, signature, nonce, network string) ([]byte, error) {
