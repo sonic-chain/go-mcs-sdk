@@ -198,6 +198,18 @@ func (client *McsClient) GetUserTasksDeals(fileName, status string, pageNumber, 
 	return response, nil
 }
 
+func (client *McsClient) GetDealDetail(sourceFileUploadId, dealId int) ([]byte, error) {
+	requestParam := strconv.Itoa(dealId) + "?source_file_upload_id=" + strconv.Itoa(sourceFileUploadId)
+	httpRequestUrl := client.BaseURL + common.DEAL_DETAIL + requestParam
+	response, err := common.HttpGet(httpRequestUrl, client.JwtToken, nil)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	log.Println(*(*string)(unsafe.Pointer(&response)))
+	return response, nil
+}
+
 func (client *McsClient) GetMintInfo(sourceFileUploadId, tokenId int, payloadCid, txHash, mintAddress string) ([]byte, error) {
 	httpRequestUrl := client.BaseURL + common.MINT_INFO
 	params := make(map[string]interface{})
@@ -275,4 +287,30 @@ func (client *McsClient) UploadFile(filePath string) ([]byte, error) {
 	}
 	fmt.Println(string(body))
 	return body, nil
+}
+
+func (client *McsClient) GenerateApikey(validDays int) ([]byte, error) {
+	httpRequestUrl := client.BaseURL + common.GENERATE_APIKEY + strconv.Itoa(validDays)
+	response, err := common.HttpGet(httpRequestUrl, client.JwtToken, nil)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	log.Println(*(*string)(unsafe.Pointer(&response)))
+	return response, nil
+}
+
+func (client *McsClient) ApikeyLogin(apikey, accessToken string) ([]byte, error) {
+	httpRequestUrl := client.BaseURL + common.APIKEY_LOGIN
+	params := make(map[string]interface{})
+	params["apikey"] = apikey
+	params["access_token"] = accessToken
+	params["network"] = client.ChainNameForRegisterOnMcs
+	response, err := common.HttpPost(httpRequestUrl, client.JwtToken, params)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	log.Println(*(*string)(unsafe.Pointer(&response)))
+	return response, nil
 }

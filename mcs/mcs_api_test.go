@@ -7,16 +7,20 @@ import (
 )
 
 const (
-	Nonce              = "12955819538690153468153899560298852982"
-	Signature          = "0xa77366b42c8d7691d2ec69455897cf8caf502adc319e8d0a2aae587d1e746ba27e29055ca770b8c5d40094165fdfd178cc380cae12536fc7df9182f2ff00133d1b"
+	Nonce              = ""
+	Signature          = ""
 	SourceFileUploadId = 2123
 	FileName           = "4.jpeg"
 	Status             = "Pending"
 	TokenId            = 111
+	DealId             = 10001
 	PayLoadCid         = "ewrew"
 	txHash             = "fdgdfgdfg"
 	MintAddress        = "gfhfghfghf"
-	FilePathForUpload  = "/home/zzq/Pictures/5.jpeg"
+	FilePathForUpload  = "/home/userName/Pictures/5.jpeg"
+	Apikey             = ""
+	AccessToken        = ""
+	ValidDays          = 60
 	PageNumber         = 1
 	PageSize           = 10
 )
@@ -105,6 +109,21 @@ func TestMcsGetUserTasksDeals(t *testing.T) {
 	log.Println(*(*string)(unsafe.Pointer(&resp)))
 }
 
+func TestMcsGetDealDetail(t *testing.T) {
+	mcsClient := NewMcsClient()
+	err := mcsClient.GetJwtToken()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	resp, err := mcsClient.GetDealDetail(SourceFileUploadId, DealId)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	log.Println(*(*string)(unsafe.Pointer(&resp)))
+}
+
 func TestMcsGetMintInfo(t *testing.T) {
 	mcsClient := NewMcsClient()
 	err := mcsClient.GetJwtToken()
@@ -128,6 +147,36 @@ func TestMcsUploadFile(t *testing.T) {
 		return
 	}
 	resp, err := mcsClient.UploadFile(FilePathForUpload)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	log.Println(*(*string)(unsafe.Pointer(&resp)))
+}
+
+func TestMcsGenerateApikey(t *testing.T) {
+	mcsClient := NewMcsClient()
+	err := mcsClient.GetJwtToken()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	resp, err := mcsClient.GenerateApikey(ValidDays)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	log.Println(*(*string)(unsafe.Pointer(&resp)))
+}
+
+func TestMcsApikeyLogin(t *testing.T) {
+	mcsClient := NewMcsClient()
+	err := mcsClient.GetJwtToken()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	resp, err := mcsClient.ApikeyLogin(Apikey, AccessToken)
 	if err != nil {
 		log.Println(err)
 		return
