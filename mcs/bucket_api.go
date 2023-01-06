@@ -17,16 +17,16 @@ import (
 	"unsafe"
 )
 
-type MetaSpaceClient struct {
+type BucketClient struct {
 	McsClient
 }
 
-func NewMetaSpaceClient() *MetaSpaceClient {
-	metaSpaceClient := MetaSpaceClient{}
-	return &metaSpaceClient
+func NewBucketClient() *BucketClient {
+	bucketClient := BucketClient{}
+	return &bucketClient
 }
 
-func (client *MetaSpaceClient) GetBuckets() ([]byte, error) {
+func (client *BucketClient) GetBuckets() ([]byte, error) {
 	httpRequestUrl := client.BaseURL + common.BUCKET_LIST
 	bucketListInfoBytes, err := common.HttpGet(httpRequestUrl, client.JwtToken, nil)
 	if err != nil {
@@ -37,7 +37,7 @@ func (client *MetaSpaceClient) GetBuckets() ([]byte, error) {
 	return bucketListInfoBytes, nil
 }
 
-func (client *MetaSpaceClient) CreateBucket(bucketName string) ([]byte, error) {
+func (client *BucketClient) CreateBucket(bucketName string) ([]byte, error) {
 	httpRequestUrl := client.BaseURL + common.CREATE_BUCKET
 	params := make(map[string]string)
 	params["bucket_name"] = bucketName
@@ -50,7 +50,7 @@ func (client *MetaSpaceClient) CreateBucket(bucketName string) ([]byte, error) {
 	return response, nil
 }
 
-func (client *MetaSpaceClient) DeleteBucket(bucketUid string) ([]byte, error) {
+func (client *BucketClient) DeleteBucket(bucketUid string) ([]byte, error) {
 	httpRequestUrl := client.BaseURL + common.DELETE_BUCKET + bucketUid
 	response, err := common.HttpGet(httpRequestUrl, client.JwtToken, nil)
 	if err != nil {
@@ -61,7 +61,7 @@ func (client *MetaSpaceClient) DeleteBucket(bucketUid string) ([]byte, error) {
 	return response, nil
 }
 
-func (client *MetaSpaceClient) GetFileInfo(fileId int) ([]byte, error) {
+func (client *BucketClient) GetFileInfo(fileId int) ([]byte, error) {
 	httpRequestUrl := client.BaseURL + common.FILE_INFO + strconv.Itoa(fileId)
 	params := make(map[string]int)
 	params["file_id"] = fileId
@@ -74,7 +74,7 @@ func (client *MetaSpaceClient) GetFileInfo(fileId int) ([]byte, error) {
 	return response, nil
 }
 
-func (client *MetaSpaceClient) DeleteFile(fileId int) ([]byte, error) {
+func (client *BucketClient) DeleteFile(fileId int) ([]byte, error) {
 	httpRequestUrl := client.BaseURL + common.DELETE_FILE + strconv.Itoa(fileId)
 	params := make(map[string]int)
 	params["file_id"] = fileId
@@ -87,7 +87,7 @@ func (client *MetaSpaceClient) DeleteFile(fileId int) ([]byte, error) {
 	return response, nil
 }
 
-func (client *MetaSpaceClient) GetFileList(fileUid, limit, offset string) ([]byte, error) {
+func (client *BucketClient) GetFileList(fileUid, limit, offset string) ([]byte, error) {
 	httpRequestUrl := client.BaseURL + common.FILE_LIST + fileUid + "&limit=" + limit + "&offset=" + offset
 	response, err := common.HttpGet(httpRequestUrl, client.JwtToken, nil)
 	if err != nil {
@@ -98,7 +98,7 @@ func (client *MetaSpaceClient) GetFileList(fileUid, limit, offset string) ([]byt
 	return response, nil
 }
 
-func (client *MetaSpaceClient) CreateFolder(fileName, prefix, bucketUid string) ([]byte, error) {
+func (client *BucketClient) CreateFolder(fileName, prefix, bucketUid string) ([]byte, error) {
 	httpRequestUrl := client.BaseURL + common.CREATE_FOLDER
 	params := make(map[string]string)
 	params["file_name"] = fileName
@@ -113,7 +113,7 @@ func (client *MetaSpaceClient) CreateFolder(fileName, prefix, bucketUid string) 
 	return response, nil
 }
 
-func (client *MetaSpaceClient) CheckFile(bucketUid, fileHash, fileName, prefix string) ([]byte, error) {
+func (client *BucketClient) CheckFile(bucketUid, fileHash, fileName, prefix string) ([]byte, error) {
 	httpRequestUrl := client.BaseURL + common.CHECK_UPLOAD
 	params := make(map[string]string)
 	params["bucket_uid"] = bucketUid
@@ -129,7 +129,7 @@ func (client *MetaSpaceClient) CheckFile(bucketUid, fileHash, fileName, prefix s
 	return response, nil
 }
 
-func (client *MetaSpaceClient) UploadChunk(fileHash, uploadFilePath string) ([]byte, error) {
+func (client *BucketClient) UploadChunk(fileHash, uploadFilePath string) ([]byte, error) {
 	httpRequestUrl := client.BaseURL + common.UPLOAD_CHUNK
 	fileNameWithSuffix := path.Base(uploadFilePath)
 	payload := &bytes.Buffer{}
@@ -182,7 +182,7 @@ func (client *MetaSpaceClient) UploadChunk(fileHash, uploadFilePath string) ([]b
 	return responseBytes, nil
 }
 
-func (client *MetaSpaceClient) MergeRequest(bucketUid, fileHash, fileName, prefix string) ([]byte, error) {
+func (client *BucketClient) MergeRequest(bucketUid, fileHash, fileName, prefix string) ([]byte, error) {
 	httpRequestUrl := client.BaseURL + common.MERGE_FILE
 	params := make(map[string]string)
 	params["bucket_uid"] = bucketUid
