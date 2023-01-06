@@ -20,13 +20,13 @@ const (
 )
 
 func TestBucketApiGetBuckets(t *testing.T) {
-	metaClient := NewBucketClient()
-	err := metaClient.GetConfig().GetJwtToken()
+	bucketClient := NewBucketClient()
+	err := bucketClient.GetConfig().GetJwtToken()
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	resp, err := metaClient.GetBuckets()
+	resp, err := bucketClient.GetBuckets()
 	if err != nil {
 		log.Println(err)
 		return
@@ -35,13 +35,13 @@ func TestBucketApiGetBuckets(t *testing.T) {
 }
 
 func TestBucketApiCreateBucket(t *testing.T) {
-	metaClient := NewBucketClient()
-	err := metaClient.GetConfig().GetJwtToken()
+	bucketClient := NewBucketClient()
+	err := bucketClient.GetConfig().GetJwtToken()
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	fileId, err := metaClient.CreateBucket(BucketNameForTest)
+	fileId, err := bucketClient.CreateBucket(BucketNameForTest)
 	if err != nil {
 		log.Println(err)
 		return
@@ -50,13 +50,13 @@ func TestBucketApiCreateBucket(t *testing.T) {
 }
 
 func TestBucketApiDeleteBucket(t *testing.T) {
-	metaClient := NewBucketClient()
-	err := metaClient.GetConfig().GetJwtToken()
+	bucketClient := NewBucketClient()
+	err := bucketClient.GetConfig().GetJwtToken()
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	resp, err := metaClient.DeleteBucket(BucketUidForTest)
+	resp, err := bucketClient.DeleteBucket(BucketUidForTest)
 	if err != nil {
 		log.Println(err)
 		return
@@ -65,13 +65,13 @@ func TestBucketApiDeleteBucket(t *testing.T) {
 }
 
 func TestBucketApiGetFileInfo(t *testing.T) {
-	metaClient := NewBucketClient()
-	err := metaClient.GetConfig().GetJwtToken()
+	bucketClient := NewBucketClient()
+	err := bucketClient.GetConfig().GetJwtToken()
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	resp, err := metaClient.GetFileInfo(FileIdForTest)
+	resp, err := bucketClient.GetFileInfo(FileIdForTest)
 	if err != nil {
 		log.Println(err)
 		return
@@ -80,13 +80,13 @@ func TestBucketApiGetFileInfo(t *testing.T) {
 }
 
 func TestBucketApiGetFileList(t *testing.T) {
-	metaClient := NewBucketClient()
-	err := metaClient.GetConfig().GetJwtToken()
+	bucketClient := NewBucketClient()
+	err := bucketClient.GetConfig().GetJwtToken()
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	resp, err := metaClient.GetFileList("cb9063b5-1fbb-4efa-b23f-fcaa7fbecfd4", Limit, Offset)
+	resp, err := bucketClient.GetFileList("cb9063b5-1fbb-4efa-b23f-fcaa7fbecfd4", Limit, Offset)
 	if err != nil {
 		log.Println(err)
 		return
@@ -95,13 +95,13 @@ func TestBucketApiGetFileList(t *testing.T) {
 }
 
 func TestBucketApiDeleteFile(t *testing.T) {
-	metaClient := NewBucketClient()
-	err := metaClient.GetConfig().GetJwtToken()
+	bucketClient := NewBucketClient()
+	err := bucketClient.GetConfig().GetJwtToken()
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	resp, err := metaClient.DeleteFile(FileIdForTest)
+	resp, err := bucketClient.DeleteFile(FileIdForTest)
 	if err != nil {
 		log.Println(err)
 		return
@@ -110,13 +110,13 @@ func TestBucketApiDeleteFile(t *testing.T) {
 }
 
 func TestBucketApiCreateFolder(t *testing.T) {
-	metaClient := NewBucketClient()
-	err := metaClient.GetConfig().GetJwtToken()
+	bucketClient := NewBucketClient()
+	err := bucketClient.GetConfig().GetJwtToken()
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	resp, err := metaClient.CreateFolder(FolderNameForTest, "", BucketUidForTest)
+	resp, err := bucketClient.CreateFolder(FolderNameForTest, "", BucketUidForTest)
 	if err != nil {
 		log.Println(err)
 		return
@@ -125,13 +125,13 @@ func TestBucketApiCreateFolder(t *testing.T) {
 }
 
 func TestBucketApiCheckFile(t *testing.T) {
-	metaClient := NewBucketClient()
-	err := metaClient.GetConfig().GetJwtToken()
+	bucketClient := NewBucketClient()
+	err := bucketClient.GetConfig().GetJwtToken()
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	resp, err := metaClient.CheckFile(BucketUidForTest, FileHashForTest, FileNameForTest, PrefixForTest)
+	resp, err := bucketClient.CheckFile(BucketUidForTest, FileHashForTest, FileNameForTest, PrefixForTest)
 	if err != nil {
 		log.Println(err)
 		return
@@ -140,13 +140,13 @@ func TestBucketApiCheckFile(t *testing.T) {
 }
 
 func TestBucketApiUploadChunk(t *testing.T) {
-	metaClient := NewBucketClient()
-	err := metaClient.GetConfig().GetJwtToken()
+	bucketClient := NewBucketClient()
+	err := bucketClient.GetConfig().GetJwtToken()
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	resp, err := metaClient.UploadChunk(FileHashForTest, FilePathForTest)
+	resp, err := bucketClient.UploadChunk(FileHashForTest, FilePathForTest)
 	if err != nil {
 		log.Println(err)
 		return
@@ -155,13 +155,13 @@ func TestBucketApiUploadChunk(t *testing.T) {
 }
 
 func TestBucketApiMergeRequest(t *testing.T) {
-	metaClient := NewBucketClient()
-	err := metaClient.GetConfig().GetJwtToken()
+	bucketClient := NewBucketClient()
+	err := bucketClient.GetConfig().GetJwtToken()
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	resp, err := metaClient.MergeRequest(BucketUidForTest, FileHashForTest, FileNameForTest, PrefixForTest)
+	resp, err := bucketClient.MergeRequest(BucketUidForTest, FileHashForTest, FileNameForTest, PrefixForTest)
 	if err != nil {
 		log.Println(err)
 		return
