@@ -1,6 +1,6 @@
 module go-mcs-sdk
 
-go 1.18
+go 1.17
 
 require (
 	github.com/bitly/go-simplejson v0.5.0

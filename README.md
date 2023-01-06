@@ -75,20 +75,27 @@ USER_WALLET_ADDRESS_PK: The private key of the wallet address used to log in to 
 CHAIN_NAME_FOR_REGISTER_ON_MCS: polygon network name: polygon.mumbai/polygon.mainnet <br>
 MCS_BACKEND_BASE_URL: mcs backend url: http://127.0.0.1:8888/api/ <br>
 META_SPACE_URL: meta-space backend url: http://127.0.0.1:9999/api/ <br>
-### how to test meta-space
+### How to test 
+Run the test method in **_test.go and enter the parameters <br>
+The parameters are placed at the top of the test script file as constants <br>
+List of test scripts:
 ```
-cd go-mcs-sdk/mcs/meta_space_test.go
+go-mcs-sdk/mcs/bucket_api_test.go
+go-mcs-sdk/mcs/mcs_api_test.go
 ```
-modify the constants at the top of this file
-- BucketNameForTest: the bucket name that you want to create/delete/get bucket ID
-- FileNameForTest: the file name in meta-space bucket
-- BucketIdForTest: the bucket ID in meta-space 
-
-### 
+#### Run the test method, take the test upload file method as an example:
+1. Set the full path of the file you want to upload to the constant at the top of the test file <br>
+   FilePathForUpload = <your file full path>
+2. Run the upload file test api   <br>
+   go test -v -run TestMcsUploadFile
 
 ## Documentation
 
+For more examples please see the [SDK documentation](https://docs.filswan.com/multi-chain-storage/developer-quickstart/sdk)
+
 # Contributing
+
+Feel free to join in and discuss. Suggestions are welcome! [Open an issue](https://github.com/filswan/python-mcs-sdk/issues) or [Join the Discord](https://discord.com/invite/KKGhy8ZqzK)!
 
 ## Sponsors
 
