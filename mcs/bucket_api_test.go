@@ -20,7 +20,7 @@ const (
 )
 
 func TestBucketApiGetBuckets(t *testing.T) {
-	metaClient := NewMetaSpaceClient()
+	metaClient := NewBucketClient()
 	err := metaClient.GetConfig().GetJwtToken()
 	if err != nil {
 		log.Println(err)
@@ -35,7 +35,7 @@ func TestBucketApiGetBuckets(t *testing.T) {
 }
 
 func TestBucketApiCreateBucket(t *testing.T) {
-	metaClient := NewMetaSpaceClient()
+	metaClient := NewBucketClient()
 	err := metaClient.GetConfig().GetJwtToken()
 	if err != nil {
 		log.Println(err)
@@ -50,7 +50,7 @@ func TestBucketApiCreateBucket(t *testing.T) {
 }
 
 func TestBucketApiDeleteBucket(t *testing.T) {
-	metaClient := NewMetaSpaceClient()
+	metaClient := NewBucketClient()
 	err := metaClient.GetConfig().GetJwtToken()
 	if err != nil {
 		log.Println(err)
@@ -65,7 +65,7 @@ func TestBucketApiDeleteBucket(t *testing.T) {
 }
 
 func TestBucketApiGetFileInfo(t *testing.T) {
-	metaClient := NewMetaSpaceClient()
+	metaClient := NewBucketClient()
 	err := metaClient.GetConfig().GetJwtToken()
 	if err != nil {
 		log.Println(err)
@@ -80,7 +80,7 @@ func TestBucketApiGetFileInfo(t *testing.T) {
 }
 
 func TestBucketApiGetFileList(t *testing.T) {
-	metaClient := NewMetaSpaceClient()
+	metaClient := NewBucketClient()
 	err := metaClient.GetConfig().GetJwtToken()
 	if err != nil {
 		log.Println(err)
@@ -95,7 +95,7 @@ func TestBucketApiGetFileList(t *testing.T) {
 }
 
 func TestBucketApiDeleteFile(t *testing.T) {
-	metaClient := NewMetaSpaceClient()
+	metaClient := NewBucketClient()
 	err := metaClient.GetConfig().GetJwtToken()
 	if err != nil {
 		log.Println(err)
@@ -110,7 +110,7 @@ func TestBucketApiDeleteFile(t *testing.T) {
 }
 
 func TestBucketApiCreateFolder(t *testing.T) {
-	metaClient := NewMetaSpaceClient()
+	metaClient := NewBucketClient()
 	err := metaClient.GetConfig().GetJwtToken()
 	if err != nil {
 		log.Println(err)
@@ -125,7 +125,7 @@ func TestBucketApiCreateFolder(t *testing.T) {
 }
 
 func TestBucketApiCheckFile(t *testing.T) {
-	metaClient := NewMetaSpaceClient()
+	metaClient := NewBucketClient()
 	err := metaClient.GetConfig().GetJwtToken()
 	if err != nil {
 		log.Println(err)
@@ -140,7 +140,7 @@ func TestBucketApiCheckFile(t *testing.T) {
 }
 
 func TestBucketApiUploadChunk(t *testing.T) {
-	metaClient := NewMetaSpaceClient()
+	metaClient := NewBucketClient()
 	err := metaClient.GetConfig().GetJwtToken()
 	if err != nil {
 		log.Println(err)
@@ -155,7 +155,7 @@ func TestBucketApiUploadChunk(t *testing.T) {
 }
 
 func TestBucketApiMergeRequest(t *testing.T) {
-	metaClient := NewMetaSpaceClient()
+	metaClient := NewBucketClient()
 	err := metaClient.GetConfig().GetJwtToken()
 	if err != nil {
 		log.Println(err)
