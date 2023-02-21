@@ -4,16 +4,17 @@ import (
 	"crypto/ecdsa"
 	"encoding/json"
 	"fmt"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/joho/godotenv"
-	"io/ioutil"
 	"log"
 	"math/big"
-	"net/http"
 	"regexp"
 	"strconv"
 	"time"
+
+	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/filswan/go-swan-lib/client/web"
+	"github.com/filswan/go-swan-lib/logs"
+	"github.com/joho/godotenv"
 )
 
 const (
@@ -33,15 +34,19 @@ type FilPrice struct {
 }
 
 func GetFilPrice() (float64, error) {
-	resp, _ := http.Get(FilPriceApi)
-	defer resp.Body.Close()
-	body, _ := ioutil.ReadAll(resp.Body)
-	if resp.StatusCode == 200 {
-		fmt.Println("ok")
+	response, err := web.HttpGetNoToken(FilPriceApi, nil)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return -1, err
 	}
-	res := new(FilPrice)
-	_ = json.Unmarshal(body, res)
-	price := res.Data.AveragePricePerGBPerYear
+	filPrice := new(FilPrice)
+	err = json.Unmarshal(response, filPrice)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return -1, err
+	}
+
+	price := filPrice.Data.AveragePricePerGBPerYear
 	reg := regexp.MustCompile(`\d+\.\d+`)
 	result := reg.FindAllStringSubmatch(price, -1)
 	return strconv.ParseFloat(result[0][0], 64)
