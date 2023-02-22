@@ -13,10 +13,6 @@ const (
 	API_URL_MCS_POLYGON_MUMBAI  = "https://calibration-mcs-api.filswan.com"
 	API_URL_MCS_BSC_TESTNET     = "https://calibration-mcs-bsc.filswan.com"
 	API_URL_FIL_PRICE_API       = "https://api.filswan.com/stats/storage"
-	GET                         = "GET"
-	POST                        = "POST"
-	PUT                         = "PUT"
-	DELETE                      = "DELETE"
 
 	// mcs api
 	MCS_PARAMS      = "/api/v1/common/system/params"
