@@ -18,10 +18,6 @@ import (
 	"github.com/joho/godotenv"
 )
 
-const (
-	FilPriceApi = "https://api.filswan.com/stats/storage"
-)
-
 type FilPrice struct {
 	Data struct {
 		AverageCostPushMessage           string `json:"average_cost_push_message"`
@@ -36,7 +32,7 @@ type FilPrice struct {
 }
 
 func GetFilPrice() (float64, error) {
-	response, err := web.HttpGetNoToken(FilPriceApi, nil)
+	response, err := web.HttpGetNoToken(constants.API_URL_FIL_PRICE_API, nil)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return -1, err

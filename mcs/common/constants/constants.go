@@ -1,15 +1,22 @@
 package constants
 
 const (
+	HTTP_STATUS_SUCCESS = "success"
+	HTTP_STATUS_ERROR   = "error"
+
+	PAYMENT_CHAIN_NAME_POLYGON_MUMBAI  = "polygon.mumbai"
+	PAYMENT_CHAIN_NAME_POLYGON_MAINNET = "polygon.mainnet"
+	PAYMENT_CHAIN_NAME_BSC_TESTNET     = "bsc.testnet"
+
 	// common
-	MCS_POLYGON_MAIN_API   = "https://api.multichain.storage"
-	MCS_POLYGON_MUMBAI_API = "https://calibration-mcs-api.filswan.com"
-	MCS_BSC_API            = "https://calibration-mcs-bsc.filswan.com"
-	GET                    = "GET"
-	POST                   = "POST"
-	PUT                    = "PUT"
-	DELETE                 = "DELETE"
-	FIL_PRICE_API          = "https://api.filswan.com/stats/storage"
+	API_URL_MCS_POLYGON_MAINNET = "https://api.multichain.storage"
+	API_URL_MCS_POLYGON_MUMBAI  = "https://calibration-mcs-api.filswan.com"
+	API_URL_MCS_BSC_TESTNET     = "https://calibration-mcs-bsc.filswan.com"
+	API_URL_FIL_PRICE_API       = "https://api.filswan.com/stats/storage"
+	GET                         = "GET"
+	POST                        = "POST"
+	PUT                         = "PUT"
+	DELETE                      = "DELETE"
 
 	// mcs api
 	MCS_PARAMS      = "/api/v1/common/system/params"
