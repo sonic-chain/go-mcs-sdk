@@ -1,10 +1,4 @@
-package mcs
-
-import (
-	jsoniter "github.com/json-iterator/go"
-)
-
-var json = jsoniter.ConfigCompatibleWithStandardLibrary
+package api
 
 type Client struct {
 	BaseURL  string

@@ -1,4 +1,4 @@
-package common
+package constants
 
 const (
 	// common
@@ -41,4 +41,10 @@ const (
 	SWAN_PAYMENT_ABI  = "SwanPayment.json"
 	MINT_ABI          = "SwanNFT.json"
 	CONTRACT_TIME_OUT = 300
+
+	BYTES_1KB = 1024
+	BYTES_1MB = BYTES_1KB * BYTES_1KB
+	BYTES_1GB = BYTES_1MB * BYTES_1KB
+
+	DURATION_DAYS_DEFAULT = 525
 )

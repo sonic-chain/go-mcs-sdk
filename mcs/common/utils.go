@@ -4,6 +4,7 @@ import (
 	"crypto/ecdsa"
 	"encoding/json"
 	"fmt"
+	"go-mcs-sdk/mcs/common/constants"
 	"log"
 	"math/big"
 	"regexp"
@@ -29,6 +30,7 @@ type FilPrice struct {
 		AverageMinPieceSize              string `json:"average_min_piece_size"`
 		AveragePricePerGBPerYear         string `json:"average_price_per_GB_per_year"`
 		AverageVerifiedPricePerGBPerYear string `json:"average_verified_price_per_GB_per_year"`
+		HistoricalAveragePriceVerified   string `json:"historical_average_price_verified"`
 	} `json:"data"`
 	Status string `json:"status"`
 }
@@ -46,17 +48,34 @@ func GetFilPrice() (float64, error) {
 		return -1, err
 	}
 
-	price := filPrice.Data.AveragePricePerGBPerYear
+	price := filPrice.Data.HistoricalAveragePriceVerified
 	reg := regexp.MustCompile(`\d+\.\d+`)
 	result := reg.FindAllStringSubmatch(price, -1)
-	return strconv.ParseFloat(result[0][0], 64)
+
+	priceFloat, err := strconv.ParseFloat(result[0][0], 64)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return -1, err
+	}
+
+	priceFloat = priceFloat / constants.BYTES_1GB / 1e8
+	return priceFloat, err
 }
 
-func GetAmount(size int64, rate float64) int64 {
-	price, _ := GetFilPrice()
-	sizeFloat := float64(size)
-	amount := sizeFloat * price / 1024 / 1024 / 1024 * 525 / 365 * rate * 1000000000000000000
-	return int64(amount)
+func GetAmount(sizeByte int64, rate float64) (float64, error) {
+	price, err := GetFilPrice()
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return -1, err
+	}
+
+	amount := float64(sizeByte) * price * rate * constants.DURATION_DAYS_DEFAULT / 365
+
+	if amount == 0 {
+		amount = 0.000002
+	}
+
+	return amount, nil
 }
 
 func Bigint2int64(num big.Int) int64 {

@@ -1,4 +1,4 @@
-package mcs
+package api
 
 import (
 	"log"

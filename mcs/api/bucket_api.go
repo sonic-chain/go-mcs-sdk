@@ -1,9 +1,10 @@
-package mcs
+package api
 
 import (
 	"bytes"
 	"fmt"
 	"go-mcs-sdk/mcs/common"
+	"go-mcs-sdk/mcs/common/constants"
 	"io"
 	"io/ioutil"
 	"log"
@@ -27,7 +28,7 @@ func NewBucketClient() *BucketClient {
 }
 
 func (client *BucketClient) GetBuckets() ([]byte, error) {
-	httpRequestUrl := client.BaseURL + common.BUCKET_LIST
+	httpRequestUrl := client.BaseURL + constants.BUCKET_LIST
 	bucketListInfoBytes, err := common.HttpGet(httpRequestUrl, client.JwtToken, nil)
 	if err != nil {
 		log.Println(err)
@@ -38,7 +39,7 @@ func (client *BucketClient) GetBuckets() ([]byte, error) {
 }
 
 func (client *BucketClient) CreateBucket(bucketName string) ([]byte, error) {
-	httpRequestUrl := client.BaseURL + common.CREATE_BUCKET
+	httpRequestUrl := client.BaseURL + constants.CREATE_BUCKET
 	params := make(map[string]string)
 	params["bucket_name"] = bucketName
 	response, err := common.HttpPost(httpRequestUrl, client.JwtToken, params)
@@ -51,7 +52,7 @@ func (client *BucketClient) CreateBucket(bucketName string) ([]byte, error) {
 }
 
 func (client *BucketClient) DeleteBucket(bucketUid string) ([]byte, error) {
-	httpRequestUrl := client.BaseURL + common.DELETE_BUCKET + bucketUid
+	httpRequestUrl := client.BaseURL + constants.DELETE_BUCKET + bucketUid
 	response, err := common.HttpGet(httpRequestUrl, client.JwtToken, nil)
 	if err != nil {
 		log.Println(err)
@@ -62,7 +63,7 @@ func (client *BucketClient) DeleteBucket(bucketUid string) ([]byte, error) {
 }
 
 func (client *BucketClient) GetFileInfo(fileId int) ([]byte, error) {
-	httpRequestUrl := client.BaseURL + common.FILE_INFO + strconv.Itoa(fileId)
+	httpRequestUrl := client.BaseURL + constants.FILE_INFO + strconv.Itoa(fileId)
 	params := make(map[string]int)
 	params["file_id"] = fileId
 	response, err := common.HttpGet(httpRequestUrl, client.JwtToken, params)
@@ -75,7 +76,7 @@ func (client *BucketClient) GetFileInfo(fileId int) ([]byte, error) {
 }
 
 func (client *BucketClient) DeleteFile(fileId int) ([]byte, error) {
-	httpRequestUrl := client.BaseURL + common.DELETE_FILE + strconv.Itoa(fileId)
+	httpRequestUrl := client.BaseURL + constants.DELETE_FILE + strconv.Itoa(fileId)
 	params := make(map[string]int)
 	params["file_id"] = fileId
 	response, err := common.HttpGet(httpRequestUrl, client.JwtToken, params)
@@ -88,7 +89,7 @@ func (client *BucketClient) DeleteFile(fileId int) ([]byte, error) {
 }
 
 func (client *BucketClient) GetFileList(fileUid, limit, offset string) ([]byte, error) {
-	httpRequestUrl := client.BaseURL + common.FILE_LIST + fileUid + "&limit=" + limit + "&offset=" + offset
+	httpRequestUrl := client.BaseURL + constants.FILE_LIST + fileUid + "&limit=" + limit + "&offset=" + offset
 	response, err := common.HttpGet(httpRequestUrl, client.JwtToken, nil)
 	if err != nil {
 		log.Println(err)
@@ -99,7 +100,7 @@ func (client *BucketClient) GetFileList(fileUid, limit, offset string) ([]byte, 
 }
 
 func (client *BucketClient) CreateFolder(fileName, prefix, bucketUid string) ([]byte, error) {
-	httpRequestUrl := client.BaseURL + common.CREATE_FOLDER
+	httpRequestUrl := client.BaseURL + constants.CREATE_FOLDER
 	params := make(map[string]string)
 	params["file_name"] = fileName
 	params["prefix"] = prefix
@@ -114,7 +115,7 @@ func (client *BucketClient) CreateFolder(fileName, prefix, bucketUid string) ([]
 }
 
 func (client *BucketClient) CheckFile(bucketUid, fileHash, fileName, prefix string) ([]byte, error) {
-	httpRequestUrl := client.BaseURL + common.CHECK_UPLOAD
+	httpRequestUrl := client.BaseURL + constants.CHECK_UPLOAD
 	params := make(map[string]string)
 	params["bucket_uid"] = bucketUid
 	params["file_hash"] = fileHash
@@ -130,7 +131,7 @@ func (client *BucketClient) CheckFile(bucketUid, fileHash, fileName, prefix stri
 }
 
 func (client *BucketClient) UploadChunk(fileHash, uploadFilePath string) ([]byte, error) {
-	httpRequestUrl := client.BaseURL + common.UPLOAD_CHUNK
+	httpRequestUrl := client.BaseURL + constants.UPLOAD_CHUNK
 	fileNameWithSuffix := path.Base(uploadFilePath)
 	payload := &bytes.Buffer{}
 	writer := multipart.NewWriter(payload)
@@ -183,7 +184,7 @@ func (client *BucketClient) UploadChunk(fileHash, uploadFilePath string) ([]byte
 }
 
 func (client *BucketClient) MergeRequest(bucketUid, fileHash, fileName, prefix string) ([]byte, error) {
-	httpRequestUrl := client.BaseURL + common.MERGE_FILE
+	httpRequestUrl := client.BaseURL + constants.MERGE_FILE
 	params := make(map[string]string)
 	params["bucket_uid"] = bucketUid
 	params["file_hash"] = fileHash
