@@ -6,6 +6,8 @@ import (
 	"go-mcs-sdk/mcs/common/constants"
 	"strings"
 
+	libutils "github.com/filswan/go-swan-lib/utils"
+
 	"github.com/filswan/go-swan-lib/client/web"
 	"github.com/filswan/go-swan-lib/logs"
 )
@@ -49,6 +51,8 @@ func LoginByApikey(apikey, accessToken, network string) (*MCSClient, error) {
 		apiUrl = constants.API_URL_MCS_POLYGON_MAINNET
 		network = constants.PAYMENT_CHAIN_NAME_POLYGON_MAINNET
 	}
+
+	apiUrl = libutils.UrlJoin(apiUrl, constants.APIKEY_LOGIN)
 
 	response, err := web.HttpPostNoToken(apiUrl, loginByApikeyParams)
 	if err != nil {

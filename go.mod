@@ -7,7 +7,6 @@ require (
 	github.com/ethereum/go-ethereum v1.10.21
 	github.com/filswan/go-swan-lib v0.2.137
 	github.com/joho/godotenv v1.4.0
-	github.com/shopspring/decimal v1.3.1
 )
 
 require (
@@ -23,6 +22,7 @@ require (
 	github.com/rifflock/lfshook v0.0.0-20180920164130-b9218ef580f5 // indirect
 	github.com/rjeczalik/notify v0.9.1 // indirect
 	github.com/shirou/gopsutil v3.21.4-0.20210419000835-c7a38de76ee5+incompatible // indirect
+	github.com/shopspring/decimal v1.3.1 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/tklauser/go-sysconf v0.3.5 // indirect
 	github.com/tklauser/numcpus v0.2.2 // indirect

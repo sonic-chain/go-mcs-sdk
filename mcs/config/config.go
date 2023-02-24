@@ -1,4 +1,4 @@
-package api
+package config
 
 import (
 	"os"
@@ -22,7 +22,7 @@ func InitConfig() {
 		logs.GetLogger().Fatal("Cannot get home directory.")
 	}
 
-	configFile := filepath.Join(homedir, "~/.swan/mcs_sdk", "config.toml")
+	configFile := filepath.Join(homedir, ".swan/mcs_sdk", "config.toml")
 
 	if metaData, err := toml.DecodeFile(configFile, &config); err != nil {
 		logs.GetLogger().Fatal("error:", err)
@@ -33,11 +33,11 @@ func InitConfig() {
 	}
 }
 
-func GetConfig() Configuration {
+func GetConfig() *Configuration {
 	if config == nil {
-		logs.GetLogger().Fatal("config not initialized")
+		InitConfig()
 	}
-	return *config
+	return config
 }
 
 func requiredFieldsAreGiven(metaData toml.MetaData) bool {
