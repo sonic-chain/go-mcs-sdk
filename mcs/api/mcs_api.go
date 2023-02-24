@@ -1,10 +1,11 @@
-package mcs
+package api
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
-	"github.com/ethereum/go-ethereum/crypto"
 	"go-mcs-sdk/mcs/common"
+	"go-mcs-sdk/mcs/common/constants"
 	"io"
 	"io/ioutil"
 	"log"
@@ -14,6 +15,8 @@ import (
 	"path/filepath"
 	"strconv"
 	"unsafe"
+
+	"github.com/ethereum/go-ethereum/crypto"
 )
 
 type McsClient struct {
@@ -67,7 +70,7 @@ func (client *McsClient) GetConfig() *McsClient {
 }
 
 func (client *McsClient) UserLogin(walletAddress, signature, nonce, network string) ([]byte, error) {
-	httpRequestUrl := client.BaseURL + common.USER_LOGIN
+	httpRequestUrl := client.BaseURL + constants.USER_LOGIN
 	params := make(map[string]string)
 	params["public_key_address"] = walletAddress
 	params["nonce"] = nonce
@@ -83,7 +86,7 @@ func (client *McsClient) UserLogin(walletAddress, signature, nonce, network stri
 }
 
 func (client *McsClient) UserRegister(walletAddress string) (*string, error) {
-	httpRequestUrl := client.BaseURL + common.USER_REGISTER
+	httpRequestUrl := client.BaseURL + constants.USER_REGISTER
 	params := make(map[string]string)
 	params["public_key_address"] = walletAddress
 	response, err := common.HttpPost(httpRequestUrl, client.JwtToken, params)
@@ -131,44 +134,9 @@ func (client *McsClient) GetJwtToken() error {
 	return nil
 }
 
-func (client *McsClient) GetParams() ([]byte, error) {
-	httpRequestUrl := client.BaseURL + common.MCS_PARAMS
-	response, err := common.HttpGet(httpRequestUrl, client.JwtToken, nil)
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-	log.Println(*(*string)(unsafe.Pointer(&response)))
-	return response, nil
-}
-
-func (client *McsClient) GetPriceRate() ([]byte, error) {
-	httpRequestUrl := client.BaseURL + common.PRICE_RATE
-	response, err := common.HttpGet(httpRequestUrl, client.JwtToken, nil)
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-	log.Println(*(*string)(unsafe.Pointer(&response)))
-	return response, nil
-}
-
-func (client *McsClient) GetPaymentInfo(sourceFileUploadId int) ([]byte, error) {
-	httpRequestUrl := client.BaseURL + common.PAYMENT_INFO + strconv.Itoa(sourceFileUploadId)
-	params := make(map[string]int)
-	params["source_file_upload_id"] = sourceFileUploadId
-	response, err := common.HttpGet(httpRequestUrl, client.JwtToken, nil)
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-	log.Println(*(*string)(unsafe.Pointer(&response)))
-	return response, nil
-}
-
 func (client *McsClient) GetUserTasksDeals(fileName, status string, pageNumber, pageSize int) ([]byte, error) {
 	requestParam := "?file_name=" + fileName + "status=" + status + "page_number=" + strconv.Itoa(pageNumber) + "page_size=" + strconv.Itoa(pageSize)
-	httpRequestUrl := client.BaseURL + common.TASKS_DEALS + requestParam
+	httpRequestUrl := client.BaseURL + constants.TASKS_DEALS + requestParam
 	response, err := common.HttpGet(httpRequestUrl, client.JwtToken, nil)
 	if err != nil {
 		log.Println(err)
@@ -180,7 +148,7 @@ func (client *McsClient) GetUserTasksDeals(fileName, status string, pageNumber, 
 
 func (client *McsClient) GetDealDetail(sourceFileUploadId, dealId int) ([]byte, error) {
 	requestParam := strconv.Itoa(dealId) + "?source_file_upload_id=" + strconv.Itoa(sourceFileUploadId)
-	httpRequestUrl := client.BaseURL + common.DEAL_DETAIL + requestParam
+	httpRequestUrl := client.BaseURL + constants.DEAL_DETAIL + requestParam
 	response, err := common.HttpGet(httpRequestUrl, client.JwtToken, nil)
 	if err != nil {
 		log.Println(err)
@@ -191,7 +159,7 @@ func (client *McsClient) GetDealDetail(sourceFileUploadId, dealId int) ([]byte, 
 }
 
 func (client *McsClient) GetMintInfo(sourceFileUploadId, tokenId int, payloadCid, txHash, mintAddress string) ([]byte, error) {
-	httpRequestUrl := client.BaseURL + common.MINT_INFO
+	httpRequestUrl := client.BaseURL + constants.MINT_INFO
 	params := make(map[string]interface{})
 	params["source_file_upload_id"] = sourceFileUploadId
 	params["payload_cid"] = payloadCid
@@ -208,7 +176,7 @@ func (client *McsClient) GetMintInfo(sourceFileUploadId, tokenId int, payloadCid
 }
 
 func (client *McsClient) UploadFile(filePath string) ([]byte, error) {
-	httpRequestUrl := client.BaseURL + common.UPLOAD_FILE
+	httpRequestUrl := client.BaseURL + constants.UPLOAD_FILE
 	payload := &bytes.Buffer{}
 	writer := multipart.NewWriter(payload)
 	file, errFile1 := os.Open(filePath)
@@ -270,23 +238,8 @@ func (client *McsClient) UploadFile(filePath string) ([]byte, error) {
 }
 
 func (client *McsClient) GenerateApikey(validDays int) ([]byte, error) {
-	httpRequestUrl := client.BaseURL + common.GENERATE_APIKEY + strconv.Itoa(validDays)
+	httpRequestUrl := client.BaseURL + constants.GENERATE_APIKEY + strconv.Itoa(validDays)
 	response, err := common.HttpGet(httpRequestUrl, client.JwtToken, nil)
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-	log.Println(*(*string)(unsafe.Pointer(&response)))
-	return response, nil
-}
-
-func (client *McsClient) ApikeyLogin(apikey, accessToken string) ([]byte, error) {
-	httpRequestUrl := client.BaseURL + common.APIKEY_LOGIN
-	params := make(map[string]interface{})
-	params["apikey"] = apikey
-	params["access_token"] = accessToken
-	params["network"] = client.ChainNameForRegisterOnMcs
-	response, err := common.HttpPost(httpRequestUrl, client.JwtToken, params)
 	if err != nil {
 		log.Println(err)
 		return nil, err

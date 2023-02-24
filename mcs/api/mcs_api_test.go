@@ -1,4 +1,4 @@
-package mcs
+package api
 
 import (
 	"log"
@@ -52,46 +52,6 @@ func TestMcsGetJwtToken2(t *testing.T) {
 		log.Println(err)
 		return
 	}
-}
-
-func TestMcsGetParams(t *testing.T) {
-	mcsClient := NewMcsClient()
-	resp, err := mcsClient.GetParams()
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	log.Println(*(*string)(unsafe.Pointer(&resp)))
-}
-
-func TestMcsGetPriceRate(t *testing.T) {
-	mcsClient := NewMcsClient()
-	err := mcsClient.GetJwtToken()
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	resp, err := mcsClient.GetPriceRate()
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	log.Println(*(*string)(unsafe.Pointer(&resp)))
-}
-
-func TestMcsGetPaymentInfo(t *testing.T) {
-	mcsClient := NewMcsClient()
-	err := mcsClient.GetJwtToken()
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	resp, err := mcsClient.GetPaymentInfo(SourceFileUploadId)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	log.Println(*(*string)(unsafe.Pointer(&resp)))
 }
 
 func TestMcsGetUserTasksDeals(t *testing.T) {
@@ -162,21 +122,6 @@ func TestMcsGenerateApikey(t *testing.T) {
 		return
 	}
 	resp, err := mcsClient.GenerateApikey(ValidDays)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	log.Println(*(*string)(unsafe.Pointer(&resp)))
-}
-
-func TestMcsApikeyLogin(t *testing.T) {
-	mcsClient := NewMcsClient()
-	err := mcsClient.GetJwtToken()
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	resp, err := mcsClient.ApikeyLogin(Apikey, AccessToken)
 	if err != nil {
 		log.Println(err)
 		return
