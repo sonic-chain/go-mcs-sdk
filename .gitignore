@@ -2,3 +2,6 @@ pkg/
 .idea
 *.iml
 .env
+mcs/api/logs
+mcs/api/logs/info.log
+mcs/api/logs/error.log

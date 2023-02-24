@@ -1,8 +1,0 @@
-time="2023-02-24 10:19:12.443" level=fatal msg="config not initialized" func=GetConfig file="config.go:38"
-time="2023-02-24 10:19:28.813" level=fatal msg="config not initialized" func=GetConfig file="config.go:38"
-time="2023-02-24 10:20:57.294" level=fatal msg="error:open /Users/dorachen/~/.swan/mcs_sdk/config.toml: no such file or directory" func=InitConfig file="config.go:28"
-time="2023-02-24 10:21:33.594" level=error msg="http status: 404 Not Found, code:404, url:https://calibration-mcs-api.filswan.com" func=HttpRequest file="restful.go:119"
-time="2023-02-24 10:21:33.594" level=error msg="please check your url:https://calibration-mcs-api.filswan.com" func=HttpRequest file="restful.go:122"
-time="2023-02-24 10:21:33.595" level=error msg="http status: 404 Not Found, code:404, url:https://calibration-mcs-api.filswan.com" func=HttpPostNoToken file="restful.go:25"
-time="2023-02-24 10:21:33.595" level=error msg="http status: 404 Not Found, code:404, url:https://calibration-mcs-api.filswan.com" func=LoginByApikey file="common.go:55"
-time="2023-02-24 10:21:33.595" level=error msg="http status: 404 Not Found, code:404, url:https://calibration-mcs-api.filswan.com" func=TestLoginByApikey file="common_test.go:18"
