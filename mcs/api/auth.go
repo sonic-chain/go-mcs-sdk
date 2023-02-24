@@ -1,4 +1,4 @@
-package auth
+package api
 
 import (
 	"encoding/json"
@@ -38,20 +38,20 @@ func LoginByApikey(apikey, accessToken, network string) (*MCSClient, error) {
 		Network:     network,
 	}
 
-	apiUrl := ""
+	apiUrlBase := ""
 	switch network {
 	case constants.PAYMENT_CHAIN_NAME_POLYGON_MAINNET:
-		apiUrl = constants.API_URL_MCS_POLYGON_MAINNET
+		apiUrlBase = constants.API_URL_MCS_POLYGON_MAINNET
 	case constants.PAYMENT_CHAIN_NAME_POLYGON_MUMBAI:
-		apiUrl = constants.API_URL_MCS_POLYGON_MUMBAI
+		apiUrlBase = constants.API_URL_MCS_POLYGON_MUMBAI
 	case constants.PAYMENT_CHAIN_NAME_BSC_TESTNET:
-		apiUrl = constants.API_URL_MCS_BSC_TESTNET
+		apiUrlBase = constants.API_URL_MCS_BSC_TESTNET
 	default:
-		apiUrl = constants.API_URL_MCS_POLYGON_MAINNET
+		apiUrlBase = constants.API_URL_MCS_POLYGON_MAINNET
 		network = constants.PAYMENT_CHAIN_NAME_POLYGON_MAINNET
 	}
 
-	apiUrl = libutils.UrlJoin(apiUrl, constants.LOGIN_BY_APIKEY)
+	apiUrl := libutils.UrlJoin(apiUrlBase, constants.LOGIN_BY_APIKEY)
 
 	response, err := web.HttpPostNoToken(apiUrl, loginByApikeyParams)
 	if err != nil {
@@ -74,7 +74,7 @@ func LoginByApikey(apikey, accessToken, network string) (*MCSClient, error) {
 
 	mcsClient := MCSClient{
 		Network:  network,
-		BaseUrl:  apiUrl,
+		BaseUrl:  apiUrlBase,
 		JwtToken: loginByApikeyResponse.Data.JwtToken,
 	}
 

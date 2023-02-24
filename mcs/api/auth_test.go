@@ -1,4 +1,4 @@
-package auth
+package api
 
 import (
 	"go-mcs-sdk/mcs/config"
