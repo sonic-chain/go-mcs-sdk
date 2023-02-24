@@ -134,19 +134,6 @@ func (client *McsClient) GetJwtToken() error {
 	return nil
 }
 
-func (client *McsClient) GetPaymentInfo(sourceFileUploadId int) ([]byte, error) {
-	httpRequestUrl := client.BaseURL + constants.PAYMENT_INFO + strconv.Itoa(sourceFileUploadId)
-	params := make(map[string]int)
-	params["source_file_upload_id"] = sourceFileUploadId
-	response, err := common.HttpGet(httpRequestUrl, client.JwtToken, nil)
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-	log.Println(*(*string)(unsafe.Pointer(&response)))
-	return response, nil
-}
-
 func (client *McsClient) GetUserTasksDeals(fileName, status string, pageNumber, pageSize int) ([]byte, error) {
 	requestParam := "?file_name=" + fileName + "status=" + status + "page_number=" + strconv.Itoa(pageNumber) + "page_size=" + strconv.Itoa(pageSize)
 	httpRequestUrl := client.BaseURL + constants.TASKS_DEALS + requestParam

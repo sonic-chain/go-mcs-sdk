@@ -23,3 +23,21 @@ func TestGetFileCoinPrice(t *testing.T) {
 
 	logs.GetLogger().Info(*filecoinPrice)
 }
+
+func TestGetLockPaymentInfo(t *testing.T) {
+	mcsClient, err := GetMcsClient()
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return
+	}
+
+	logs.GetLogger().Info(mcsClient)
+
+	lockPaymentInfo, err := mcsClient.GetLockPaymentInfo(18)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return
+	}
+
+	logs.GetLogger().Info(*lockPaymentInfo)
+}

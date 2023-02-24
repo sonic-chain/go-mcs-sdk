@@ -15,17 +15,17 @@ const (
 	API_URL_FIL_PRICE_API       = "https://api.filswan.com/stats/storage"
 
 	// mcs api
-	API_URL_MCS_GET_PARAMS = "/api/v1/common/system/params"
-	API_URL_FILECOIN_PRICE = "/api/v1/billing/price/filecoin"
-	PAYMENT_INFO           = "/api/v1/billing/deal/lockpayment/info"
-	TASKS_DEALS            = "/api/v1/storage/tasks/deals"
-	MINT_INFO              = "/api/v1/storage/mint/info"
-	UPLOAD_FILE            = "/api/v1/storage/ipfs/upload"
-	DEAL_DETAIL            = "/api/v1/storage/deal/detail/"
-	USER_REGISTER          = "/api/v1/user/register"
-	USER_LOGIN             = "/api/v1/user/login_by_metamask_signature"
-	GENERATE_APIKEY        = "/api/v1/user/generate_api_key"
-	LOGIN_BY_APIKEY        = "/api/v1/user/login_by_api_key"
+	API_URL_MCS_GET_PARAMS           = "/api/v1/common/system/params"
+	API_URL_BILLING_FILECOIN_PRICE   = "/api/v1/billing/price/filecoin"
+	API_URL_BILLING_GET_PAYMENT_INFO = "/api/v1/billing/deal/lockpayment/info"
+	TASKS_DEALS                      = "/api/v1/storage/tasks/deals"
+	MINT_INFO                        = "/api/v1/storage/mint/info"
+	UPLOAD_FILE                      = "/api/v1/storage/ipfs/upload"
+	DEAL_DETAIL                      = "/api/v1/storage/deal/detail/"
+	USER_REGISTER                    = "/api/v1/user/register"
+	USER_LOGIN                       = "/api/v1/user/login_by_metamask_signature"
+	GENERATE_APIKEY                  = "/api/v1/user/generate_api_key"
+	LOGIN_BY_APIKEY                  = "/api/v1/user/login_by_api_key"
 
 	// bucket api
 	CREATE_BUCKET = "/api/v2/bucket/create"
