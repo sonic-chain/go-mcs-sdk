@@ -1,18 +1,13 @@
 package api
 
 import (
-	"go-mcs-sdk/mcs/config"
 	"testing"
 
 	"github.com/filswan/go-swan-lib/logs"
 )
 
 func TestGetFileCoinPrice(t *testing.T) {
-	apikey := config.GetConfig().Apikey
-	accessToken := config.GetConfig().AccessToken
-	network := config.GetConfig().Network
-
-	mcsClient, err := LoginByApikey(apikey, accessToken, network)
+	mcsClient, err := GetMcsClient()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
