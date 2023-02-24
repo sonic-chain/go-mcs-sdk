@@ -51,12 +51,18 @@ func TestGetBillingHistory(t *testing.T) {
 
 	logs.GetLogger().Info(mcsClient)
 
-	billingHistoryParams := BillingHistoryParams{}
+	pageNumber := 1
+	pageSize := 10
+	billingHistoryParams := BillingHistoryParams{
+		PageNumber: &pageNumber,
+		PageSize:   &pageSize,
+	}
 	billing, recCnt, err := mcsClient.GetBillingHistory(billingHistoryParams)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
 	}
 
-	logs.GetLogger().Info(billing, recCnt)
+	logs.GetLogger().Info(billing)
+	logs.GetLogger().Info(*recCnt)
 }

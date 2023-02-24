@@ -99,8 +99,8 @@ type BillingHistory struct {
 type BillingHistoryResponse struct {
 	Status string `json:"status"`
 	Data   struct {
-		Billing          []*BillingHistory `json:"billing"`
-		TotalRecordCount int64             `json:"total_record_count"`
+		Billing          []BillingHistory `json:"billing"`
+		TotalRecordCount int64            `json:"total_record_count"`
 	} `json:"data"`
 	Message string `json:"message"`
 }
@@ -114,7 +114,7 @@ type BillingHistoryParams struct {
 	IsAscend   *string `json:"is_ascend"`
 }
 
-func (mcsCient *MCSClient) GetBillingHistory(billingHistoryParams BillingHistoryParams) ([]*BillingHistory, *int64, error) {
+func (mcsCient *MCSClient) GetBillingHistory(billingHistoryParams BillingHistoryParams) ([]BillingHistory, *int64, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_BILLING_HISTORY)
 	paramItems := []string{}
 	if billingHistoryParams.PageNumber != nil {
