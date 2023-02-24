@@ -282,18 +282,3 @@ func (client *McsClient) GenerateApikey(validDays int) ([]byte, error) {
 	log.Println(*(*string)(unsafe.Pointer(&response)))
 	return response, nil
 }
-
-func (client *McsClient) ApikeyLogin(apikey, accessToken string) ([]byte, error) {
-	httpRequestUrl := client.BaseURL + constants.APIKEY_LOGIN
-	params := make(map[string]interface{})
-	params["apikey"] = apikey
-	params["access_token"] = accessToken
-	params["network"] = client.ChainNameForRegisterOnMcs
-	response, err := common.HttpPost(httpRequestUrl, client.JwtToken, params)
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-	log.Println(*(*string)(unsafe.Pointer(&response)))
-	return response, nil
-}

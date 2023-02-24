@@ -52,7 +52,7 @@ func LoginByApikey(apikey, accessToken, network string) (*MCSClient, error) {
 		network = constants.PAYMENT_CHAIN_NAME_POLYGON_MAINNET
 	}
 
-	apiUrl = libutils.UrlJoin(apiUrl, constants.APIKEY_LOGIN)
+	apiUrl = libutils.UrlJoin(apiUrl, constants.LOGIN_BY_APIKEY)
 
 	response, err := web.HttpPostNoToken(apiUrl, loginByApikeyParams)
 	if err != nil {

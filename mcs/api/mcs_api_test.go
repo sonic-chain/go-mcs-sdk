@@ -168,18 +168,3 @@ func TestMcsGenerateApikey(t *testing.T) {
 	}
 	log.Println(*(*string)(unsafe.Pointer(&resp)))
 }
-
-func TestMcsApikeyLogin(t *testing.T) {
-	mcsClient := NewMcsClient()
-	err := mcsClient.GetJwtToken()
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	resp, err := mcsClient.ApikeyLogin(Apikey, AccessToken)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	log.Println(*(*string)(unsafe.Pointer(&resp)))
-}
