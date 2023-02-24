@@ -7,7 +7,7 @@ import (
 	"github.com/filswan/go-swan-lib/logs"
 )
 
-func TestGetMCSSystemParam(t *testing.T) {
+func TestGetSystemParam(t *testing.T) {
 	apikey := config.GetConfig().Apikey
 	accessToken := config.GetConfig().AccessToken
 	network := config.GetConfig().Network
@@ -18,7 +18,7 @@ func TestGetMCSSystemParam(t *testing.T) {
 		return
 	}
 
-	params, err := mcsClient.GetMCSSystemParam()
+	params, err := mcsClient.GetSystemParam()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return

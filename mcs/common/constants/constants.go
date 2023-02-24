@@ -16,7 +16,7 @@ const (
 
 	// mcs api
 	API_URL_MCS_GET_PARAMS = "/api/v1/common/system/params"
-	PRICE_RATE             = "/api/v1/billing/price/filecoin"
+	API_URL_FILECOIN_PRICE = "/api/v1/billing/price/filecoin"
 	PAYMENT_INFO           = "/api/v1/billing/deal/lockpayment/info"
 	TASKS_DEALS            = "/api/v1/storage/tasks/deals"
 	MINT_INFO              = "/api/v1/storage/mint/info"
