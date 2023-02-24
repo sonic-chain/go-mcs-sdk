@@ -38,7 +38,7 @@ type SystemParamResponse struct {
 }
 
 func (mcsCient *MCSClient) GetMCSSystemParam() (*SystemParam, error) {
-	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, "api/v1/common/system/params")
+	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_MCS_GET_PARAMS)
 	params := url.Values{}
 	response, err := web.HttpGet(apiUrl, mcsCient.JwtToken, strings.NewReader(params.Encode()))
 	if err != nil {

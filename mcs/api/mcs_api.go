@@ -134,17 +134,6 @@ func (client *McsClient) GetJwtToken() error {
 	return nil
 }
 
-func (client *McsClient) GetParams() ([]byte, error) {
-	httpRequestUrl := client.BaseURL + constants.MCS_PARAMS
-	response, err := common.HttpGet(httpRequestUrl, client.JwtToken, nil)
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-	log.Println(*(*string)(unsafe.Pointer(&response)))
-	return response, nil
-}
-
 func (client *McsClient) GetPriceRate() ([]byte, error) {
 	httpRequestUrl := client.BaseURL + constants.PRICE_RATE
 	response, err := common.HttpGet(httpRequestUrl, client.JwtToken, nil)

@@ -54,16 +54,6 @@ func TestMcsGetJwtToken2(t *testing.T) {
 	}
 }
 
-func TestMcsGetParams(t *testing.T) {
-	mcsClient := NewMcsClient()
-	resp, err := mcsClient.GetParams()
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	log.Println(*(*string)(unsafe.Pointer(&resp)))
-}
-
 func TestMcsGetPriceRate(t *testing.T) {
 	mcsClient := NewMcsClient()
 	err := mcsClient.GetJwtToken()
