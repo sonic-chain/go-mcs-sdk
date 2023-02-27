@@ -21,7 +21,7 @@ const (
 	API_URL_BILLING_GET_PAYMENT_INFO = "/api/v1/billing/deal/lockpayment/info"
 
 	API_URL_STORAGE_UPLOAD_FILE = "/api/v1/storage/ipfs/upload"
-	TASKS_DEALS                 = "/api/v1/storage/tasks/deals"
+	API_URL_STORAGE_GET_DEALS   = "/api/v1/storage/tasks/deals"
 	MINT_INFO                   = "/api/v1/storage/mint/info"
 	DEAL_DETAIL                 = "/api/v1/storage/deal/detail/"
 	USER_REGISTER               = "/api/v1/user/register"

@@ -54,21 +54,6 @@ func TestMcsGetJwtToken2(t *testing.T) {
 	}
 }
 
-func TestMcsGetUserTasksDeals(t *testing.T) {
-	mcsClient := NewMcsClient()
-	err := mcsClient.GetJwtToken()
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	resp, err := mcsClient.GetUserTasksDeals(FileName, Status, PageNumber, PageSize)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	log.Println(*(*string)(unsafe.Pointer(&resp)))
-}
-
 func TestMcsGetDealDetail(t *testing.T) {
 	mcsClient := NewMcsClient()
 	err := mcsClient.GetJwtToken()

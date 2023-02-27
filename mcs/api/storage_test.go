@@ -24,3 +24,29 @@ func TestMcsUploadFile(t *testing.T) {
 
 	logs.GetLogger().Info(uploadFile)
 }
+
+func TestGetDeals(t *testing.T) {
+	mcsClient, err := GetMcsClient()
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return
+	}
+
+	pageNumber := 1
+	pageSize := 10
+	dealsParams := DealsParams{
+		PageNumber: &pageNumber,
+		PageSize:   &pageSize,
+	}
+	sourceFileUploads, recCnt, err := mcsClient.GetDeals(dealsParams)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return
+	}
+
+	for _, sourceFileUpload := range sourceFileUploads {
+		logs.GetLogger().Info(*sourceFileUpload)
+	}
+
+	logs.GetLogger().Info(*recCnt)
+}
