@@ -99,21 +99,6 @@ func TestMcsGetMintInfo(t *testing.T) {
 	log.Println(*(*string)(unsafe.Pointer(&resp)))
 }
 
-func TestMcsUploadFile(t *testing.T) {
-	mcsClient := NewMcsClient()
-	err := mcsClient.GetJwtToken()
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	resp, err := mcsClient.UploadFile(FilePathForUpload)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	log.Println(*(*string)(unsafe.Pointer(&resp)))
-}
-
 func TestMcsGenerateApikey(t *testing.T) {
 	mcsClient := NewMcsClient()
 	err := mcsClient.GetJwtToken()
