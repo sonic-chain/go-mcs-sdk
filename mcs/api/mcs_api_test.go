@@ -54,21 +54,6 @@ func TestMcsGetJwtToken2(t *testing.T) {
 	}
 }
 
-func TestMcsGetDealDetail(t *testing.T) {
-	mcsClient := NewMcsClient()
-	err := mcsClient.GetJwtToken()
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	resp, err := mcsClient.GetDealDetail(SourceFileUploadId, DealId)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	log.Println(*(*string)(unsafe.Pointer(&resp)))
-}
-
 func TestMcsGetMintInfo(t *testing.T) {
 	mcsClient := NewMcsClient()
 	err := mcsClient.GetJwtToken()

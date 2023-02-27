@@ -230,3 +230,81 @@ func (mcsCient *MCSClient) GetDeals(dealsParams DealsParams) ([]*SourceFileUploa
 
 	return dealsResponse.Data.SourceFileUploads, &dealsResponse.Data.TotalRecordCount, nil
 }
+
+type SourceFileUploadDeal struct {
+	DealID                   *int    `json:"deal_id"`
+	DealCid                  *string `json:"deal_cid"`
+	MessageCid               *string `json:"message_cid"`
+	Height                   *int    `json:"height"`
+	PieceCid                 *string `json:"piece_cid"`
+	VerifiedDeal             *bool   `json:"verified_deal"`
+	StoragePricePerEpoch     *int    `json:"storage_price_per_epoch"`
+	Signature                *string `json:"signature"`
+	SignatureType            *string `json:"signature_type"`
+	CreatedAt                *int    `json:"created_at"`
+	PieceSizeFormat          *string `json:"piece_size_format"`
+	StartHeight              *int    `json:"start_height"`
+	EndHeight                *int    `json:"end_height"`
+	Client                   *string `json:"client"`
+	ClientCollateralFormat   *string `json:"client_collateral_format"`
+	Provider                 *string `json:"provider"`
+	ProviderTag              *string `json:"provider_tag"`
+	VerifiedProvider         *int    `json:"verified_provider"`
+	ProviderCollateralFormat *string `json:"provider_collateral_format"`
+	Status                   *int    `json:"status"`
+	NetworkName              *string `json:"network_name"`
+	StoragePrice             *int    `json:"storage_price"`
+	IpfsUrl                  string  `json:"ipfs_url"`
+	FileName                 string  `json:"file_name"`
+	WCid                     string  `json:"w_cid"`
+	CarFilePayloadCid        string  `json:"car_file_payload_cid"`
+	LockedAt                 int64   `json:"locked_at"`
+	LockedFee                string  `json:"locked_fee"`
+	Unlocked                 bool    `json:"unlocked"`
+}
+
+type DaoSignature struct {
+	WalletSigner string  `json:"wallet_signer"`
+	TxHash       *string `json:"tx_hash"`
+	Status       *string `json:"status"`
+	CreateAt     *int64  `json:"create_at"`
+}
+
+type SourceFileUploadDealResponse struct {
+	Status string `json:"status"`
+	Data   struct {
+		SourceFileUploadDeal SourceFileUploadDeal `json:"source_file_upload_deal"`
+		DaoThreshold         int                  `json:"dao_threshold"`
+		DaoSignatures        []*DaoSignature      `json:"dao_signature"`
+	} `json:"data"`
+	Message string `json:"message"`
+}
+
+func (mcsCient *MCSClient) GetDealDetail(sourceFileUploadId, dealId int64) (*SourceFileUploadDeal, []*DaoSignature, *int, error) {
+	params := strconv.FormatInt(dealId, 10) + "?source_file_upload_id=" + strconv.FormatInt(sourceFileUploadId, 10)
+	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, params)
+	response, err := web.HttpGet(apiUrl, mcsCient.JwtToken, nil)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, nil, nil, err
+	}
+
+	var sourceFileUploadDealResponse SourceFileUploadDealResponse
+	err = json.Unmarshal(response, &sourceFileUploadDealResponse)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, nil, nil, err
+	}
+
+	if !strings.EqualFold(sourceFileUploadDealResponse.Status, constants.HTTP_STATUS_SUCCESS) {
+		err := fmt.Errorf("get parameters failed, status:%s,message:%s", sourceFileUploadDealResponse.Status, sourceFileUploadDealResponse.Message)
+		logs.GetLogger().Error(err)
+		return nil, nil, nil, err
+	}
+
+	sourceFileUploadDeal := &sourceFileUploadDealResponse.Data.SourceFileUploadDeal
+	daoSignatures := sourceFileUploadDealResponse.Data.DaoSignatures
+	daoThreshold := &sourceFileUploadDealResponse.Data.DaoThreshold
+
+	return sourceFileUploadDeal, daoSignatures, daoThreshold, nil
+}

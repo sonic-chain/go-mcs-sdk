@@ -50,3 +50,23 @@ func TestGetDeals(t *testing.T) {
 
 	logs.GetLogger().Info(*recCnt)
 }
+
+func TestMcsGetDealDetail(t *testing.T) {
+	mcsClient, err := GetMcsClient()
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return
+	}
+
+	sourceFileUploadDeal, daoSignatures, daoThreshold, err := mcsClient.GetDealDetail(SourceFileUploadId, DealId)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return
+	}
+
+	logs.GetLogger().Info(*sourceFileUploadDeal)
+	for _, daoSignature := range daoSignatures {
+		logs.GetLogger().Info(*daoSignature)
+	}
+	logs.GetLogger().Info(*daoThreshold)
+}
