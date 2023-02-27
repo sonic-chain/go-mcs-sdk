@@ -282,7 +282,7 @@ type SourceFileUploadDealResponse struct {
 
 func (mcsCient *MCSClient) GetDealDetail(sourceFileUploadId, dealId int64) (*SourceFileUploadDeal, []*DaoSignature, *int, error) {
 	params := strconv.FormatInt(dealId, 10) + "?source_file_upload_id=" + strconv.FormatInt(sourceFileUploadId, 10)
-	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, params)
+	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_STORAGE_GET_DEAL_DETAIL, params)
 	response, err := web.HttpGet(apiUrl, mcsCient.JwtToken, nil)
 	if err != nil {
 		logs.GetLogger().Error(err)

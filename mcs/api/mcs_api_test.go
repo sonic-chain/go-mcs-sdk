@@ -11,13 +11,10 @@ const (
 	Signature          = ""
 	SourceFileUploadId = 2123
 	FileName           = "4.jpeg"
-	Status             = "Pending"
 	TokenId            = 111
-	DealId             = 10001
 	PayLoadCid         = "ewrew"
 	txHash             = "fdgdfgdfg"
 	MintAddress        = "gfhfghfghf"
-	FilePathForUpload  = "/home/userName/Pictures/5.jpeg"
 	Apikey             = ""
 	AccessToken        = ""
 	ValidDays          = 60

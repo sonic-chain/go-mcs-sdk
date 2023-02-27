@@ -58,7 +58,7 @@ func TestMcsGetDealDetail(t *testing.T) {
 		return
 	}
 
-	sourceFileUploadDeal, daoSignatures, daoThreshold, err := mcsClient.GetDealDetail(SourceFileUploadId, DealId)
+	sourceFileUploadDeal, daoSignatures, daoThreshold, err := mcsClient.GetDealDetail(149717, 198335)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
