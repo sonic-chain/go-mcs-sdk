@@ -390,3 +390,27 @@ func (mcsCient *MCSClient) GetSourceFileUpload(sourceFileUploadId int64) (*Sourc
 
 	return sourceFileUpload, nil
 }
+
+func (mcsCient *MCSClient) UnpinSourceFile(sourceFileUploadId int64) error {
+	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_STORAGE_UNPIN_SOURCE_FILE, strconv.FormatInt(sourceFileUploadId, 10))
+	result, err := web.HttpPost(apiUrl, mcsCient.JwtToken, nil)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return err
+	}
+
+	var response Response
+	err = json.Unmarshal(result, &response)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return err
+	}
+
+	if !strings.EqualFold(response.Status, constants.HTTP_STATUS_SUCCESS) {
+		err := fmt.Errorf("get parameters failed, status:%s,message:%s", response.Status, response.Message)
+		logs.GetLogger().Error(err)
+		return err
+	}
+
+	return nil
+}

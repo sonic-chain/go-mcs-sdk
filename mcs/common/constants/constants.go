@@ -25,6 +25,7 @@ const (
 	API_URL_STORAGE_GET_DEAL_DETAIL        = "/api/v1/storage/deal/detail"
 	API_URL_STORAGE_GET_DEAL_LOG           = "/api/v1/storage/deal/log"
 	API_URL_STORAGE_GET_SOURCE_FILE_UPLOAD = "/api/v1/storage/source_file_upload"
+	API_URL_STORAGE_UNPIN_SOURCE_FILE      = "/api/v1/storage/unpin_source_file"
 	MINT_INFO                              = "/api/v1/storage/mint/info"
 	USER_REGISTER                          = "/api/v1/user/register"
 	USER_LOGIN                             = "/api/v1/user/login_by_metamask_signature"

@@ -104,3 +104,17 @@ func TestMcsGetSourceFileUpload(t *testing.T) {
 
 	logs.GetLogger().Info(*sourceFileUpload)
 }
+
+func TestUnpinSourceFile(t *testing.T) {
+	mcsClient, err := GetMcsClient()
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return
+	}
+
+	err = mcsClient.UnpinSourceFile(148234)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return
+	}
+}
