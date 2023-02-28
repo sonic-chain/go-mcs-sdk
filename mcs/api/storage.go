@@ -358,11 +358,10 @@ type SourceFileUpload struct {
 }
 
 type SourceFileUploadResponse struct {
-	Status string `json:"status"`
-	Data   struct {
+	Response
+	Data struct {
 		SourceFileUpload *SourceFileUpload `json:"source_file_upload"`
 	} `json:"data"`
-	Message string `json:"message"`
 }
 
 func (mcsCient *MCSClient) GetSourceFileUpload(sourceFileUploadId int64) (*SourceFileUpload, error) {
