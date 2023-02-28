@@ -132,7 +132,7 @@ type OfflineDeal struct {
 	UpdateAt       int64   `json:"update_at"`
 }
 
-type SourceFileUpload struct {
+type Deal struct {
 	SourceFileUploadId int64          `json:"source_file_upload_id"`
 	FileName           string         `json:"file_name"`
 	FileSize           int64          `json:"file_size"`
@@ -152,8 +152,8 @@ type SourceFileUpload struct {
 type DealsResponse struct {
 	Status string `json:"status"`
 	Data   struct {
-		SourceFileUploads []*SourceFileUpload `json:"source_file_upload"`
-		TotalRecordCount  int64               `json:"total_record_count"`
+		Deals            []*Deal `json:"source_file_upload"`
+		TotalRecordCount int64   `json:"total_record_count"`
 	} `json:"data"`
 	Message string `json:"message"`
 }
@@ -168,7 +168,7 @@ type DealsParams struct {
 	IsAscend   *string `json:"is_ascend"`
 }
 
-func (mcsCient *MCSClient) GetDeals(dealsParams DealsParams) ([]*SourceFileUpload, *int64, error) {
+func (mcsCient *MCSClient) GetDeals(dealsParams DealsParams) ([]*Deal, *int64, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_STORAGE_GET_DEALS)
 	paramItems := []string{}
 	if dealsParams.PageNumber != nil {
@@ -228,7 +228,7 @@ func (mcsCient *MCSClient) GetDeals(dealsParams DealsParams) ([]*SourceFileUploa
 		return nil, nil, err
 	}
 
-	return dealsResponse.Data.SourceFileUploads, &dealsResponse.Data.TotalRecordCount, nil
+	return dealsResponse.Data.Deals, &dealsResponse.Data.TotalRecordCount, nil
 }
 
 type SourceFileUploadDeal struct {
@@ -349,4 +349,44 @@ func (mcsCient *MCSClient) GetDealLogs(offlineDealId int64) ([]*OfflineDealLog, 
 	offlineDealLogs := offlineDealLogResponse.Data.OfflineDealLogs
 
 	return offlineDealLogs, nil
+}
+
+type SourceFileUpload struct {
+	WCid   string `json:"w_cid"`
+	Status string `json:"status"`
+	IsFree bool   `json:"is_free"`
+}
+
+type SourceFileUploadResponse struct {
+	Status string `json:"status"`
+	Data   struct {
+		SourceFileUpload *SourceFileUpload `json:"source_file_upload"`
+	} `json:"data"`
+	Message string `json:"message"`
+}
+
+func (mcsCient *MCSClient) GetSourceFileUpload(sourceFileUploadId int64) (*SourceFileUpload, error) {
+	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_STORAGE_GET_SOURCE_FILE_UPLOAD, strconv.FormatInt(sourceFileUploadId, 10))
+	response, err := web.HttpGet(apiUrl, mcsCient.JwtToken, nil)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	var sourceFileUploadResponse SourceFileUploadResponse
+	err = json.Unmarshal(response, &sourceFileUploadResponse)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	if !strings.EqualFold(sourceFileUploadResponse.Status, constants.HTTP_STATUS_SUCCESS) {
+		err := fmt.Errorf("get parameters failed, status:%s,message:%s", sourceFileUploadResponse.Status, sourceFileUploadResponse.Message)
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	sourceFileUpload := sourceFileUploadResponse.Data.SourceFileUpload
+
+	return sourceFileUpload, nil
 }

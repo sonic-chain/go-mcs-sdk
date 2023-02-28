@@ -88,3 +88,19 @@ func TestMcsGetDealLog(t *testing.T) {
 		logs.GetLogger().Info(*offlineDealLog)
 	}
 }
+
+func TestMcsGetSourceFileUpload(t *testing.T) {
+	mcsClient, err := GetMcsClient()
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return
+	}
+
+	sourceFileUpload, err := mcsClient.GetSourceFileUpload(148234)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return
+	}
+
+	logs.GetLogger().Info(*sourceFileUpload)
+}
