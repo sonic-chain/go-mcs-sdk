@@ -88,3 +88,27 @@ func (mcsCient *MCSClient) GetDeals2Sign() ([]*Deal2Sign, error) {
 
 	return getDeals2SignResponse.Data, nil
 }
+
+func (mcsCient *MCSClient) GetDeals2SignHash() ([]*Deal2Sign, error) {
+	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_DAO_GET_DEALS_2_SIGN_HASH)
+	result, err := web.HttpGet(apiUrl, mcsCient.JwtToken, nil)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	var getDeals2SignResponse GetDeals2SignResponse
+	err = json.Unmarshal(result, &getDeals2SignResponse)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	if !strings.EqualFold(getDeals2SignResponse.Status, constants.HTTP_STATUS_SUCCESS) {
+		err := fmt.Errorf("get parameters failed, status:%s,message:%s", getDeals2SignResponse.Status, getDeals2SignResponse.Message)
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	return getDeals2SignResponse.Data, nil
+}
