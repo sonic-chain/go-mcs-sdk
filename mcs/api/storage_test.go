@@ -70,3 +70,21 @@ func TestMcsGetDealDetail(t *testing.T) {
 	}
 	logs.GetLogger().Info(*daoThreshold)
 }
+
+func TestMcsGetDealLog(t *testing.T) {
+	mcsClient, err := GetMcsClient()
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return
+	}
+
+	offlineDealLogs, err := mcsClient.GetDealLogs(1)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return
+	}
+
+	for _, offlineDealLog := range offlineDealLogs {
+		logs.GetLogger().Info(*offlineDealLog)
+	}
+}

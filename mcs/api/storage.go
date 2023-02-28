@@ -308,3 +308,45 @@ func (mcsCient *MCSClient) GetDealDetail(sourceFileUploadId, dealId int64) (*Sou
 
 	return sourceFileUploadDeal, daoSignatures, daoThreshold, nil
 }
+
+type OfflineDealLog struct {
+	Id             int64  `json:"id"`
+	OfflineDealId  int64  `json:"offline_deal_id"`
+	OnChainStatus  string `json:"on_chain_status"`
+	OnChainMessage string `json:"on_chain_message"`
+	CreateAt       int64  `json:"create_at"`
+}
+
+type OfflineDealLogResponse struct {
+	Status string `json:"status"`
+	Data   struct {
+		OfflineDealLogs []*OfflineDealLog `json:"offline_deal_log"`
+	} `json:"data"`
+	Message string `json:"message"`
+}
+
+func (mcsCient *MCSClient) GetDealLogs(offlineDealId int64) ([]*OfflineDealLog, error) {
+	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_STORAGE_GET_DEAL_LOG, strconv.FormatInt(offlineDealId, 10))
+	response, err := web.HttpGet(apiUrl, mcsCient.JwtToken, nil)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	var offlineDealLogResponse OfflineDealLogResponse
+	err = json.Unmarshal(response, &offlineDealLogResponse)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	if !strings.EqualFold(offlineDealLogResponse.Status, constants.HTTP_STATUS_SUCCESS) {
+		err := fmt.Errorf("get parameters failed, status:%s,message:%s", offlineDealLogResponse.Status, offlineDealLogResponse.Message)
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	offlineDealLogs := offlineDealLogResponse.Data.OfflineDealLogs
+
+	return offlineDealLogs, nil
+}
