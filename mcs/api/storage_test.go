@@ -118,3 +118,40 @@ func TestUnpinSourceFile(t *testing.T) {
 		return
 	}
 }
+
+func TestWriteNftCollection(t *testing.T) {
+	mcsClient, err := GetMcsClient()
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return
+	}
+
+	nftCollectionParams := NftCollectionParams{
+		Name:   "aaadd",
+		TxHash: "0x68c28a439efcb9bbebec7992e0e7bac5d84bd6a06890bf35678f4fdf2ac2e519",
+	}
+
+	err = mcsClient.WriteNftCollection(nftCollectionParams)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return
+	}
+}
+
+func TestGetNftCollections(t *testing.T) {
+	mcsClient, err := GetMcsClient()
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return
+	}
+
+	nftCollections, err := mcsClient.GetNftCollections()
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return
+	}
+
+	for _, nftCollection := range nftCollections {
+		logs.GetLogger().Info(*nftCollection)
+	}
+}

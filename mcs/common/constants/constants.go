@@ -10,7 +10,7 @@ const (
 
 	// common
 	API_URL_MCS_POLYGON_MAINNET = "https://api.multichain.storage"
-	API_URL_MCS_POLYGON_MUMBAI  = "https://calibration-mcs-api.filswan.com"
+	API_URL_MCS_POLYGON_MUMBAI  = "http://127.0.0.1:8889" //"https://calibration-mcs-api.filswan.com"
 	API_URL_MCS_BSC_TESTNET     = "https://calibration-mcs-bsc.filswan.com"
 	API_URL_FIL_PRICE_API       = "https://api.filswan.com/stats/storage"
 
@@ -32,7 +32,11 @@ const (
 	API_URL_STORAGE_GET_DEAL_LOG           = "/api/v1/storage/deal/log"
 	API_URL_STORAGE_GET_SOURCE_FILE_UPLOAD = "/api/v1/storage/source_file_upload"
 	API_URL_STORAGE_UNPIN_SOURCE_FILE      = "/api/v1/storage/unpin_source_file"
-	MINT_INFO                              = "/api/v1/storage/mint/info"
+
+	API_URL_STORAGE_WRITE_NFT_COLLECTION = "/api/v1/storage/mint/nft_collection"
+	API_URL_STORAGE_GET_NFT_COLLECTIONS  = "/api/v1/storage/mint/nft_collections"
+
+	MINT_INFO = "/api/v1/storage/mint/info"
 
 	API_URL_DAO_GET_DEALS_2_PRE_SIGN  = "/api/v1/dao/deals_to_pre_sign/x"
 	API_URL_DAO_GET_DEALS_2_SIGN      = "/api/v1/dao/deals_to_sign/x"

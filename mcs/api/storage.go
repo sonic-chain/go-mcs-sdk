@@ -413,3 +413,83 @@ func (mcsCient *MCSClient) UnpinSourceFile(sourceFileUploadId int64) error {
 
 	return nil
 }
+
+type NftCollectionParams struct {
+	Name            string  `json:"name"`
+	Description     *string `json:"description"`
+	ImageUrl        *string `json:"image_url"`
+	ExternalLink    *string `json:"external_link"`
+	SellerFee       *int    `json:"seller_fee"`
+	WalletRecipient *string `json:"wallet_recipient"`
+	TxHash          string  `json:"tx_hash"`
+}
+
+func (mcsCient *MCSClient) WriteNftCollection(nftCollectionParams NftCollectionParams) error {
+	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_STORAGE_WRITE_NFT_COLLECTION)
+	result, err := web.HttpPost(apiUrl, mcsCient.JwtToken, nftCollectionParams)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return err
+	}
+
+	var response Response
+	err = json.Unmarshal(result, &response)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return err
+	}
+
+	if !strings.EqualFold(response.Status, constants.HTTP_STATUS_SUCCESS) {
+		err := fmt.Errorf("get parameters failed, status:%s,message:%s", response.Status, response.Message)
+		logs.GetLogger().Error(err)
+		return err
+	}
+
+	return nil
+}
+
+type NftCollection struct {
+	ID                int64   `json:"id"`
+	Address           *string `json:"address"`
+	WalletId          int64   `json:"wallet_id"`
+	Name              string  `json:"name"`
+	Description       *string `json:"description"`
+	ImageUrl          *string `json:"image_url"`
+	ExternalLink      *string `json:"external_link"`
+	SellerFee         *int    `json:"seller_fee"`
+	WalletIdRecipient *int64  `json:"wallet_id_recipient"`
+	TxHash            string  `json:"tx_hash"`
+	CreateAt          int64   `json:"create_at"`
+	UpdateAt          int64   `json:"update_at"`
+	WalletRecipient   string  `json:"wallet_recipient"`
+	IsDefault         bool    `json:"is_default"`
+}
+
+type GetNftCollectionsResponse struct {
+	Response
+	Data []*NftCollection `json:"data"`
+}
+
+func (mcsCient *MCSClient) GetNftCollections() ([]*NftCollection, error) {
+	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_STORAGE_GET_NFT_COLLECTIONS)
+	result, err := web.HttpGet(apiUrl, mcsCient.JwtToken, nil)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	var getNftCollectionsResponse GetNftCollectionsResponse
+	err = json.Unmarshal(result, &getNftCollectionsResponse)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	if !strings.EqualFold(getNftCollectionsResponse.Status, constants.HTTP_STATUS_SUCCESS) {
+		err := fmt.Errorf("get parameters failed, status:%s,message:%s", getNftCollectionsResponse.Status, getNftCollectionsResponse.Message)
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	return getNftCollectionsResponse.Data, nil
+}
