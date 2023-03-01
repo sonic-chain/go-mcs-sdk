@@ -14,6 +14,11 @@ import (
 	libutils "github.com/filswan/go-swan-lib/utils"
 )
 
+type Response struct {
+	Status  string `json:"status"`
+	Message string `json:"message"`
+}
+
 type SystemParam struct {
 	ChainName                   string  `json:"chain_name"`
 	PaymentContractAddress      string  `json:"payment_contract_address"`
@@ -32,9 +37,8 @@ type SystemParam struct {
 }
 
 type SystemParamResponse struct {
-	Status  string      `json:"status"`
-	Data    SystemParam `json:"data"`
-	Message string      `json:"message"`
+	Response
+	Data SystemParam `json:"data"`
 }
 
 func (mcsCient *MCSClient) GetSystemParam() (*SystemParam, error) {

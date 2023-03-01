@@ -12,6 +12,7 @@ type Configuration struct {
 	Apikey      string `toml:"apikey"`
 	AccessToken string `toml:"access_token"`
 	Network     string `toml:"network"`
+	File2Upload string `toml:"file_to_upload"`
 }
 
 var config *Configuration
@@ -45,6 +46,7 @@ func requiredFieldsAreGiven(metaData toml.MetaData) bool {
 		{"apikey"},
 		{"access_token"},
 		{"network"},
+		{"file_to_upload"},
 	}
 
 	for _, v := range requiredFields {

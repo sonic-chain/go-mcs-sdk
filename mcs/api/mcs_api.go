@@ -1,18 +1,12 @@
 package api
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"go-mcs-sdk/mcs/common"
 	"go-mcs-sdk/mcs/common/constants"
-	"io"
-	"io/ioutil"
 	"log"
-	"mime/multipart"
-	"net/http"
 	"os"
-	"path/filepath"
 	"strconv"
 	"unsafe"
 
@@ -134,30 +128,6 @@ func (client *McsClient) GetJwtToken() error {
 	return nil
 }
 
-func (client *McsClient) GetUserTasksDeals(fileName, status string, pageNumber, pageSize int) ([]byte, error) {
-	requestParam := "?file_name=" + fileName + "status=" + status + "page_number=" + strconv.Itoa(pageNumber) + "page_size=" + strconv.Itoa(pageSize)
-	httpRequestUrl := client.BaseURL + constants.TASKS_DEALS + requestParam
-	response, err := common.HttpGet(httpRequestUrl, client.JwtToken, nil)
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-	log.Println(*(*string)(unsafe.Pointer(&response)))
-	return response, nil
-}
-
-func (client *McsClient) GetDealDetail(sourceFileUploadId, dealId int) ([]byte, error) {
-	requestParam := strconv.Itoa(dealId) + "?source_file_upload_id=" + strconv.Itoa(sourceFileUploadId)
-	httpRequestUrl := client.BaseURL + constants.DEAL_DETAIL + requestParam
-	response, err := common.HttpGet(httpRequestUrl, client.JwtToken, nil)
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-	log.Println(*(*string)(unsafe.Pointer(&response)))
-	return response, nil
-}
-
 func (client *McsClient) GetMintInfo(sourceFileUploadId, tokenId int, payloadCid, txHash, mintAddress string) ([]byte, error) {
 	httpRequestUrl := client.BaseURL + constants.MINT_INFO
 	params := make(map[string]interface{})
@@ -173,68 +143,6 @@ func (client *McsClient) GetMintInfo(sourceFileUploadId, tokenId int, payloadCid
 	}
 	log.Println(*(*string)(unsafe.Pointer(&response)))
 	return response, nil
-}
-
-func (client *McsClient) UploadFile(filePath string) ([]byte, error) {
-	httpRequestUrl := client.BaseURL + constants.UPLOAD_FILE
-	payload := &bytes.Buffer{}
-	writer := multipart.NewWriter(payload)
-	file, errFile1 := os.Open(filePath)
-	defer file.Close()
-	part1, err := writer.CreateFormFile("file", filepath.Base(filePath))
-	if errFile1 != nil {
-		fmt.Println(errFile1)
-		return nil, err
-	}
-	_, err = io.Copy(part1, file)
-	if err != nil {
-		fmt.Println(errFile1)
-		return nil, err
-	}
-	err = writer.WriteField("duration", "525")
-	if err != nil {
-		fmt.Println(errFile1)
-		return nil, err
-	}
-	err = writer.WriteField("storage_copy", "5")
-	if err != nil {
-		fmt.Println(errFile1)
-		return nil, err
-	}
-	err = writer.WriteField("wallet_address", client.UserWalletAddressForRegisterMcs)
-	if err != nil {
-		fmt.Println(errFile1)
-		return nil, err
-	}
-	err = writer.Close()
-	if err != nil {
-		fmt.Println(err)
-		return nil, err
-	}
-
-	httpClient := &http.Client{}
-	req, err := http.NewRequest("POST", httpRequestUrl, payload)
-
-	if err != nil {
-		fmt.Println(err)
-		return nil, err
-	}
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", client.JwtToken))
-	req.Header.Set("Content-Type", writer.FormDataContentType())
-	res, err := httpClient.Do(req)
-	if err != nil {
-		fmt.Println(err)
-		return nil, err
-	}
-	defer res.Body.Close()
-
-	body, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		fmt.Println(err)
-		return nil, err
-	}
-	fmt.Println(string(body))
-	return body, nil
 }
 
 func (client *McsClient) GenerateApikey(validDays int) ([]byte, error) {

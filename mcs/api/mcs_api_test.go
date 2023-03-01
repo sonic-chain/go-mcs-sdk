@@ -11,13 +11,10 @@ const (
 	Signature          = ""
 	SourceFileUploadId = 2123
 	FileName           = "4.jpeg"
-	Status             = "Pending"
 	TokenId            = 111
-	DealId             = 10001
 	PayLoadCid         = "ewrew"
 	txHash             = "fdgdfgdfg"
 	MintAddress        = "gfhfghfghf"
-	FilePathForUpload  = "/home/userName/Pictures/5.jpeg"
 	Apikey             = ""
 	AccessToken        = ""
 	ValidDays          = 60
@@ -54,36 +51,6 @@ func TestMcsGetJwtToken2(t *testing.T) {
 	}
 }
 
-func TestMcsGetUserTasksDeals(t *testing.T) {
-	mcsClient := NewMcsClient()
-	err := mcsClient.GetJwtToken()
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	resp, err := mcsClient.GetUserTasksDeals(FileName, Status, PageNumber, PageSize)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	log.Println(*(*string)(unsafe.Pointer(&resp)))
-}
-
-func TestMcsGetDealDetail(t *testing.T) {
-	mcsClient := NewMcsClient()
-	err := mcsClient.GetJwtToken()
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	resp, err := mcsClient.GetDealDetail(SourceFileUploadId, DealId)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	log.Println(*(*string)(unsafe.Pointer(&resp)))
-}
-
 func TestMcsGetMintInfo(t *testing.T) {
 	mcsClient := NewMcsClient()
 	err := mcsClient.GetJwtToken()
@@ -92,21 +59,6 @@ func TestMcsGetMintInfo(t *testing.T) {
 		return
 	}
 	resp, err := mcsClient.GetMintInfo(SourceFileUploadId, TokenId, PayLoadCid, txHash, MintAddress)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	log.Println(*(*string)(unsafe.Pointer(&resp)))
-}
-
-func TestMcsUploadFile(t *testing.T) {
-	mcsClient := NewMcsClient()
-	err := mcsClient.GetJwtToken()
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	resp, err := mcsClient.UploadFile(FilePathForUpload)
 	if err != nil {
 		log.Println(err)
 		return

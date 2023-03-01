@@ -13,8 +13,6 @@ func TestGetFileCoinPrice(t *testing.T) {
 		return
 	}
 
-	logs.GetLogger().Info(mcsClient)
-
 	filecoinPrice, err := mcsClient.GetFileCoinPrice()
 	if err != nil {
 		logs.GetLogger().Error(err)
@@ -31,8 +29,6 @@ func TestGetLockPaymentInfo(t *testing.T) {
 		return
 	}
 
-	logs.GetLogger().Info(mcsClient)
-
 	lockPaymentInfo, err := mcsClient.GetLockPaymentInfo(18)
 	if err != nil {
 		logs.GetLogger().Error(err)
@@ -48,8 +44,6 @@ func TestGetBillingHistory(t *testing.T) {
 		logs.GetLogger().Error(err)
 		return
 	}
-
-	logs.GetLogger().Info(mcsClient)
 
 	pageNumber := 1
 	pageSize := 10
