@@ -10,11 +10,6 @@ import (
 	libutils "github.com/filswan/go-swan-lib/utils"
 )
 
-type FileCoinPriceResponse struct {
-	Response
-	Data float64 `json:"data"`
-}
-
 func (mcsCient *McsClient) GetFileCoinPrice() (*float64, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_BILLING_FILECOIN_PRICE)
 	params := url.Values{}
