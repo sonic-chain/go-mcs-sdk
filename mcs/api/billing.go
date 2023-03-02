@@ -1,13 +1,11 @@
 package api
 
 import (
-	"encoding/json"
 	"fmt"
 	"go-mcs-sdk/mcs/common/constants"
 	"net/url"
 	"strings"
 
-	"github.com/filswan/go-swan-lib/client/web"
 	"github.com/filswan/go-swan-lib/logs"
 	libutils "github.com/filswan/go-swan-lib/utils"
 )
@@ -21,14 +19,8 @@ type FileCoinPriceResponse struct {
 func (mcsCient *McsClient) GetFileCoinPrice() (*float64, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_BILLING_FILECOIN_PRICE)
 	params := url.Values{}
-	response, err := web.HttpGet(apiUrl, mcsCient.JwtToken, strings.NewReader(params.Encode()))
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
 	var fileCoinPriceResponse FileCoinPriceResponse
-	err = json.Unmarshal(response, &fileCoinPriceResponse)
+	err := HttpGet(apiUrl, mcsCient.JwtToken, strings.NewReader(params.Encode()), &fileCoinPriceResponse)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -60,14 +52,8 @@ func (mcsCient *McsClient) GetLockPaymentInfo(fileUploadId int64) (*LockPaymentI
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_BILLING_GET_PAYMENT_INFO)
 	apiUrl = apiUrl + "?source_file_upload_id=" + fmt.Sprintf("%d", fileUploadId)
 	params := url.Values{}
-	response, err := web.HttpGet(apiUrl, mcsCient.JwtToken, strings.NewReader(params.Encode()))
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
 	var lockPaymentInfoResponse LockPaymentInfoResponse
-	err = json.Unmarshal(response, &lockPaymentInfoResponse)
+	err := HttpGet(apiUrl, mcsCient.JwtToken, strings.NewReader(params.Encode()), &lockPaymentInfoResponse)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -151,14 +137,8 @@ func (mcsCient *McsClient) GetBillingHistory(billingHistoryParams BillingHistory
 	}
 
 	logs.GetLogger().Info(apiUrl)
-	response, err := web.HttpGet(apiUrl, mcsCient.JwtToken, nil)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, nil, err
-	}
-
 	var billingHistoryResponse BillingHistoryResponse
-	err = json.Unmarshal(response, &billingHistoryResponse)
+	err := HttpGet(apiUrl, mcsCient.JwtToken, nil, &billingHistoryResponse)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, nil, err

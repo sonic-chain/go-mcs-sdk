@@ -1,12 +1,10 @@
 package api
 
 import (
-	"encoding/json"
 	"fmt"
 	"go-mcs-sdk/mcs/common/constants"
 	"strings"
 
-	"github.com/filswan/go-swan-lib/client/web"
 	"github.com/filswan/go-swan-lib/logs"
 	libutils "github.com/filswan/go-swan-lib/utils"
 )
@@ -24,14 +22,9 @@ type GetDeals2PreSignResponse struct {
 
 func (mcsCient *McsClient) GetDeals2PreSign() ([]*Deal2PreSign, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_DAO_GET_DEALS_2_PRE_SIGN)
-	result, err := web.HttpGet(apiUrl, mcsCient.JwtToken, nil)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
 
 	var getDeals2PreSignResponse GetDeals2PreSignResponse
-	err = json.Unmarshal(result, &getDeals2PreSignResponse)
+	err := HttpGet(apiUrl, mcsCient.JwtToken, nil, &getDeals2PreSignResponse)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -67,14 +60,8 @@ type GetDeals2SignResponse struct {
 
 func (mcsCient *McsClient) GetDeals2Sign() ([]*Deal2Sign, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_DAO_GET_DEALS_2_SIGN)
-	result, err := web.HttpGet(apiUrl, mcsCient.JwtToken, nil)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
 	var getDeals2SignResponse GetDeals2SignResponse
-	err = json.Unmarshal(result, &getDeals2SignResponse)
+	err := HttpGet(apiUrl, mcsCient.JwtToken, nil, &getDeals2SignResponse)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -91,14 +78,9 @@ func (mcsCient *McsClient) GetDeals2Sign() ([]*Deal2Sign, error) {
 
 func (mcsCient *McsClient) GetDeals2SignHash() ([]*Deal2Sign, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_DAO_GET_DEALS_2_SIGN_HASH)
-	result, err := web.HttpGet(apiUrl, mcsCient.JwtToken, nil)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
 
 	var getDeals2SignResponse GetDeals2SignResponse
-	err = json.Unmarshal(result, &getDeals2SignResponse)
+	err := HttpGet(apiUrl, mcsCient.JwtToken, nil, &getDeals2SignResponse)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err

@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"go-mcs-sdk/mcs/common/constants"
-	"go-mcs-sdk/mcs/common/utils"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -14,7 +13,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/filswan/go-swan-lib/client/web"
 	"github.com/filswan/go-swan-lib/logs"
 	libutils "github.com/filswan/go-swan-lib/utils"
 )
@@ -210,14 +208,8 @@ func (mcsCient *McsClient) GetDeals(dealsParams DealsParams) ([]*Deal, *int64, e
 	}
 
 	logs.GetLogger().Info(apiUrl)
-	response, err := web.HttpGet(apiUrl, mcsCient.JwtToken, nil)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, nil, err
-	}
-
 	var dealsResponse DealsResponse
-	err = json.Unmarshal(response, &dealsResponse)
+	err := HttpGet(apiUrl, mcsCient.JwtToken, nil, &dealsResponse)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, nil, err
@@ -284,14 +276,8 @@ type SourceFileUploadDealResponse struct {
 func (mcsCient *McsClient) GetDealDetail(sourceFileUploadId, dealId int64) (*SourceFileUploadDeal, []*DaoSignature, *int, error) {
 	params := strconv.FormatInt(dealId, 10) + "?source_file_upload_id=" + strconv.FormatInt(sourceFileUploadId, 10)
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_STORAGE_GET_DEAL_DETAIL, params)
-	response, err := web.HttpGet(apiUrl, mcsCient.JwtToken, nil)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, nil, nil, err
-	}
-
 	var sourceFileUploadDealResponse SourceFileUploadDealResponse
-	err = json.Unmarshal(response, &sourceFileUploadDealResponse)
+	err := HttpGet(apiUrl, mcsCient.JwtToken, nil, &sourceFileUploadDealResponse)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, nil, nil, err
@@ -328,14 +314,8 @@ type OfflineDealLogResponse struct {
 
 func (mcsCient *McsClient) GetDealLogs(offlineDealId int64) ([]*OfflineDealLog, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_STORAGE_GET_DEAL_LOG, strconv.FormatInt(offlineDealId, 10))
-	response, err := web.HttpGet(apiUrl, mcsCient.JwtToken, nil)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
 	var offlineDealLogResponse OfflineDealLogResponse
-	err = json.Unmarshal(response, &offlineDealLogResponse)
+	err := HttpGet(apiUrl, mcsCient.JwtToken, nil, &offlineDealLogResponse)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -367,14 +347,9 @@ type SourceFileUploadResponse struct {
 
 func (mcsCient *McsClient) GetSourceFileUpload(sourceFileUploadId int64) (*SourceFileUpload, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_STORAGE_GET_SOURCE_FILE_UPLOAD, strconv.FormatInt(sourceFileUploadId, 10))
-	response, err := web.HttpGet(apiUrl, mcsCient.JwtToken, nil)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
 
 	var sourceFileUploadResponse SourceFileUploadResponse
-	err = json.Unmarshal(response, &sourceFileUploadResponse)
+	err := HttpGet(apiUrl, mcsCient.JwtToken, nil, &sourceFileUploadResponse)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -393,14 +368,9 @@ func (mcsCient *McsClient) GetSourceFileUpload(sourceFileUploadId int64) (*Sourc
 
 func (mcsCient *McsClient) UnpinSourceFile(sourceFileUploadId int64) error {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_STORAGE_UNPIN_SOURCE_FILE, strconv.FormatInt(sourceFileUploadId, 10))
-	result, err := web.HttpPost(apiUrl, mcsCient.JwtToken, nil)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return err
-	}
 
 	var response Response
-	err = json.Unmarshal(result, &response)
+	err := HttpPost(apiUrl, mcsCient.JwtToken, nil, &response)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return err
@@ -427,14 +397,9 @@ type NftCollectionParams struct {
 
 func (mcsCient *McsClient) WriteNftCollection(nftCollectionParams NftCollectionParams) error {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_STORAGE_WRITE_NFT_COLLECTION)
-	result, err := web.HttpPost(apiUrl, mcsCient.JwtToken, nftCollectionParams)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return err
-	}
 
 	var response Response
-	err = json.Unmarshal(result, &response)
+	err := HttpPost(apiUrl, mcsCient.JwtToken, nftCollectionParams, &response)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return err
@@ -473,14 +438,9 @@ type GetNftCollectionsResponse struct {
 
 func (mcsCient *McsClient) GetNftCollections() ([]*NftCollection, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_STORAGE_GET_NFT_COLLECTIONS)
-	result, err := web.HttpGet(apiUrl, mcsCient.JwtToken, nil)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
 
 	var getNftCollectionsResponse GetNftCollectionsResponse
-	err = json.Unmarshal(result, &getNftCollectionsResponse)
+	err := HttpGet(apiUrl, mcsCient.JwtToken, nil, &getNftCollectionsResponse)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -526,7 +486,7 @@ func (mcsCient *McsClient) RecordMintInfo(recordMintInfoParams *RecordMintInfoPa
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_STORAGE_RECORD_MINT_INFO)
 
 	var recordMintInfoResponse RecordMintInfoResponse
-	_, _, err := utils.HttpRequest(http.MethodPost, apiUrl, &mcsCient.JwtToken, recordMintInfoParams, nil, &recordMintInfoResponse)
+	err := HttpPost(apiUrl, mcsCient.JwtToken, nil, &recordMintInfoResponse)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -557,7 +517,8 @@ func (mcsCient *McsClient) GetMintInfo(sourceFileUploadId int64) ([]*SourceFileM
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_STORAGE_GET_MINT_INFO, strconv.FormatInt(sourceFileUploadId, 10))
 
 	var getMintInfoResponse GetMintInfoResponse
-	_, _, err := utils.HttpRequest(http.MethodGet, apiUrl, &mcsCient.JwtToken, nil, nil, &getMintInfoResponse)
+
+	err := HttpPost(apiUrl, mcsCient.JwtToken, nil, &getMintInfoResponse)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err

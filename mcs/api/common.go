@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"go-mcs-sdk/mcs/common/constants"
+	"go-mcs-sdk/mcs/common/utils"
+	"net/http"
 	"net/url"
 	"regexp"
 	"strconv"
@@ -13,6 +15,94 @@ import (
 	"github.com/filswan/go-swan-lib/logs"
 	libutils "github.com/filswan/go-swan-lib/utils"
 )
+
+func HttpPost(uri, tokenString string, params interface{}, result interface{}) error {
+	_, _, err := utils.HttpRequest(http.MethodPost, uri, &tokenString, params, nil, result)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return err
+	}
+	return nil
+}
+
+func HttpGet(uri, tokenString string, params interface{}, result interface{}) error {
+	_, _, err := utils.HttpRequest(http.MethodGet, uri, &tokenString, params, nil, result)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return err
+	}
+	return nil
+}
+
+type McsClient struct {
+	Network  string `json:"network"`
+	BaseUrl  string `json:"base_url"`
+	JwtToken string `json:"jwt_token"`
+}
+
+type LoginByApikeyParams struct {
+	Apikey      string `json:"apikey" binding:"required,min=1,max=100"`
+	AccessToken string `json:"access_token" binding:"required,min=1,max=100"`
+	Network     string `json:"network" binding:"required,min=1,max=65535"`
+}
+
+type LoginByApikeyResponse struct {
+	Status string `json:"status"`
+	Data   struct {
+		JwtToken string `json:"jwt_token"`
+	} `json:"data"`
+	Message string `json:"message"`
+}
+
+func LoginByApikey(apikey, accessToken, network string) (*McsClient, error) {
+	loginByApikeyParams := LoginByApikeyParams{
+		Apikey:      apikey,
+		AccessToken: accessToken,
+		Network:     network,
+	}
+
+	apiUrlBase := ""
+	switch network {
+	case constants.PAYMENT_CHAIN_NAME_POLYGON_MAINNET:
+		apiUrlBase = constants.API_URL_MCS_POLYGON_MAINNET
+	case constants.PAYMENT_CHAIN_NAME_POLYGON_MUMBAI:
+		apiUrlBase = constants.API_URL_MCS_POLYGON_MUMBAI
+	case constants.PAYMENT_CHAIN_NAME_BSC_TESTNET:
+		apiUrlBase = constants.API_URL_MCS_BSC_TESTNET
+	default:
+		apiUrlBase = constants.API_URL_MCS_POLYGON_MAINNET
+		network = constants.PAYMENT_CHAIN_NAME_POLYGON_MAINNET
+	}
+
+	apiUrl := libutils.UrlJoin(apiUrlBase, constants.LOGIN_BY_APIKEY)
+
+	response, err := web.HttpPostNoToken(apiUrl, loginByApikeyParams)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	loginByApikeyResponse := &LoginByApikeyResponse{}
+	err = json.Unmarshal(response, loginByApikeyResponse)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	if !strings.EqualFold(loginByApikeyResponse.Status, constants.HTTP_STATUS_SUCCESS) {
+		err := fmt.Errorf("login failed,code:%s,message:%s", loginByApikeyResponse.Status, loginByApikeyResponse.Message)
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	mcsClient := McsClient{
+		Network:  network,
+		BaseUrl:  apiUrlBase,
+		JwtToken: loginByApikeyResponse.Data.JwtToken,
+	}
+
+	return &mcsClient, nil
+}
 
 type Response struct {
 	Status  string `json:"status"`
