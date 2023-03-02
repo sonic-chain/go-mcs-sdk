@@ -11,7 +11,7 @@ import (
 	libutils "github.com/filswan/go-swan-lib/utils"
 )
 
-type MCSClient struct {
+type McsClient struct {
 	Network  string `json:"network"`
 	BaseUrl  string `json:"base_url"`
 	JwtToken string `json:"jwt_token"`
@@ -31,7 +31,7 @@ type LoginByApikeyResponse struct {
 	Message string `json:"message"`
 }
 
-func LoginByApikey(apikey, accessToken, network string) (*MCSClient, error) {
+func LoginByApikey(apikey, accessToken, network string) (*McsClient, error) {
 	loginByApikeyParams := LoginByApikeyParams{
 		Apikey:      apikey,
 		AccessToken: accessToken,
@@ -72,7 +72,7 @@ func LoginByApikey(apikey, accessToken, network string) (*MCSClient, error) {
 		return nil, err
 	}
 
-	mcsClient := MCSClient{
+	mcsClient := McsClient{
 		Network:  network,
 		BaseUrl:  apiUrlBase,
 		JwtToken: loginByApikeyResponse.Data.JwtToken,

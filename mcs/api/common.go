@@ -41,7 +41,7 @@ type SystemParamResponse struct {
 	Data SystemParam `json:"data"`
 }
 
-func (mcsCient *MCSClient) GetSystemParam() (*SystemParam, error) {
+func (mcsCient *McsClient) GetSystemParam() (*SystemParam, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_MCS_GET_PARAMS)
 	params := url.Values{}
 	response, err := web.HttpGet(apiUrl, mcsCient.JwtToken, strings.NewReader(params.Encode()))

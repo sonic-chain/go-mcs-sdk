@@ -18,7 +18,7 @@ type FileCoinPriceResponse struct {
 	Message string  `json:"message"`
 }
 
-func (mcsCient *MCSClient) GetFileCoinPrice() (*float64, error) {
+func (mcsCient *McsClient) GetFileCoinPrice() (*float64, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_BILLING_FILECOIN_PRICE)
 	params := url.Values{}
 	response, err := web.HttpGet(apiUrl, mcsCient.JwtToken, strings.NewReader(params.Encode()))
@@ -56,7 +56,7 @@ type LockPaymentInfoResponse struct {
 	Message string          `json:"message"`
 }
 
-func (mcsCient *MCSClient) GetLockPaymentInfo(fileUploadId int64) (*LockPaymentInfo, error) {
+func (mcsCient *McsClient) GetLockPaymentInfo(fileUploadId int64) (*LockPaymentInfo, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_BILLING_GET_PAYMENT_INFO)
 	apiUrl = apiUrl + "?source_file_upload_id=" + fmt.Sprintf("%d", fileUploadId)
 	params := url.Values{}
@@ -114,7 +114,7 @@ type BillingHistoryParams struct {
 	IsAscend   *string `json:"is_ascend"`
 }
 
-func (mcsCient *MCSClient) GetBillingHistory(billingHistoryParams BillingHistoryParams) ([]*BillingHistory, *int64, error) {
+func (mcsCient *McsClient) GetBillingHistory(billingHistoryParams BillingHistoryParams) ([]*BillingHistory, *int64, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_BILLING_HISTORY)
 	paramItems := []string{}
 	if billingHistoryParams.PageNumber != nil {

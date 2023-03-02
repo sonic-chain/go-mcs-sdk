@@ -22,7 +22,7 @@ type GetDeals2PreSignResponse struct {
 	Data []*Deal2PreSign `json:"data"`
 }
 
-func (mcsCient *MCSClient) GetDeals2PreSign() ([]*Deal2PreSign, error) {
+func (mcsCient *McsClient) GetDeals2PreSign() ([]*Deal2PreSign, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_DAO_GET_DEALS_2_PRE_SIGN)
 	result, err := web.HttpGet(apiUrl, mcsCient.JwtToken, nil)
 	if err != nil {
@@ -65,7 +65,7 @@ type GetDeals2SignResponse struct {
 	Data []*Deal2Sign `json:"data"`
 }
 
-func (mcsCient *MCSClient) GetDeals2Sign() ([]*Deal2Sign, error) {
+func (mcsCient *McsClient) GetDeals2Sign() ([]*Deal2Sign, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_DAO_GET_DEALS_2_SIGN)
 	result, err := web.HttpGet(apiUrl, mcsCient.JwtToken, nil)
 	if err != nil {
@@ -89,7 +89,7 @@ func (mcsCient *MCSClient) GetDeals2Sign() ([]*Deal2Sign, error) {
 	return getDeals2SignResponse.Data, nil
 }
 
-func (mcsCient *MCSClient) GetDeals2SignHash() ([]*Deal2Sign, error) {
+func (mcsCient *McsClient) GetDeals2SignHash() ([]*Deal2Sign, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_DAO_GET_DEALS_2_SIGN_HASH)
 	result, err := web.HttpGet(apiUrl, mcsCient.JwtToken, nil)
 	if err != nil {

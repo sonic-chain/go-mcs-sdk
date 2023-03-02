@@ -7,7 +7,7 @@ import (
 	"github.com/filswan/go-swan-lib/logs"
 )
 
-func GetMcsClient() (*MCSClient, error) {
+func GetMcsClient() (*McsClient, error) {
 	apikey := config.GetConfig().Apikey
 	accessToken := config.GetConfig().AccessToken
 	network := config.GetConfig().Network
