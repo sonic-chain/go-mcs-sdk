@@ -5,7 +5,7 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
-	"go-mcs-sdk/mcs/common/constants"
+	"go-mcs-sdk/mcs/api/common/constants"
 	"io"
 	"io/ioutil"
 	"net/http"

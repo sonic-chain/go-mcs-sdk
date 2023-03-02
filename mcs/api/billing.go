@@ -2,7 +2,7 @@ package api
 
 import (
 	"fmt"
-	"go-mcs-sdk/mcs/common/constants"
+	"go-mcs-sdk/mcs/api/common/constants"
 	"net/url"
 	"strings"
 

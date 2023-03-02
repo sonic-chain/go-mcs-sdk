@@ -3,8 +3,8 @@ package api
 import (
 	"bytes"
 	"fmt"
+	"go-mcs-sdk/mcs/api/common/constants"
 	"go-mcs-sdk/mcs/common"
-	"go-mcs-sdk/mcs/common/constants"
 	"io"
 	"log"
 	"mime/multipart"

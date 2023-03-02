@@ -1,7 +1,7 @@
 package api
 
 import (
-	"go-mcs-sdk/mcs/common/constants"
+	"go-mcs-sdk/mcs/api/common/constants"
 	"go-mcs-sdk/mcs/config"
 	"log"
 	"testing"
