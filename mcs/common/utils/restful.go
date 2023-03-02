@@ -27,7 +27,7 @@ type McsResponse struct {
 	Data    interface{} `json:"data"`
 }
 
-func HttpRequest(httpMethod, uri string, tokenString *string, params interface{}, timeoutSecond *int) (interface{}, error) {
+func HttpRequest(httpMethod, uri string, tokenString *string, params interface{}, timeoutSecond *int, result interface{}) error {
 	var request *http.Request
 	var err error
 
@@ -36,20 +36,20 @@ func HttpRequest(httpMethod, uri string, tokenString *string, params interface{}
 		request, err = http.NewRequest(httpMethod, uri, params)
 		if err != nil {
 			logs.GetLogger().Error(err)
-			return nil, err
+			return err
 		}
 		request.Header.Set("Content-Type", HTTP_CONTENT_TYPE_FORM)
 	default:
 		jsonReq, errJson := json.Marshal(params)
 		if errJson != nil {
 			logs.GetLogger().Error(errJson)
-			return nil, err
+			return err
 		}
 
 		request, err = http.NewRequest(httpMethod, uri, bytes.NewBuffer(jsonReq))
 		if err != nil {
 			logs.GetLogger().Error(err)
-			return nil, err
+			return err
 		}
 		request.Header.Set("Content-Type", HTTP_CONTENT_TYPE_JSON)
 	}
@@ -70,7 +70,7 @@ func HttpRequest(httpMethod, uri string, tokenString *string, params interface{}
 
 	if err != nil {
 		logs.GetLogger().Error(err)
-		return nil, err
+		return err
 	}
 
 	defer response.Body.Close()
@@ -92,24 +92,38 @@ func HttpRequest(httpMethod, uri string, tokenString *string, params interface{}
 		responseBody, err = io.ReadAll(response.Body)
 		if err != nil {
 			logs.GetLogger().Error(err)
-			return nil, err
+			return err
 		}
 
 		err = json.Unmarshal(responseBody, &mcsResponse)
 		if err != nil {
 			logs.GetLogger().Error(err)
 			logs.GetLogger().Error(string(responseBody))
-			return nil, err
+			return err
 		}
 
 		if !strings.EqualFold(mcsResponse.Status, constants.HTTP_STATUS_SUCCESS) {
 			err := fmt.Errorf("%s failed, status:%s, message:%s", uri, mcsResponse.Status, mcsResponse.Message)
 			logs.GetLogger().Error(err)
-			return nil, err
+			return err
+		}
+
+		mcsResponseDataJson, err := json.Marshal(mcsResponse.Data)
+		if err != nil {
+			logs.GetLogger().Error(err)
+			logs.GetLogger().Error(string(responseBody))
+			return err
+		}
+
+		err = json.Unmarshal(mcsResponseDataJson, result)
+		if err != nil {
+			logs.GetLogger().Error(err)
+			logs.GetLogger().Error(string(responseBody))
+			return err
 		}
 	}
 
-	return mcsResponse.Data, nil
+	return nil
 }
 
 func HttpUploadFileByStream(uri, filefullpath string) ([]byte, error) {

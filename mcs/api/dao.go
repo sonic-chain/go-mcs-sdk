@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"go-mcs-sdk/mcs/common/constants"
 
 	"github.com/filswan/go-swan-lib/logs"
@@ -17,15 +16,9 @@ type Deal2PreSign struct {
 func (mcsCient *McsClient) GetDeals2PreSign() ([]*Deal2PreSign, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_DAO_GET_DEALS_2_PRE_SIGN)
 
-	data, err := HttpGet(apiUrl, mcsCient.JwtToken, nil)
+	var deals []*Deal2PreSign
+	err := HttpGet(apiUrl, mcsCient.JwtToken, nil, deals)
 	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	deals, ok := data.([]*Deal2PreSign)
-	if !ok {
-		err := fmt.Errorf("invalid data type data:%s", data)
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
@@ -50,15 +43,9 @@ type Deal2Sign struct {
 func (mcsCient *McsClient) GetDeals2Sign() ([]*Deal2Sign, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_DAO_GET_DEALS_2_SIGN)
 
-	data, err := HttpGet(apiUrl, mcsCient.JwtToken, nil)
+	var deals []*Deal2Sign
+	err := HttpGet(apiUrl, mcsCient.JwtToken, nil, deals)
 	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	deals, ok := data.([]*Deal2Sign)
-	if !ok {
-		err := fmt.Errorf("invalid data type data:%s", data)
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
@@ -69,15 +56,9 @@ func (mcsCient *McsClient) GetDeals2Sign() ([]*Deal2Sign, error) {
 func (mcsCient *McsClient) GetDeals2SignHash() ([]*Deal2Sign, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_DAO_GET_DEALS_2_SIGN_HASH)
 
-	data, err := HttpGet(apiUrl, mcsCient.JwtToken, nil)
+	var deals []*Deal2Sign
+	err := HttpGet(apiUrl, mcsCient.JwtToken, nil, deals)
 	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	deals, ok := data.([]*Deal2Sign)
-	if !ok {
-		err := fmt.Errorf("invalid data type data:%s", data)
 		logs.GetLogger().Error(err)
 		return nil, err
 	}

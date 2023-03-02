@@ -22,24 +22,24 @@ type Response struct {
 	Data    interface{} `json:"data"`
 }
 
-func HttpPost(uri, tokenString string, params interface{}) (interface{}, error) {
-	data, err := utils.HttpRequest(http.MethodPost, uri, &tokenString, params, nil)
+func HttpPost(uri, tokenString string, params, result interface{}) error {
+	err := utils.HttpRequest(http.MethodPost, uri, &tokenString, params, nil, result)
 	if err != nil {
 		logs.GetLogger().Error(err)
-		return nil, err
+		return err
 	}
 
-	return data, nil
+	return nil
 }
 
-func HttpGet(uri, tokenString string, params interface{}) (interface{}, error) {
-	data, err := utils.HttpRequest(http.MethodGet, uri, &tokenString, params, nil)
+func HttpGet(uri, tokenString string, params, result interface{}) error {
+	err := utils.HttpRequest(http.MethodGet, uri, &tokenString, params, nil, result)
 	if err != nil {
 		logs.GetLogger().Error(err)
-		return nil, err
+		return err
 	}
 
-	return data, nil
+	return nil
 }
 
 type McsClient struct {

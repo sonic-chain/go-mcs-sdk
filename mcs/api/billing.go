@@ -18,15 +18,10 @@ type FileCoinPriceResponse struct {
 func (mcsCient *McsClient) GetFileCoinPrice() (*float64, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_BILLING_FILECOIN_PRICE)
 	params := url.Values{}
-	data, err := HttpGet(apiUrl, mcsCient.JwtToken, strings.NewReader(params.Encode()))
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
 
-	price, ok := data.(float64)
-	if !ok {
-		err := fmt.Errorf("invalid data type data:%s", data)
+	var price float64
+	err := HttpGet(apiUrl, mcsCient.JwtToken, strings.NewReader(params.Encode()), &price)
+	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
@@ -51,15 +46,9 @@ func (mcsCient *McsClient) GetLockPaymentInfo(fileUploadId int64) (*LockPaymentI
 	apiUrl = apiUrl + "?source_file_upload_id=" + fmt.Sprintf("%d", fileUploadId)
 	params := url.Values{}
 
-	data, err := HttpGet(apiUrl, mcsCient.JwtToken, strings.NewReader(params.Encode()))
+	var lockPaymentInfo LockPaymentInfo
+	err := HttpGet(apiUrl, mcsCient.JwtToken, strings.NewReader(params.Encode()), &lockPaymentInfo)
 	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	lockPaymentInfo, ok := data.(LockPaymentInfo)
-	if !ok {
-		err := fmt.Errorf("invalid data type data:%s", data)
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
@@ -131,15 +120,9 @@ func (mcsCient *McsClient) GetBillingHistory(billingHistoryParams BillingHistory
 		apiUrl = strings.TrimRight(apiUrl, "&")
 	}
 
-	data, err := HttpGet(apiUrl, mcsCient.JwtToken, nil)
+	var billingHistoryResponseData BillingHistoryResponseData
+	err := HttpGet(apiUrl, mcsCient.JwtToken, nil, &billingHistoryResponseData)
 	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, nil, err
-	}
-
-	billingHistoryResponseData, ok := data.(BillingHistoryResponseData)
-	if !ok {
-		err := fmt.Errorf("invalid data type data:%s", data)
 		logs.GetLogger().Error(err)
 		return nil, nil, err
 	}

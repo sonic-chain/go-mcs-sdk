@@ -29,7 +29,7 @@ func TestGetLockPaymentInfo(t *testing.T) {
 		return
 	}
 
-	lockPaymentInfo, err := mcsClient.GetLockPaymentInfo(18)
+	lockPaymentInfo, err := mcsClient.GetLockPaymentInfo(2131)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return

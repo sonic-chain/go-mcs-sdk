@@ -202,15 +202,9 @@ func (mcsCient *McsClient) GetDeals(dealsParams DealsParams) ([]*Deal, *int64, e
 		apiUrl = strings.TrimRight(apiUrl, "&")
 	}
 
-	data, err := HttpGet(apiUrl, mcsCient.JwtToken, nil)
+	var deals DealsResponseData
+	err := HttpGet(apiUrl, mcsCient.JwtToken, nil, &deals)
 	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, nil, err
-	}
-
-	deals, ok := data.(DealsResponseData)
-	if !ok {
-		err := fmt.Errorf("invalid data type data:%s", data)
 		logs.GetLogger().Error(err)
 		return nil, nil, err
 	}
@@ -267,15 +261,9 @@ func (mcsCient *McsClient) GetDealDetail(sourceFileUploadId, dealId int64) (*Sou
 	params := strconv.FormatInt(dealId, 10) + "?source_file_upload_id=" + strconv.FormatInt(sourceFileUploadId, 10)
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_STORAGE_GET_DEAL_DETAIL, params)
 
-	data, err := HttpGet(apiUrl, mcsCient.JwtToken, nil)
+	var dealDetail GetDealDetailResponseData
+	err := HttpGet(apiUrl, mcsCient.JwtToken, nil, &dealDetail)
 	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, nil, nil, err
-	}
-
-	dealDetail, ok := data.(GetDealDetailResponseData)
-	if !ok {
-		err := fmt.Errorf("invalid data type data:%s", data)
 		logs.GetLogger().Error(err)
 		return nil, nil, nil, err
 	}
@@ -305,15 +293,9 @@ type OfflineDealLogResponse struct {
 func (mcsCient *McsClient) GetDealLogs(offlineDealId int64) ([]*OfflineDealLog, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_STORAGE_GET_DEAL_LOG, strconv.FormatInt(offlineDealId, 10))
 
-	data, err := HttpGet(apiUrl, mcsCient.JwtToken, nil)
+	var dealLogs []*OfflineDealLog
+	err := HttpGet(apiUrl, mcsCient.JwtToken, nil, dealLogs)
 	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	dealLogs, ok := data.([]*OfflineDealLog)
-	if !ok {
-		err := fmt.Errorf("invalid data type data:%s", data)
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
@@ -334,15 +316,9 @@ type SourceFileUploadResponseData struct {
 func (mcsCient *McsClient) GetSourceFileUpload(sourceFileUploadId int64) (*SourceFileUpload, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_STORAGE_GET_SOURCE_FILE_UPLOAD, strconv.FormatInt(sourceFileUploadId, 10))
 
-	data, err := HttpGet(apiUrl, mcsCient.JwtToken, nil)
+	var sourceFileUpload SourceFileUploadResponseData
+	err := HttpGet(apiUrl, mcsCient.JwtToken, nil, &sourceFileUpload)
 	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	sourceFileUpload, ok := data.(SourceFileUploadResponseData)
-	if !ok {
-		err := fmt.Errorf("invalid data type data:%s", data)
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
@@ -353,7 +329,7 @@ func (mcsCient *McsClient) GetSourceFileUpload(sourceFileUploadId int64) (*Sourc
 func (mcsCient *McsClient) UnpinSourceFile(sourceFileUploadId int64) error {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_STORAGE_UNPIN_SOURCE_FILE, strconv.FormatInt(sourceFileUploadId, 10))
 
-	_, err := HttpPost(apiUrl, mcsCient.JwtToken, nil)
+	err := HttpPost(apiUrl, mcsCient.JwtToken, nil, nil)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return err
@@ -375,7 +351,7 @@ type NftCollectionParams struct {
 func (mcsCient *McsClient) WriteNftCollection(nftCollectionParams NftCollectionParams) error {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_STORAGE_WRITE_NFT_COLLECTION)
 
-	_, err := HttpPost(apiUrl, mcsCient.JwtToken, nftCollectionParams)
+	err := HttpPost(apiUrl, mcsCient.JwtToken, nftCollectionParams, nil)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return err
@@ -409,15 +385,9 @@ type GetNftCollectionsResponse struct {
 func (mcsCient *McsClient) GetNftCollections() ([]*NftCollection, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_STORAGE_GET_NFT_COLLECTIONS)
 
-	data, err := HttpGet(apiUrl, mcsCient.JwtToken, nil)
+	var nftCollections []*NftCollection
+	err := HttpGet(apiUrl, mcsCient.JwtToken, nil, nftCollections)
 	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	nftCollections, ok := data.([]*NftCollection)
-	if !ok {
-		err := fmt.Errorf("invalid data type data:%s", data)
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
@@ -455,20 +425,14 @@ type RecordMintInfoResponse struct {
 func (mcsCient *McsClient) RecordMintInfo(recordMintInfoParams *RecordMintInfoParams) (*SourceFileMint, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_STORAGE_RECORD_MINT_INFO)
 
-	data, err := HttpPost(apiUrl, mcsCient.JwtToken, nil)
+	var sourceFileMint SourceFileMint
+	err := HttpPost(apiUrl, mcsCient.JwtToken, nil, &sourceFileMint)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
-	sourceFileMint, ok := data.(*SourceFileMint)
-	if !ok {
-		err := fmt.Errorf("invalid data type data:%s", data)
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	return sourceFileMint, nil
+	return &sourceFileMint, nil
 }
 
 type SourceFileMintOut struct {
@@ -486,15 +450,9 @@ type GetMintInfoResponse struct {
 func (mcsCient *McsClient) GetMintInfo(sourceFileUploadId int64) ([]*SourceFileMintOut, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_STORAGE_GET_MINT_INFO, strconv.FormatInt(sourceFileUploadId, 10))
 
-	data, err := HttpPost(apiUrl, mcsCient.JwtToken, nil)
+	var sourceFileMints []*SourceFileMintOut
+	err := HttpPost(apiUrl, mcsCient.JwtToken, nil, sourceFileMints)
 	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	sourceFileMints, ok := data.([]*SourceFileMintOut)
-	if !ok {
-		err := fmt.Errorf("invalid data type data:%s", data)
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
