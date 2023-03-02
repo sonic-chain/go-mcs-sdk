@@ -51,21 +51,6 @@ func TestMcsGetJwtToken2(t *testing.T) {
 	}
 }
 
-func TestMcsGetMintInfo(t *testing.T) {
-	mcsClient := NewMcsClient()
-	err := mcsClient.GetJwtToken()
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	resp, err := mcsClient.GetMintInfo(SourceFileUploadId, TokenId, PayLoadCid, txHash, MintAddress)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	log.Println(*(*string)(unsafe.Pointer(&resp)))
-}
-
 func TestMcsGenerateApikey(t *testing.T) {
 	mcsClient := NewMcsClient()
 	err := mcsClient.GetJwtToken()

@@ -36,8 +36,7 @@ const (
 	API_URL_STORAGE_WRITE_NFT_COLLECTION = "/api/v1/storage/mint/nft_collection"
 	API_URL_STORAGE_GET_NFT_COLLECTIONS  = "/api/v1/storage/mint/nft_collections"
 	API_URL_STORAGE_RECORD_MINT_INFO     = "/api/v1/storage/mint/info"
-
-	MINT_INFO = "/api/v1/storage/mint/info"
+	API_URL_STORAGE_GET_MINT_INFO        = "/api/v1/storage/mint/info"
 
 	API_URL_DAO_GET_DEALS_2_PRE_SIGN  = "/api/v1/dao/deals_to_pre_sign/x"
 	API_URL_DAO_GET_DEALS_2_SIGN      = "/api/v1/dao/deals_to_sign/x"

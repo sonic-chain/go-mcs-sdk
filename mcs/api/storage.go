@@ -540,3 +540,34 @@ func (mcsCient *MCSClient) RecordMintInfo(recordMintInfoParams *RecordMintInfoPa
 
 	return recordMintInfoResponse.Data, nil
 }
+
+type SourceFileMintOut struct {
+	SourceFileMint
+	NftCollectionAddress  string  `json:"nft_collection_address"`
+	NftCollectionName     *string `json:"nft_collection_name"`
+	NftCollectionImageUrl *string `json:"nft_collection_image_url"`
+}
+
+type GetMintInfoResponse struct {
+	Response
+	Data []*SourceFileMintOut `json:"data"`
+}
+
+func (mcsCient *MCSClient) GetMintInfo(sourceFileUploadId int64) ([]*SourceFileMintOut, error) {
+	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_STORAGE_GET_MINT_INFO, strconv.FormatInt(sourceFileUploadId, 10))
+
+	var getMintInfoResponse GetMintInfoResponse
+	_, _, err := utils.HttpRequest(http.MethodGet, apiUrl, &mcsCient.JwtToken, nil, nil, &getMintInfoResponse)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	if !strings.EqualFold(getMintInfoResponse.Status, constants.HTTP_STATUS_SUCCESS) {
+		err := fmt.Errorf("%s failed, status:%s, message:%s", apiUrl, getMintInfoResponse.Status, getMintInfoResponse.Message)
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	return getMintInfoResponse.Data, nil
+}

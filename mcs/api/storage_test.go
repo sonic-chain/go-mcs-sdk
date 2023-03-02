@@ -182,3 +182,21 @@ func TestRecordMintInfo(t *testing.T) {
 
 	logs.GetLogger().Info(*sourceFileMint)
 }
+
+func TestGetMintInfo(t *testing.T) {
+	mcsClient, err := GetMcsClient()
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return
+	}
+
+	sourceFileMints, err := mcsClient.GetMintInfo(1)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return
+	}
+
+	for _, sourceFileMint := range sourceFileMints {
+		logs.GetLogger().Info(*sourceFileMint)
+	}
+}

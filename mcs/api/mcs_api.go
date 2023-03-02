@@ -128,23 +128,6 @@ func (client *McsClient) GetJwtToken() error {
 	return nil
 }
 
-func (client *McsClient) GetMintInfo(sourceFileUploadId, tokenId int, payloadCid, txHash, mintAddress string) ([]byte, error) {
-	httpRequestUrl := client.BaseURL + constants.MINT_INFO
-	params := make(map[string]interface{})
-	params["source_file_upload_id"] = sourceFileUploadId
-	params["payload_cid"] = payloadCid
-	params["tx_hash"] = txHash
-	params["token_id"] = tokenId
-	params["mint_address"] = mintAddress
-	response, err := common.HttpPost(httpRequestUrl, client.JwtToken, params)
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-	log.Println(*(*string)(unsafe.Pointer(&response)))
-	return response, nil
-}
-
 func (client *McsClient) GenerateApikey(validDays int) ([]byte, error) {
 	httpRequestUrl := client.BaseURL + constants.GENERATE_APIKEY + strconv.Itoa(validDays)
 	response, err := common.HttpGet(httpRequestUrl, client.JwtToken, nil)
