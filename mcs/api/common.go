@@ -17,26 +17,29 @@ import (
 )
 
 type Response struct {
-	Status  string `json:"status"`
-	Message string `json:"message"`
+	Status  string      `json:"status"`
+	Message string      `json:"message"`
+	Data    interface{} `json:"data"`
 }
 
-func HttpPost(uri, tokenString string, params interface{}, result interface{}) error {
-	_, _, err := utils.HttpRequest(http.MethodPost, uri, &tokenString, params, nil, result)
+func HttpPost(uri, tokenString string, params interface{}) (interface{}, error) {
+	data, err := utils.HttpRequest(http.MethodPost, uri, &tokenString, params, nil)
 	if err != nil {
 		logs.GetLogger().Error(err)
-		return err
+		return nil, err
 	}
-	return nil
+
+	return data, nil
 }
 
-func HttpGet(uri, tokenString string, params interface{}, result interface{}) error {
-	_, _, err := utils.HttpRequest(http.MethodGet, uri, &tokenString, params, nil, result)
+func HttpGet(uri, tokenString string, params interface{}) (interface{}, error) {
+	data, err := utils.HttpRequest(http.MethodGet, uri, &tokenString, params, nil)
 	if err != nil {
 		logs.GetLogger().Error(err)
-		return err
+		return nil, err
 	}
-	return nil
+
+	return data, nil
 }
 
 type McsClient struct {

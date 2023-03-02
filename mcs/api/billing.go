@@ -18,20 +18,20 @@ type FileCoinPriceResponse struct {
 func (mcsCient *McsClient) GetFileCoinPrice() (*float64, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_BILLING_FILECOIN_PRICE)
 	params := url.Values{}
-	var fileCoinPriceResponse FileCoinPriceResponse
-	err := HttpGet(apiUrl, mcsCient.JwtToken, strings.NewReader(params.Encode()), &fileCoinPriceResponse)
+	data, err := HttpGet(apiUrl, mcsCient.JwtToken, strings.NewReader(params.Encode()))
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
-	if !strings.EqualFold(fileCoinPriceResponse.Status, constants.HTTP_STATUS_SUCCESS) {
-		err := fmt.Errorf("get parameters failed, status:%s,message:%s", fileCoinPriceResponse.Status, fileCoinPriceResponse.Message)
+	price, ok := data.(float64)
+	if !ok {
+		err := fmt.Errorf("invalid data type data:%s", data)
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
-	return &fileCoinPriceResponse.Data, nil
+	return &price, nil
 }
 
 type LockPaymentInfo struct {
@@ -50,20 +50,21 @@ func (mcsCient *McsClient) GetLockPaymentInfo(fileUploadId int64) (*LockPaymentI
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_BILLING_GET_PAYMENT_INFO)
 	apiUrl = apiUrl + "?source_file_upload_id=" + fmt.Sprintf("%d", fileUploadId)
 	params := url.Values{}
-	var lockPaymentInfoResponse LockPaymentInfoResponse
-	err := HttpGet(apiUrl, mcsCient.JwtToken, strings.NewReader(params.Encode()), &lockPaymentInfoResponse)
+
+	data, err := HttpGet(apiUrl, mcsCient.JwtToken, strings.NewReader(params.Encode()))
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
-	if !strings.EqualFold(lockPaymentInfoResponse.Status, constants.HTTP_STATUS_SUCCESS) {
-		err := fmt.Errorf("get parameters failed, status:%s,message:%s", lockPaymentInfoResponse.Status, lockPaymentInfoResponse.Message)
+	lockPaymentInfo, ok := data.(LockPaymentInfo)
+	if !ok {
+		err := fmt.Errorf("invalid data type data:%s", data)
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
-	return &lockPaymentInfoResponse.Data, nil
+	return &lockPaymentInfo, nil
 }
 
 type BillingHistory struct {
@@ -80,12 +81,9 @@ type BillingHistory struct {
 	TokenName    string `json:"token_name"`
 }
 
-type BillingHistoryResponse struct {
-	Response
-	Data struct {
-		Billing          []*BillingHistory `json:"billing"`
-		TotalRecordCount int64             `json:"total_record_count"`
-	} `json:"data"`
+type BillingHistoryResponseData struct {
+	Billing          []*BillingHistory `json:"billing"`
+	TotalRecordCount int64             `json:"total_record_count"`
 }
 
 type BillingHistoryParams struct {
@@ -133,19 +131,18 @@ func (mcsCient *McsClient) GetBillingHistory(billingHistoryParams BillingHistory
 		apiUrl = strings.TrimRight(apiUrl, "&")
 	}
 
-	logs.GetLogger().Info(apiUrl)
-	var billingHistoryResponse BillingHistoryResponse
-	err := HttpGet(apiUrl, mcsCient.JwtToken, nil, &billingHistoryResponse)
+	data, err := HttpGet(apiUrl, mcsCient.JwtToken, nil)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, nil, err
 	}
 
-	if !strings.EqualFold(billingHistoryResponse.Status, constants.HTTP_STATUS_SUCCESS) {
-		err := fmt.Errorf("get parameters failed, status:%s,message:%s", billingHistoryResponse.Status, billingHistoryResponse.Message)
+	billingHistoryResponseData, ok := data.(BillingHistoryResponseData)
+	if !ok {
+		err := fmt.Errorf("invalid data type data:%s", data)
 		logs.GetLogger().Error(err)
 		return nil, nil, err
 	}
 
-	return billingHistoryResponse.Data.Billing, &billingHistoryResponse.Data.TotalRecordCount, nil
+	return billingHistoryResponseData.Billing, &billingHistoryResponseData.TotalRecordCount, nil
 }

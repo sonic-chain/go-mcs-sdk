@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
+	"go-mcs-sdk/mcs/common/constants"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -20,7 +21,13 @@ import (
 const HTTP_CONTENT_TYPE_FORM = "application/x-www-form-urlencoded"
 const HTTP_CONTENT_TYPE_JSON = "application/json; charset=UTF-8"
 
-func HttpRequest(httpMethod, uri string, tokenString *string, params interface{}, timeoutSecond *int, result interface{}) (*int, []byte, error) {
+type McsResponse struct {
+	Status  string      `json:"status"`
+	Message string      `json:"message"`
+	Data    interface{} `json:"data"`
+}
+
+func HttpRequest(httpMethod, uri string, tokenString *string, params interface{}, timeoutSecond *int) (interface{}, error) {
 	var request *http.Request
 	var err error
 
@@ -29,20 +36,20 @@ func HttpRequest(httpMethod, uri string, tokenString *string, params interface{}
 		request, err = http.NewRequest(httpMethod, uri, params)
 		if err != nil {
 			logs.GetLogger().Error(err)
-			return nil, nil, err
+			return nil, err
 		}
 		request.Header.Set("Content-Type", HTTP_CONTENT_TYPE_FORM)
 	default:
 		jsonReq, errJson := json.Marshal(params)
 		if errJson != nil {
 			logs.GetLogger().Error(errJson)
-			return nil, nil, errJson
+			return nil, err
 		}
 
 		request, err = http.NewRequest(httpMethod, uri, bytes.NewBuffer(jsonReq))
 		if err != nil {
 			logs.GetLogger().Error(err)
-			return nil, nil, err
+			return nil, err
 		}
 		request.Header.Set("Content-Type", HTTP_CONTENT_TYPE_JSON)
 	}
@@ -63,7 +70,7 @@ func HttpRequest(httpMethod, uri string, tokenString *string, params interface{}
 
 	if err != nil {
 		logs.GetLogger().Error(err)
-		return nil, nil, err
+		return nil, err
 	}
 
 	defer response.Body.Close()
@@ -80,22 +87,29 @@ func HttpRequest(httpMethod, uri string, tokenString *string, params interface{}
 	}
 
 	var responseBody []byte
+	var mcsResponse McsResponse
 	if response.Body != nil {
-		responseBody, err = ioutil.ReadAll(response.Body)
+		responseBody, err = io.ReadAll(response.Body)
 		if err != nil {
 			logs.GetLogger().Error(err)
-			return nil, nil, err
+			return nil, err
 		}
 
-		err = json.Unmarshal(responseBody, result)
+		err = json.Unmarshal(responseBody, &mcsResponse)
 		if err != nil {
 			logs.GetLogger().Error(err)
 			logs.GetLogger().Error(string(responseBody))
-			return nil, nil, err
+			return nil, err
+		}
+
+		if !strings.EqualFold(mcsResponse.Status, constants.HTTP_STATUS_SUCCESS) {
+			err := fmt.Errorf("%s failed, status:%s, message:%s", uri, mcsResponse.Status, mcsResponse.Message)
+			logs.GetLogger().Error(err)
+			return nil, err
 		}
 	}
 
-	return &response.StatusCode, responseBody, nil
+	return mcsResponse.Data, nil
 }
 
 func HttpUploadFileByStream(uri, filefullpath string) ([]byte, error) {

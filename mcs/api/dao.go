@@ -3,7 +3,6 @@ package api
 import (
 	"fmt"
 	"go-mcs-sdk/mcs/common/constants"
-	"strings"
 
 	"github.com/filswan/go-swan-lib/logs"
 	libutils "github.com/filswan/go-swan-lib/utils"
@@ -15,28 +14,23 @@ type Deal2PreSign struct {
 	BatchCount          int   `json:"batch_count"`
 }
 
-type GetDeals2PreSignResponse struct {
-	Response
-	Data []*Deal2PreSign `json:"data"`
-}
-
 func (mcsCient *McsClient) GetDeals2PreSign() ([]*Deal2PreSign, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_DAO_GET_DEALS_2_PRE_SIGN)
 
-	var getDeals2PreSignResponse GetDeals2PreSignResponse
-	err := HttpGet(apiUrl, mcsCient.JwtToken, nil, &getDeals2PreSignResponse)
+	data, err := HttpGet(apiUrl, mcsCient.JwtToken, nil)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
-	if !strings.EqualFold(getDeals2PreSignResponse.Status, constants.HTTP_STATUS_SUCCESS) {
-		err := fmt.Errorf("get parameters failed, status:%s,message:%s", getDeals2PreSignResponse.Status, getDeals2PreSignResponse.Message)
+	deals, ok := data.([]*Deal2PreSign)
+	if !ok {
+		err := fmt.Errorf("invalid data type data:%s", data)
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
-	return getDeals2PreSignResponse.Data, nil
+	return deals, nil
 }
 
 type Deal2SignBatchInfo struct {
@@ -53,44 +47,40 @@ type Deal2Sign struct {
 	BatchInfo     []*Deal2SignBatchInfo `json:"batch_info"`
 }
 
-type GetDeals2SignResponse struct {
-	Response
-	Data []*Deal2Sign `json:"data"`
-}
-
 func (mcsCient *McsClient) GetDeals2Sign() ([]*Deal2Sign, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_DAO_GET_DEALS_2_SIGN)
-	var getDeals2SignResponse GetDeals2SignResponse
-	err := HttpGet(apiUrl, mcsCient.JwtToken, nil, &getDeals2SignResponse)
+
+	data, err := HttpGet(apiUrl, mcsCient.JwtToken, nil)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
-	if !strings.EqualFold(getDeals2SignResponse.Status, constants.HTTP_STATUS_SUCCESS) {
-		err := fmt.Errorf("get parameters failed, status:%s,message:%s", getDeals2SignResponse.Status, getDeals2SignResponse.Message)
+	deals, ok := data.([]*Deal2Sign)
+	if !ok {
+		err := fmt.Errorf("invalid data type data:%s", data)
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
-	return getDeals2SignResponse.Data, nil
+	return deals, nil
 }
 
 func (mcsCient *McsClient) GetDeals2SignHash() ([]*Deal2Sign, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_DAO_GET_DEALS_2_SIGN_HASH)
 
-	var getDeals2SignResponse GetDeals2SignResponse
-	err := HttpGet(apiUrl, mcsCient.JwtToken, nil, &getDeals2SignResponse)
+	data, err := HttpGet(apiUrl, mcsCient.JwtToken, nil)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
-	if !strings.EqualFold(getDeals2SignResponse.Status, constants.HTTP_STATUS_SUCCESS) {
-		err := fmt.Errorf("get parameters failed, status:%s,message:%s", getDeals2SignResponse.Status, getDeals2SignResponse.Message)
+	deals, ok := data.([]*Deal2Sign)
+	if !ok {
+		err := fmt.Errorf("invalid data type data:%s", data)
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
-	return getDeals2SignResponse.Data, nil
+	return deals, nil
 }
