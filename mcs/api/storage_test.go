@@ -166,8 +166,8 @@ func TestRecordMintInfo(t *testing.T) {
 	name := "abc"
 	description := "hello"
 	recordMintInfoParams := &RecordMintInfoParams{
-		SourceFileIploadId: 1,
-		NftCollectionId:    52,
+		SourceFileUploadId: 148234,
+		NftCollectionId:    77,
 		TxHash:             "0xesdd",
 		TokenId:            5,
 		Name:               &name,

@@ -88,7 +88,7 @@ func HttpRequest(httpMethod, uri string, tokenString *string, params interface{}
 
 	var responseBody []byte
 	var mcsResponse McsResponse
-	if response.Body != nil {
+	if response.Body != nil && response.StatusCode != http.StatusNotFound {
 		responseBody, err = io.ReadAll(response.Body)
 		if err != nil {
 			logs.GetLogger().Error(err)

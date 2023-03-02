@@ -13,14 +13,14 @@ func TestGetDeals2PreSign(t *testing.T) {
 		return
 	}
 
-	deals2PreSign, err := mcsClient.GetDeals2PreSign()
+	deals, err := mcsClient.GetDeals2PreSign()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
 	}
 
-	for _, deal2Sign := range deals2PreSign {
-		logs.GetLogger().Info(deal2Sign)
+	for _, deal := range deals {
+		logs.GetLogger().Info(deal)
 	}
 }
 
@@ -31,14 +31,14 @@ func TestGetDeals2Sign(t *testing.T) {
 		return
 	}
 
-	deals2PreSign, err := mcsClient.GetDeals2Sign()
+	deals, err := mcsClient.GetDeals2Sign()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
 	}
 
-	for _, deal2Sign := range deals2PreSign {
-		logs.GetLogger().Info(*deal2Sign)
+	for _, deal := range deals {
+		logs.GetLogger().Info(*deal)
 	}
 }
 
@@ -49,15 +49,15 @@ func TestGetDeals2SignHash(t *testing.T) {
 		return
 	}
 
-	deals2PreSign, err := mcsClient.GetDeals2SignHash()
+	deals, err := mcsClient.GetDeals2SignHash()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
 	}
 
-	for _, deal2Sign := range deals2PreSign {
-		logs.GetLogger().Info(*deal2Sign)
-		for _, batchInfo := range deal2Sign.BatchInfo {
+	for _, deal := range deals {
+		logs.GetLogger().Info(*deal)
+		for _, batchInfo := range deal.BatchInfo {
 			logs.GetLogger().Info(*batchInfo)
 		}
 	}
