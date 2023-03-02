@@ -533,7 +533,7 @@ func (mcsCient *MCSClient) RecordMintInfo(recordMintInfoParams *RecordMintInfoPa
 	}
 
 	if !strings.EqualFold(recordMintInfoResponse.Status, constants.HTTP_STATUS_SUCCESS) {
-		err := fmt.Errorf("get parameters failed, status:%s,message:%s", recordMintInfoResponse.Status, recordMintInfoResponse.Message)
+		err := fmt.Errorf("%s failed, status:%s, message:%s", apiUrl, recordMintInfoResponse.Status, recordMintInfoResponse.Message)
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
