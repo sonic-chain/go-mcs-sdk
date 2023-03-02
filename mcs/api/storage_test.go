@@ -9,7 +9,7 @@ import (
 	"github.com/filswan/go-swan-lib/logs"
 )
 
-func TestMcsUploadFile(t *testing.T) {
+func TestUploadFile(t *testing.T) {
 	mcsClient, err := GetMcsClient()
 	if err != nil {
 		logs.GetLogger().Error(err)
@@ -51,7 +51,7 @@ func TestGetDeals(t *testing.T) {
 	logs.GetLogger().Info(*recCnt)
 }
 
-func TestMcsGetDealDetail(t *testing.T) {
+func TestGetDealDetail(t *testing.T) {
 	mcsClient, err := GetMcsClient()
 	if err != nil {
 		logs.GetLogger().Error(err)
@@ -71,7 +71,7 @@ func TestMcsGetDealDetail(t *testing.T) {
 	logs.GetLogger().Info(*daoThreshold)
 }
 
-func TestMcsGetDealLog(t *testing.T) {
+func TestGetDealLogs(t *testing.T) {
 	mcsClient, err := GetMcsClient()
 	if err != nil {
 		logs.GetLogger().Error(err)
@@ -89,7 +89,7 @@ func TestMcsGetDealLog(t *testing.T) {
 	}
 }
 
-func TestMcsGetSourceFileUpload(t *testing.T) {
+func TestGetSourceFileUpload(t *testing.T) {
 	mcsClient, err := GetMcsClient()
 	if err != nil {
 		logs.GetLogger().Error(err)
