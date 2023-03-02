@@ -11,9 +11,8 @@ import (
 )
 
 type FileCoinPriceResponse struct {
-	Status  string  `json:"status"`
-	Data    float64 `json:"data"`
-	Message string  `json:"message"`
+	Response
+	Data float64 `json:"data"`
 }
 
 func (mcsCient *McsClient) GetFileCoinPrice() (*float64, error) {
@@ -43,9 +42,8 @@ type LockPaymentInfo struct {
 }
 
 type LockPaymentInfoResponse struct {
-	Status  string          `json:"status"`
-	Data    LockPaymentInfo `json:"data"`
-	Message string          `json:"message"`
+	Response
+	Data LockPaymentInfo `json:"data"`
 }
 
 func (mcsCient *McsClient) GetLockPaymentInfo(fileUploadId int64) (*LockPaymentInfo, error) {
@@ -83,12 +81,11 @@ type BillingHistory struct {
 }
 
 type BillingHistoryResponse struct {
-	Status string `json:"status"`
-	Data   struct {
+	Response
+	Data struct {
 		Billing          []*BillingHistory `json:"billing"`
 		TotalRecordCount int64             `json:"total_record_count"`
 	} `json:"data"`
-	Message string `json:"message"`
 }
 
 type BillingHistoryParams struct {

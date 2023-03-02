@@ -27,9 +27,8 @@ type UploadFile struct {
 }
 
 type UploadFileResponse struct {
-	Status  string     `json:"status"`
-	Data    UploadFile `json:"data"`
-	Message string     `json:"message"`
+	Response
+	Data UploadFile `json:"data"`
 }
 
 func (mcsCient *McsClient) UploadFile(filePath string, fileType int) (*UploadFile, error) {
@@ -149,12 +148,11 @@ type Deal struct {
 }
 
 type DealsResponse struct {
-	Status string `json:"status"`
-	Data   struct {
+	Response
+	Data struct {
 		Deals            []*Deal `json:"source_file_upload"`
 		TotalRecordCount int64   `json:"total_record_count"`
 	} `json:"data"`
-	Message string `json:"message"`
 }
 
 type DealsParams struct {
@@ -264,13 +262,12 @@ type DaoSignature struct {
 }
 
 type SourceFileUploadDealResponse struct {
-	Status string `json:"status"`
-	Data   struct {
+	Response
+	Data struct {
 		SourceFileUploadDeal SourceFileUploadDeal `json:"source_file_upload_deal"`
 		DaoThreshold         int                  `json:"dao_threshold"`
 		DaoSignatures        []*DaoSignature      `json:"dao_signature"`
 	} `json:"data"`
-	Message string `json:"message"`
 }
 
 func (mcsCient *McsClient) GetDealDetail(sourceFileUploadId, dealId int64) (*SourceFileUploadDeal, []*DaoSignature, *int, error) {
@@ -305,11 +302,10 @@ type OfflineDealLog struct {
 }
 
 type OfflineDealLogResponse struct {
-	Status string `json:"status"`
-	Data   struct {
+	Response
+	Data struct {
 		OfflineDealLogs []*OfflineDealLog `json:"offline_deal_log"`
 	} `json:"data"`
-	Message string `json:"message"`
 }
 
 func (mcsCient *McsClient) GetDealLogs(offlineDealId int64) ([]*OfflineDealLog, error) {

@@ -16,6 +16,11 @@ import (
 	libutils "github.com/filswan/go-swan-lib/utils"
 )
 
+type Response struct {
+	Status  string `json:"status"`
+	Message string `json:"message"`
+}
+
 func HttpPost(uri, tokenString string, params interface{}, result interface{}) error {
 	_, _, err := utils.HttpRequest(http.MethodPost, uri, &tokenString, params, nil, result)
 	if err != nil {
@@ -47,11 +52,10 @@ type LoginByApikeyParams struct {
 }
 
 type LoginByApikeyResponse struct {
-	Status string `json:"status"`
-	Data   struct {
+	Response
+	Data struct {
 		JwtToken string `json:"jwt_token"`
 	} `json:"data"`
-	Message string `json:"message"`
 }
 
 func LoginByApikey(apikey, accessToken, network string) (*McsClient, error) {
@@ -104,11 +108,6 @@ func LoginByApikey(apikey, accessToken, network string) (*McsClient, error) {
 	return &mcsClient, nil
 }
 
-type Response struct {
-	Status  string `json:"status"`
-	Message string `json:"message"`
-}
-
 type SystemParam struct {
 	ChainName                   string  `json:"chain_name"`
 	PaymentContractAddress      string  `json:"payment_contract_address"`
@@ -157,6 +156,7 @@ func (mcsCient *McsClient) GetSystemParam() (*SystemParam, error) {
 }
 
 type FilPrice struct {
+	Response
 	Data struct {
 		AverageCostPushMessage           string `json:"average_cost_push_message"`
 		AverageDataCostSealing1TB        string `json:"average_data_cost_sealing_1TB"`
@@ -166,7 +166,6 @@ type FilPrice struct {
 		AverageVerifiedPricePerGBPerYear string `json:"average_verified_price_per_GB_per_year"`
 		HistoricalAveragePriceVerified   string `json:"historical_average_price_verified"`
 	} `json:"data"`
-	Status string `json:"status"`
 }
 
 func GetFilPrice() (float64, error) {
