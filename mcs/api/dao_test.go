@@ -20,7 +20,7 @@ func TestGetDeals2PreSign(t *testing.T) {
 	}
 
 	for _, deal2Sign := range deals2PreSign {
-		logs.GetLogger().Info(*deal2Sign)
+		logs.GetLogger().Info(deal2Sign)
 	}
 }
 

@@ -1,8 +1,6 @@
 package api
 
 import (
-	"encoding/json"
-	"fmt"
 	"go-mcs-sdk/mcs/common/constants"
 	"go-mcs-sdk/mcs/common/utils"
 	"net/http"
@@ -11,7 +9,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/filswan/go-swan-lib/client/web"
 	"github.com/filswan/go-swan-lib/logs"
 	libutils "github.com/filswan/go-swan-lib/utils"
 )
@@ -54,13 +51,6 @@ type LoginByApikeyParams struct {
 	Network     string `json:"network" binding:"required,min=1,max=65535"`
 }
 
-type LoginByApikeyResponse struct {
-	Response
-	Data struct {
-		JwtToken string `json:"jwt_token"`
-	} `json:"data"`
-}
-
 func LoginByApikey(apikey, accessToken, network string) (*McsClient, error) {
 	loginByApikeyParams := LoginByApikeyParams{
 		Apikey:      apikey,
@@ -83,21 +73,12 @@ func LoginByApikey(apikey, accessToken, network string) (*McsClient, error) {
 
 	apiUrl := libutils.UrlJoin(apiUrlBase, constants.LOGIN_BY_APIKEY)
 
-	response, err := web.HttpPostNoToken(apiUrl, loginByApikeyParams)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
+	var loginByApikeyResponse struct {
+		JwtToken string `json:"jwt_token"`
 	}
 
-	loginByApikeyResponse := &LoginByApikeyResponse{}
-	err = json.Unmarshal(response, loginByApikeyResponse)
+	err := HttpPost(apiUrl, "", loginByApikeyParams, &loginByApikeyResponse)
 	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	if !strings.EqualFold(loginByApikeyResponse.Status, constants.HTTP_STATUS_SUCCESS) {
-		err := fmt.Errorf("login failed,code:%s,message:%s", loginByApikeyResponse.Status, loginByApikeyResponse.Message)
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
@@ -105,7 +86,7 @@ func LoginByApikey(apikey, accessToken, network string) (*McsClient, error) {
 	mcsClient := McsClient{
 		Network:  network,
 		BaseUrl:  apiUrlBase,
-		JwtToken: loginByApikeyResponse.Data.JwtToken,
+		JwtToken: loginByApikeyResponse.JwtToken,
 	}
 
 	return &mcsClient, nil
@@ -128,39 +109,24 @@ type SystemParam struct {
 	FilecoinPrice               float64 `json:"filecoin_price"`
 }
 
-type SystemParamResponse struct {
-	Response
-	Data SystemParam `json:"data"`
-}
-
 func (mcsCient *McsClient) GetSystemParam() (*SystemParam, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_MCS_GET_PARAMS)
 	params := url.Values{}
-	response, err := web.HttpGet(apiUrl, mcsCient.JwtToken, strings.NewReader(params.Encode()))
+
+	var systemParam SystemParam
+	err := HttpGet(apiUrl, mcsCient.JwtToken, strings.NewReader(params.Encode()), &systemParam)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
-	var systemParamResponse SystemParamResponse
-	err = json.Unmarshal(response, &systemParamResponse)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	if !strings.EqualFold(systemParamResponse.Status, constants.HTTP_STATUS_SUCCESS) {
-		err := fmt.Errorf("get parameters failed, status:%s,message:%s", systemParamResponse.Status, systemParamResponse.Message)
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	return &systemParamResponse.Data, nil
+	return &systemParam, nil
 }
 
-type FilPrice struct {
-	Response
-	Data struct {
+func GetFilPrice() (float64, error) {
+	apiUrl := constants.API_URL_FIL_PRICE_API
+
+	var storageStats struct {
 		AverageCostPushMessage           string `json:"average_cost_push_message"`
 		AverageDataCostSealing1TB        string `json:"average_data_cost_sealing_1TB"`
 		AverageGasCostSealing1TB         string `json:"average_gas_cost_sealing_1TB"`
@@ -168,23 +134,15 @@ type FilPrice struct {
 		AveragePricePerGBPerYear         string `json:"average_price_per_GB_per_year"`
 		AverageVerifiedPricePerGBPerYear string `json:"average_verified_price_per_GB_per_year"`
 		HistoricalAveragePriceVerified   string `json:"historical_average_price_verified"`
-	} `json:"data"`
-}
-
-func GetFilPrice() (float64, error) {
-	response, err := web.HttpGetNoToken(constants.API_URL_FIL_PRICE_API, nil)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return -1, err
 	}
-	filPrice := new(FilPrice)
-	err = json.Unmarshal(response, filPrice)
+
+	err := HttpGet(apiUrl, "", nil, &storageStats)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return -1, err
 	}
 
-	price := filPrice.Data.HistoricalAveragePriceVerified
+	price := storageStats.HistoricalAveragePriceVerified
 	reg := regexp.MustCompile(`\d+\.\d+`)
 	result := reg.FindAllStringSubmatch(price, -1)
 

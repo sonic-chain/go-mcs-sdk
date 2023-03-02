@@ -108,18 +108,20 @@ func HttpRequest(httpMethod, uri string, tokenString *string, params interface{}
 			return err
 		}
 
-		mcsResponseDataJson, err := json.Marshal(mcsResponse.Data)
-		if err != nil {
-			logs.GetLogger().Error(err)
-			logs.GetLogger().Error(string(responseBody))
-			return err
-		}
+		if mcsResponse.Data != nil {
+			mcsResponseDataJson, err := json.Marshal(mcsResponse.Data)
+			if err != nil {
+				logs.GetLogger().Error(err)
+				logs.GetLogger().Error(string(responseBody))
+				return err
+			}
 
-		err = json.Unmarshal(mcsResponseDataJson, result)
-		if err != nil {
-			logs.GetLogger().Error(err)
-			logs.GetLogger().Error(string(responseBody))
-			return err
+			err = json.Unmarshal(mcsResponseDataJson, result)
+			if err != nil {
+				logs.GetLogger().Error(err)
+				logs.GetLogger().Error(string(responseBody))
+				return err
+			}
 		}
 	}
 

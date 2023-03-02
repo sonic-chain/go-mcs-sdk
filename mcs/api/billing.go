@@ -36,11 +36,6 @@ type LockPaymentInfo struct {
 	TokenAddress string `json:"token_address"`
 }
 
-type LockPaymentInfoResponse struct {
-	Response
-	Data LockPaymentInfo `json:"data"`
-}
-
 func (mcsCient *McsClient) GetLockPaymentInfo(fileUploadId int64) (*LockPaymentInfo, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_BILLING_GET_PAYMENT_INFO)
 	apiUrl = apiUrl + "?source_file_upload_id=" + fmt.Sprintf("%d", fileUploadId)
@@ -68,11 +63,6 @@ type BillingHistory struct {
 	Deadline     int64  `json:"deadline"`
 	NetworkName  string `json:"network_name"`
 	TokenName    string `json:"token_name"`
-}
-
-type BillingHistoryResponseData struct {
-	Billing          []*BillingHistory `json:"billing"`
-	TotalRecordCount int64             `json:"total_record_count"`
 }
 
 type BillingHistoryParams struct {
@@ -120,12 +110,16 @@ func (mcsCient *McsClient) GetBillingHistory(billingHistoryParams BillingHistory
 		apiUrl = strings.TrimRight(apiUrl, "&")
 	}
 
-	var billingHistoryResponseData BillingHistoryResponseData
-	err := HttpGet(apiUrl, mcsCient.JwtToken, nil, &billingHistoryResponseData)
+	var billings struct {
+		Billing          []*BillingHistory `json:"billing"`
+		TotalRecordCount int64             `json:"total_record_count"`
+	}
+
+	err := HttpGet(apiUrl, mcsCient.JwtToken, nil, &billings)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, nil, err
 	}
 
-	return billingHistoryResponseData.Billing, &billingHistoryResponseData.TotalRecordCount, nil
+	return billings.Billing, &billings.TotalRecordCount, nil
 }
