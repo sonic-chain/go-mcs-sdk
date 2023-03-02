@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"go-mcs-sdk/mcs/common/constants"
+	"go-mcs-sdk/mcs/common/utils"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -492,4 +493,50 @@ func (mcsCient *MCSClient) GetNftCollections() ([]*NftCollection, error) {
 	}
 
 	return getNftCollectionsResponse.Data, nil
+}
+
+type RecordMintInfoParams struct {
+	SourceFileIploadId int64   `json:"source_file_upload_id"`
+	NftCollectionId    int64   `json:"nft_collection_id"`
+	TxHash             string  `json:"tx_hash"`
+	TokenId            int64   `json:"token_id"`
+	Name               *string `json:"name"`
+	Description        *string `json:"description"`
+}
+
+type SourceFileMint struct {
+	ID                 int64   `json:"id"`
+	SourceFileUploadId int64   `json:"source_file_upload_id"`
+	NftTxHash          string  `json:"nft_tx_hash"`
+	MintAddress        string  `json:"mint_address"`
+	NftCollectionId    int64   `json:"nft_collection_id"`
+	TokenId            int64   `json:"token_id"`
+	Name               *string `json:"name"`
+	Description        *string `json:"description"`
+	CreateAt           int64   `json:"create_at"`
+	UpdateAt           int64   `json:"update_at"`
+}
+
+type RecordMintInfoResponse struct {
+	Response
+	Data *SourceFileMint `json:"data"`
+}
+
+func (mcsCient *MCSClient) RecordMintInfo(recordMintInfoParams *RecordMintInfoParams) (*SourceFileMint, error) {
+	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_STORAGE_RECORD_MINT_INFO)
+
+	var recordMintInfoResponse RecordMintInfoResponse
+	_, _, err := utils.HttpRequest(http.MethodPost, apiUrl, &mcsCient.JwtToken, recordMintInfoParams, nil, &recordMintInfoResponse)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	if !strings.EqualFold(recordMintInfoResponse.Status, constants.HTTP_STATUS_SUCCESS) {
+		err := fmt.Errorf("get parameters failed, status:%s,message:%s", recordMintInfoResponse.Status, recordMintInfoResponse.Message)
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	return recordMintInfoResponse.Data, nil
 }

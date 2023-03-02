@@ -155,3 +155,30 @@ func TestGetNftCollections(t *testing.T) {
 		logs.GetLogger().Info(*nftCollection)
 	}
 }
+
+func TestRecordMintInfo(t *testing.T) {
+	mcsClient, err := GetMcsClient()
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return
+	}
+
+	name := "abc"
+	description := "hello"
+	recordMintInfoParams := &RecordMintInfoParams{
+		SourceFileIploadId: 1,
+		NftCollectionId:    52,
+		TxHash:             "0xesdd",
+		TokenId:            5,
+		Name:               &name,
+		Description:        &description,
+	}
+
+	sourceFileMint, err := mcsClient.RecordMintInfo(recordMintInfoParams)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return
+	}
+
+	logs.GetLogger().Info(*sourceFileMint)
+}

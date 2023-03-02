@@ -35,6 +35,7 @@ const (
 
 	API_URL_STORAGE_WRITE_NFT_COLLECTION = "/api/v1/storage/mint/nft_collection"
 	API_URL_STORAGE_GET_NFT_COLLECTIONS  = "/api/v1/storage/mint/nft_collections"
+	API_URL_STORAGE_RECORD_MINT_INFO     = "/api/v1/storage/mint/info"
 
 	MINT_INFO = "/api/v1/storage/mint/info"
 
