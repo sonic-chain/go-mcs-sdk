@@ -50,7 +50,7 @@ func TestGetSystemParam(t *testing.T) {
 }
 
 func TestGetFilPrice(t *testing.T) {
-	price, err := GetFilPrice()
+	price, err := GetHistoricalAveragePriceVerified()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -60,7 +60,7 @@ func TestGetFilPrice(t *testing.T) {
 }
 
 func TestGetAmount(t *testing.T) {
-	amount, err := GetAmount(1, 0.1)
+	amount, err := GetAmount(1, 0.1, 1, 2)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
