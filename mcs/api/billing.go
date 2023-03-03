@@ -183,18 +183,20 @@ func (mcsCient *McsClient) PayForFile(params PayForFileParams) (*string, error) 
 		return nil, err
 	}
 
+	minPayment := big.NewInt(amount)
+	amount2Lock := big.NewInt(int64(float64(amount) * float64(systemParams.PayMultiplyFactor)))
 	lockTime := int64(constants.DURATION_DAYS_DEFAULT) * constants.SECOND_PER_DAY
 	var paymentParam = contract.IPaymentMinimallockPaymentParam{
 		Id:         params.WCid,
-		MinPayment: big.NewInt(amount),
-		Amount:     big.NewInt(int64(float64(amount) * float64(systemParams.PayMultiplyFactor))),
+		MinPayment: minPayment,
+		Amount:     amount2Lock,
 		LockTime:   big.NewInt(lockTime),
 		Recipient:  common.HexToAddress(systemParams.PaymentRecipientAddress),
 		Size:       big.NewInt(params.FileSizeByte),
 		CopyLimit:  constants.COPY_NUMBER_LIMIT,
 	}
 
-	txHashApprove, err := Approve(params, systemParams, privateKey, amount)
+	txHashApprove, err := Approve(params, systemParams, privateKey, amount2Lock)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -222,9 +224,7 @@ func (mcsCient *McsClient) PayForFile(params PayForFileParams) (*string, error) 
 	return &txHash, nil
 }
 
-func Approve(params PayForFileParams, systemParams *SystemParam, privateKey *ecdsa.PrivateKey, amount int64) (*string, error) {
-	USDCSpender := common.HexToAddress(systemParams.PaymentContractAddress)
-
+func Approve(params PayForFileParams, systemParams *SystemParam, privateKey *ecdsa.PrivateKey, amount *big.Int) (*string, error) {
 	publicKey := privateKey.Public()
 	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
 	if !ok {
@@ -233,20 +233,9 @@ func Approve(params PayForFileParams, systemParams *SystemParam, privateKey *ecd
 		return nil, err
 	}
 
-	WalletAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
+	walletAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
 
 	client, err := ethclient.Dial(params.RpcUrl)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-	ChainId, err := client.ChainID(context.Background())
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	auth, err := bind.NewKeyedTransactorWithChainID(privateKey, ChainId)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -263,22 +252,40 @@ func Approve(params PayForFileParams, systemParams *SystemParam, privateKey *ecd
 		From:        common.Address{},
 		BlockNumber: nil,
 		Context:     nil,
-	}, WalletAddress)
+	}, walletAddress)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
-	if amount > balance.Int64() {
+	logs.GetLogger().Info(walletAddress)
+	balanceInt64 := balance.Int64()
+
+	if amount.Int64() > balanceInt64 {
 		err := fmt.Errorf("BalanceOf error")
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
+	USDCSpender := common.HexToAddress(systemParams.PaymentContractAddress)
+
+	ChainId, err := client.ChainID(context.Background())
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	auth, err := bind.NewKeyedTransactorWithChainID(privateKey, ChainId)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	logs.GetLogger().Info("USDCSpender:", USDCSpender)
 	tx, err := ERC20.Approve(&bind.TransactOpts{
 		From:   auth.From,
 		Signer: auth.Signer,
-	}, USDCSpender, big.NewInt(amount))
+	}, USDCSpender, amount)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
