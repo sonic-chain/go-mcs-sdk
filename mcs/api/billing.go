@@ -1,12 +1,19 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"go-mcs-sdk/mcs/common/constants"
+	"go-mcs-sdk/mcs/contract"
+	"math/big"
 	"net/url"
 	"strings"
 
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/filswan/go-swan-lib/client/web"
 	"github.com/filswan/go-swan-lib/logs"
 	libutils "github.com/filswan/go-swan-lib/utils"
@@ -171,4 +178,82 @@ func (mcsCient *MCSClient) GetBillingHistory(billingHistoryParams BillingHistory
 	}
 
 	return billingHistoryResponse.Data.Billing, &billingHistoryResponse.Data.TotalRecordCount, nil
+}
+
+type PayForFileParams struct {
+	WCid                    string
+	FileSizeByte            int64
+	Rate                    float64
+	PayMultiplyFactor       float64
+	PrivateKey              string
+	RpcUrl                  string
+	PaymentRecipientAddress string
+	PaymentContractAddress  string
+}
+
+func PayForFile(params PayForFileParams) (*string, error) {
+	amount, err := GetAmount(params.FileSizeByte, params.Rate)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+	privateKey, err := crypto.HexToECDSA(params.PrivateKey)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	client, err := ethclient.Dial(params.RpcUrl)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+	ChainId, err := client.ChainID(context.Background())
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	auth, err := bind.NewKeyedTransactorWithChainID(privateKey, ChainId)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	SwanPayment, err := contract.NewSwanPayment(common.HexToAddress(params.PaymentContractAddress), client)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	lockTime := int64(constants.DURATION_DAYS_DEFAULT) * constants.SECOND_PER_DAY
+	var paymentParam = contract.IPaymentMinimallockPaymentParam{
+		Id:         params.WCid,
+		MinPayment: big.NewInt(int64(amount)),
+		Amount:     big.NewInt(int64(float64(amount) * params.PayMultiplyFactor)),
+		LockTime:   big.NewInt(lockTime),
+		Recipient:  common.HexToAddress(params.PaymentRecipientAddress),
+		Size:       big.NewInt(params.FileSizeByte),
+		CopyLimit:  5,
+	}
+	tx, err := SwanPayment.LockTokenPayment(&bind.TransactOpts{
+		From:   auth.From,
+		Signer: auth.Signer,
+	}, paymentParam)
+
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	bind.WaitMined(context.Background(), client, tx)
+	tx, _, err = client.TransactionByHash(context.Background(), tx.Hash())
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	txHash := tx.Hash().String()
+
+	return &txHash, nil
 }
