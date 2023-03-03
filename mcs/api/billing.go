@@ -1,46 +1,34 @@
 package api
 
 import (
-	"encoding/json"
+	"context"
 	"fmt"
-	"go-mcs-sdk/mcs/common/constants"
+	"go-mcs-sdk/mcs/api/common/constants"
+	"go-mcs-sdk/mcs/contract"
+	"math/big"
 	"net/url"
 	"strings"
 
-	"github.com/filswan/go-swan-lib/client/web"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/filswan/go-swan-lib/logs"
 	libutils "github.com/filswan/go-swan-lib/utils"
 )
 
-type FileCoinPriceResponse struct {
-	Status  string  `json:"status"`
-	Data    float64 `json:"data"`
-	Message string  `json:"message"`
-}
-
-func (mcsCient *MCSClient) GetFileCoinPrice() (*float64, error) {
+func (mcsCient *McsClient) GetFileCoinPrice() (*float64, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_BILLING_FILECOIN_PRICE)
 	params := url.Values{}
-	response, err := web.HttpGet(apiUrl, mcsCient.JwtToken, strings.NewReader(params.Encode()))
+
+	var price float64
+	err := HttpGet(apiUrl, mcsCient.JwtToken, strings.NewReader(params.Encode()), &price)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
-	var fileCoinPriceResponse FileCoinPriceResponse
-	err = json.Unmarshal(response, &fileCoinPriceResponse)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	if !strings.EqualFold(fileCoinPriceResponse.Status, constants.HTTP_STATUS_SUCCESS) {
-		err := fmt.Errorf("get parameters failed, status:%s,message:%s", fileCoinPriceResponse.Status, fileCoinPriceResponse.Message)
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	return &fileCoinPriceResponse.Data, nil
+	return &price, nil
 }
 
 type LockPaymentInfo struct {
@@ -50,36 +38,19 @@ type LockPaymentInfo struct {
 	TokenAddress string `json:"token_address"`
 }
 
-type LockPaymentInfoResponse struct {
-	Status  string          `json:"status"`
-	Data    LockPaymentInfo `json:"data"`
-	Message string          `json:"message"`
-}
-
-func (mcsCient *MCSClient) GetLockPaymentInfo(fileUploadId int64) (*LockPaymentInfo, error) {
+func (mcsCient *McsClient) GetLockPaymentInfo(fileUploadId int64) (*LockPaymentInfo, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_BILLING_GET_PAYMENT_INFO)
 	apiUrl = apiUrl + "?source_file_upload_id=" + fmt.Sprintf("%d", fileUploadId)
 	params := url.Values{}
-	response, err := web.HttpGet(apiUrl, mcsCient.JwtToken, strings.NewReader(params.Encode()))
+
+	var lockPaymentInfo LockPaymentInfo
+	err := HttpGet(apiUrl, mcsCient.JwtToken, strings.NewReader(params.Encode()), &lockPaymentInfo)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
-	var lockPaymentInfoResponse LockPaymentInfoResponse
-	err = json.Unmarshal(response, &lockPaymentInfoResponse)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	if !strings.EqualFold(lockPaymentInfoResponse.Status, constants.HTTP_STATUS_SUCCESS) {
-		err := fmt.Errorf("get parameters failed, status:%s,message:%s", lockPaymentInfoResponse.Status, lockPaymentInfoResponse.Message)
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	return &lockPaymentInfoResponse.Data, nil
+	return &lockPaymentInfo, nil
 }
 
 type BillingHistory struct {
@@ -96,15 +67,6 @@ type BillingHistory struct {
 	TokenName    string `json:"token_name"`
 }
 
-type BillingHistoryResponse struct {
-	Status string `json:"status"`
-	Data   struct {
-		Billing          []*BillingHistory `json:"billing"`
-		TotalRecordCount int64             `json:"total_record_count"`
-	} `json:"data"`
-	Message string `json:"message"`
-}
-
 type BillingHistoryParams struct {
 	PageNumber *int    `json:"page_number"`
 	PageSize   *int    `json:"page_size"`
@@ -114,7 +76,7 @@ type BillingHistoryParams struct {
 	IsAscend   *string `json:"is_ascend"`
 }
 
-func (mcsCient *MCSClient) GetBillingHistory(billingHistoryParams BillingHistoryParams) ([]*BillingHistory, *int64, error) {
+func (mcsCient *McsClient) GetBillingHistory(billingHistoryParams BillingHistoryParams) ([]*BillingHistory, *int64, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_BILLING_HISTORY)
 	paramItems := []string{}
 	if billingHistoryParams.PageNumber != nil {
@@ -150,25 +112,106 @@ func (mcsCient *MCSClient) GetBillingHistory(billingHistoryParams BillingHistory
 		apiUrl = strings.TrimRight(apiUrl, "&")
 	}
 
-	logs.GetLogger().Info(apiUrl)
-	response, err := web.HttpGet(apiUrl, mcsCient.JwtToken, nil)
+	var billings struct {
+		Billing          []*BillingHistory `json:"billing"`
+		TotalRecordCount int64             `json:"total_record_count"`
+	}
+
+	err := HttpGet(apiUrl, mcsCient.JwtToken, nil, &billings)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, nil, err
 	}
 
-	var billingHistoryResponse BillingHistoryResponse
-	err = json.Unmarshal(response, &billingHistoryResponse)
+	return billings.Billing, &billings.TotalRecordCount, nil
+}
+
+type PayForFileParams struct {
+	WCid         string
+	FileSizeByte int64
+	Rate         float64
+	PrivateKey   string
+	RpcUrl       string
+}
+
+func (mcsCient *McsClient) PayForFile(params PayForFileParams) (*string, error) {
+	historicalAveragePriceVerified, err := GetHistoricalAveragePriceVerified()
 	if err != nil {
 		logs.GetLogger().Error(err)
-		return nil, nil, err
+		return nil, err
 	}
 
-	if !strings.EqualFold(billingHistoryResponse.Status, constants.HTTP_STATUS_SUCCESS) {
-		err := fmt.Errorf("get parameters failed, status:%s,message:%s", billingHistoryResponse.Status, billingHistoryResponse.Message)
+	systemParams, err := mcsCient.GetSystemParam()
+	if err != nil {
 		logs.GetLogger().Error(err)
-		return nil, nil, err
+		return nil, err
 	}
 
-	return billingHistoryResponse.Data.Billing, &billingHistoryResponse.Data.TotalRecordCount, nil
+	amount, err := GetAmount(params.FileSizeByte, historicalAveragePriceVerified, systemParams.FilecoinPrice, constants.COPY_NUMBER_LIMIT)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	privateKey, err := crypto.HexToECDSA(params.PrivateKey)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	client, err := ethclient.Dial(params.RpcUrl)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	ChainId, err := client.ChainID(context.Background())
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	auth, err := bind.NewKeyedTransactorWithChainID(privateKey, ChainId)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	SwanPayment, err := contract.NewSwanPayment(common.HexToAddress(systemParams.PaymentContractAddress), client)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	lockTime := int64(constants.DURATION_DAYS_DEFAULT) * constants.SECOND_PER_DAY
+	var paymentParam = contract.IPaymentMinimallockPaymentParam{
+		Id:         params.WCid,
+		MinPayment: big.NewInt(amount),
+		Amount:     big.NewInt(int64(float64(amount) * float64(systemParams.PayMultiplyFactor))),
+		LockTime:   big.NewInt(lockTime),
+		Recipient:  common.HexToAddress(systemParams.PaymentRecipientAddress),
+		Size:       big.NewInt(params.FileSizeByte),
+		CopyLimit:  constants.COPY_NUMBER_LIMIT,
+	}
+
+	tx, err := SwanPayment.LockTokenPayment(&bind.TransactOpts{
+		From:   auth.From,
+		Signer: auth.Signer,
+	}, paymentParam)
+
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	bind.WaitMined(context.Background(), client, tx)
+	tx, _, err = client.TransactionByHash(context.Background(), tx.Hash())
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	txHash := tx.Hash().String()
+
+	return &txHash, nil
 }

@@ -1,7 +1,7 @@
 package api
 
 import (
-	"go-mcs-sdk/mcs/common/constants"
+	"go-mcs-sdk/mcs/api/common/constants"
 	"go-mcs-sdk/mcs/config"
 	"log"
 	"testing"
@@ -9,7 +9,7 @@ import (
 	"github.com/filswan/go-swan-lib/logs"
 )
 
-func TestMcsUploadFile(t *testing.T) {
+func TestUploadFile(t *testing.T) {
 	mcsClient, err := GetMcsClient()
 	if err != nil {
 		logs.GetLogger().Error(err)
@@ -51,7 +51,7 @@ func TestGetDeals(t *testing.T) {
 	logs.GetLogger().Info(*recCnt)
 }
 
-func TestMcsGetDealDetail(t *testing.T) {
+func TestGetDealDetail(t *testing.T) {
 	mcsClient, err := GetMcsClient()
 	if err != nil {
 		logs.GetLogger().Error(err)
@@ -71,7 +71,7 @@ func TestMcsGetDealDetail(t *testing.T) {
 	logs.GetLogger().Info(*daoThreshold)
 }
 
-func TestMcsGetDealLog(t *testing.T) {
+func TestGetDealLogs(t *testing.T) {
 	mcsClient, err := GetMcsClient()
 	if err != nil {
 		logs.GetLogger().Error(err)
@@ -89,7 +89,7 @@ func TestMcsGetDealLog(t *testing.T) {
 	}
 }
 
-func TestMcsGetSourceFileUpload(t *testing.T) {
+func TestGetSourceFileUpload(t *testing.T) {
 	mcsClient, err := GetMcsClient()
 	if err != nil {
 		logs.GetLogger().Error(err)
@@ -153,5 +153,50 @@ func TestGetNftCollections(t *testing.T) {
 
 	for _, nftCollection := range nftCollections {
 		logs.GetLogger().Info(*nftCollection)
+	}
+}
+
+func TestRecordMintInfo(t *testing.T) {
+	mcsClient, err := GetMcsClient()
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return
+	}
+
+	name := "abc"
+	description := "hello"
+	recordMintInfoParams := &RecordMintInfoParams{
+		SourceFileUploadId: 148234,
+		NftCollectionId:    77,
+		TxHash:             "0xesdd",
+		TokenId:            5,
+		Name:               &name,
+		Description:        &description,
+	}
+
+	sourceFileMint, err := mcsClient.RecordMintInfo(recordMintInfoParams)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return
+	}
+
+	logs.GetLogger().Info(*sourceFileMint)
+}
+
+func TestGetMintInfo(t *testing.T) {
+	mcsClient, err := GetMcsClient()
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return
+	}
+
+	sourceFileMints, err := mcsClient.GetMintInfo(1)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return
+	}
+
+	for _, sourceFileMint := range sourceFileMints {
+		logs.GetLogger().Info(*sourceFileMint)
 	}
 }

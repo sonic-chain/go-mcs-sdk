@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"go-mcs-sdk/mcs/common/constants"
+	"go-mcs-sdk/mcs/api/common/constants"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -13,7 +13,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/filswan/go-swan-lib/client/web"
 	"github.com/filswan/go-swan-lib/logs"
 	libutils "github.com/filswan/go-swan-lib/utils"
 )
@@ -28,12 +27,11 @@ type UploadFile struct {
 }
 
 type UploadFileResponse struct {
-	Status  string     `json:"status"`
-	Data    UploadFile `json:"data"`
-	Message string     `json:"message"`
+	Response
+	Data UploadFile `json:"data"`
 }
 
-func (mcsCient *MCSClient) UploadFile(filePath string, fileType int) (*UploadFile, error) {
+func (mcsCient *McsClient) UploadFile(filePath string, fileType int) (*UploadFile, error) {
 	httpRequestUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_STORAGE_UPLOAD_FILE)
 	payload := &bytes.Buffer{}
 	writer := multipart.NewWriter(payload)
@@ -149,15 +147,6 @@ type Deal struct {
 	OfflineDeals       []*OfflineDeal `json:"offline_deal"`
 }
 
-type DealsResponse struct {
-	Status string `json:"status"`
-	Data   struct {
-		Deals            []*Deal `json:"source_file_upload"`
-		TotalRecordCount int64   `json:"total_record_count"`
-	} `json:"data"`
-	Message string `json:"message"`
-}
-
 type DealsParams struct {
 	PageNumber *int    `json:"page_number"`
 	PageSize   *int    `json:"page_size"`
@@ -168,7 +157,7 @@ type DealsParams struct {
 	IsAscend   *string `json:"is_ascend"`
 }
 
-func (mcsCient *MCSClient) GetDeals(dealsParams DealsParams) ([]*Deal, *int64, error) {
+func (mcsCient *McsClient) GetDeals(dealsParams DealsParams) ([]*Deal, *int64, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_STORAGE_GET_DEALS)
 	paramItems := []string{}
 	if dealsParams.PageNumber != nil {
@@ -208,27 +197,18 @@ func (mcsCient *MCSClient) GetDeals(dealsParams DealsParams) ([]*Deal, *int64, e
 		apiUrl = strings.TrimRight(apiUrl, "&")
 	}
 
-	logs.GetLogger().Info(apiUrl)
-	response, err := web.HttpGet(apiUrl, mcsCient.JwtToken, nil)
+	var deals struct {
+		Deals            []*Deal `json:"source_file_upload"`
+		TotalRecordCount int64   `json:"total_record_count"`
+	}
+
+	err := HttpGet(apiUrl, mcsCient.JwtToken, nil, &deals)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, nil, err
 	}
 
-	var dealsResponse DealsResponse
-	err = json.Unmarshal(response, &dealsResponse)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, nil, err
-	}
-
-	if !strings.EqualFold(dealsResponse.Status, constants.HTTP_STATUS_SUCCESS) {
-		err := fmt.Errorf("get parameters failed, status:%s,message:%s", dealsResponse.Status, dealsResponse.Message)
-		logs.GetLogger().Error(err)
-		return nil, nil, err
-	}
-
-	return dealsResponse.Data.Deals, &dealsResponse.Data.TotalRecordCount, nil
+	return deals.Deals, &deals.TotalRecordCount, nil
 }
 
 type SourceFileUploadDeal struct {
@@ -270,41 +250,26 @@ type DaoSignature struct {
 	CreateAt     *int64  `json:"create_at"`
 }
 
-type SourceFileUploadDealResponse struct {
-	Status string `json:"status"`
-	Data   struct {
-		SourceFileUploadDeal SourceFileUploadDeal `json:"source_file_upload_deal"`
-		DaoThreshold         int                  `json:"dao_threshold"`
-		DaoSignatures        []*DaoSignature      `json:"dao_signature"`
-	} `json:"data"`
-	Message string `json:"message"`
+type GetDealDetailResponseData struct {
+	SourceFileUploadDeal SourceFileUploadDeal `json:"source_file_upload_deal"`
+	DaoThreshold         int                  `json:"dao_threshold"`
+	DaoSignatures        []*DaoSignature      `json:"dao_signature"`
 }
 
-func (mcsCient *MCSClient) GetDealDetail(sourceFileUploadId, dealId int64) (*SourceFileUploadDeal, []*DaoSignature, *int, error) {
+func (mcsCient *McsClient) GetDealDetail(sourceFileUploadId, dealId int64) (*SourceFileUploadDeal, []*DaoSignature, *int, error) {
 	params := strconv.FormatInt(dealId, 10) + "?source_file_upload_id=" + strconv.FormatInt(sourceFileUploadId, 10)
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_STORAGE_GET_DEAL_DETAIL, params)
-	response, err := web.HttpGet(apiUrl, mcsCient.JwtToken, nil)
+
+	var dealDetail GetDealDetailResponseData
+	err := HttpGet(apiUrl, mcsCient.JwtToken, nil, &dealDetail)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, nil, nil, err
 	}
 
-	var sourceFileUploadDealResponse SourceFileUploadDealResponse
-	err = json.Unmarshal(response, &sourceFileUploadDealResponse)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, nil, nil, err
-	}
-
-	if !strings.EqualFold(sourceFileUploadDealResponse.Status, constants.HTTP_STATUS_SUCCESS) {
-		err := fmt.Errorf("get parameters failed, status:%s,message:%s", sourceFileUploadDealResponse.Status, sourceFileUploadDealResponse.Message)
-		logs.GetLogger().Error(err)
-		return nil, nil, nil, err
-	}
-
-	sourceFileUploadDeal := &sourceFileUploadDealResponse.Data.SourceFileUploadDeal
-	daoSignatures := sourceFileUploadDealResponse.Data.DaoSignatures
-	daoThreshold := &sourceFileUploadDealResponse.Data.DaoThreshold
+	sourceFileUploadDeal := &dealDetail.SourceFileUploadDeal
+	daoSignatures := dealDetail.DaoSignatures
+	daoThreshold := &dealDetail.DaoThreshold
 
 	return sourceFileUploadDeal, daoSignatures, daoThreshold, nil
 }
@@ -318,37 +283,25 @@ type OfflineDealLog struct {
 }
 
 type OfflineDealLogResponse struct {
-	Status string `json:"status"`
-	Data   struct {
+	Response
+	Data struct {
 		OfflineDealLogs []*OfflineDealLog `json:"offline_deal_log"`
 	} `json:"data"`
-	Message string `json:"message"`
 }
 
-func (mcsCient *MCSClient) GetDealLogs(offlineDealId int64) ([]*OfflineDealLog, error) {
+func (mcsCient *McsClient) GetDealLogs(offlineDealId int64) ([]*OfflineDealLog, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_STORAGE_GET_DEAL_LOG, strconv.FormatInt(offlineDealId, 10))
-	response, err := web.HttpGet(apiUrl, mcsCient.JwtToken, nil)
+
+	var dealLogs struct {
+		OfflineDealLogs []*OfflineDealLog `json:"offline_deal_log"`
+	}
+	err := HttpGet(apiUrl, mcsCient.JwtToken, nil, &dealLogs)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
-	var offlineDealLogResponse OfflineDealLogResponse
-	err = json.Unmarshal(response, &offlineDealLogResponse)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	if !strings.EqualFold(offlineDealLogResponse.Status, constants.HTTP_STATUS_SUCCESS) {
-		err := fmt.Errorf("get parameters failed, status:%s,message:%s", offlineDealLogResponse.Status, offlineDealLogResponse.Message)
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	offlineDealLogs := offlineDealLogResponse.Data.OfflineDealLogs
-
-	return offlineDealLogs, nil
+	return dealLogs.OfflineDealLogs, nil
 }
 
 type SourceFileUpload struct {
@@ -357,56 +310,27 @@ type SourceFileUpload struct {
 	IsFree bool   `json:"is_free"`
 }
 
-type SourceFileUploadResponse struct {
-	Response
-	Data struct {
-		SourceFileUpload *SourceFileUpload `json:"source_file_upload"`
-	} `json:"data"`
-}
-
-func (mcsCient *MCSClient) GetSourceFileUpload(sourceFileUploadId int64) (*SourceFileUpload, error) {
+func (mcsCient *McsClient) GetSourceFileUpload(sourceFileUploadId int64) (*SourceFileUpload, error) {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_STORAGE_GET_SOURCE_FILE_UPLOAD, strconv.FormatInt(sourceFileUploadId, 10))
-	response, err := web.HttpGet(apiUrl, mcsCient.JwtToken, nil)
+
+	var sourceFileUpload struct {
+		SourceFileUpload *SourceFileUpload `json:"source_file_upload"`
+	}
+
+	err := HttpGet(apiUrl, mcsCient.JwtToken, nil, &sourceFileUpload)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
-	var sourceFileUploadResponse SourceFileUploadResponse
-	err = json.Unmarshal(response, &sourceFileUploadResponse)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	if !strings.EqualFold(sourceFileUploadResponse.Status, constants.HTTP_STATUS_SUCCESS) {
-		err := fmt.Errorf("get parameters failed, status:%s,message:%s", sourceFileUploadResponse.Status, sourceFileUploadResponse.Message)
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	sourceFileUpload := sourceFileUploadResponse.Data.SourceFileUpload
-
-	return sourceFileUpload, nil
+	return sourceFileUpload.SourceFileUpload, nil
 }
 
-func (mcsCient *MCSClient) UnpinSourceFile(sourceFileUploadId int64) error {
+func (mcsCient *McsClient) UnpinSourceFile(sourceFileUploadId int64) error {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_STORAGE_UNPIN_SOURCE_FILE, strconv.FormatInt(sourceFileUploadId, 10))
-	result, err := web.HttpPost(apiUrl, mcsCient.JwtToken, nil)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return err
-	}
 
-	var response Response
-	err = json.Unmarshal(result, &response)
+	err := HttpPost(apiUrl, mcsCient.JwtToken, nil, nil)
 	if err != nil {
-		logs.GetLogger().Error(err)
-		return err
-	}
-
-	if !strings.EqualFold(response.Status, constants.HTTP_STATUS_SUCCESS) {
-		err := fmt.Errorf("get parameters failed, status:%s,message:%s", response.Status, response.Message)
 		logs.GetLogger().Error(err)
 		return err
 	}
@@ -424,23 +348,11 @@ type NftCollectionParams struct {
 	TxHash          string  `json:"tx_hash"`
 }
 
-func (mcsCient *MCSClient) WriteNftCollection(nftCollectionParams NftCollectionParams) error {
+func (mcsCient *McsClient) WriteNftCollection(nftCollectionParams NftCollectionParams) error {
 	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_STORAGE_WRITE_NFT_COLLECTION)
-	result, err := web.HttpPost(apiUrl, mcsCient.JwtToken, nftCollectionParams)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return err
-	}
 
-	var response Response
-	err = json.Unmarshal(result, &response)
+	err := HttpPost(apiUrl, mcsCient.JwtToken, nftCollectionParams, nil)
 	if err != nil {
-		logs.GetLogger().Error(err)
-		return err
-	}
-
-	if !strings.EqualFold(response.Status, constants.HTTP_STATUS_SUCCESS) {
-		err := fmt.Errorf("get parameters failed, status:%s,message:%s", response.Status, response.Message)
 		logs.GetLogger().Error(err)
 		return err
 	}
@@ -465,31 +377,70 @@ type NftCollection struct {
 	IsDefault         bool    `json:"is_default"`
 }
 
-type GetNftCollectionsResponse struct {
-	Response
-	Data []*NftCollection `json:"data"`
+func (mcsCient *McsClient) GetNftCollections() ([]*NftCollection, error) {
+	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_STORAGE_GET_NFT_COLLECTIONS)
+
+	var nftCollections []*NftCollection
+	err := HttpGet(apiUrl, mcsCient.JwtToken, nil, &nftCollections)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	return nftCollections, nil
 }
 
-func (mcsCient *MCSClient) GetNftCollections() ([]*NftCollection, error) {
-	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_STORAGE_GET_NFT_COLLECTIONS)
-	result, err := web.HttpGet(apiUrl, mcsCient.JwtToken, nil)
+type RecordMintInfoParams struct {
+	SourceFileUploadId int64   `json:"source_file_upload_id"`
+	NftCollectionId    int64   `json:"nft_collection_id"`
+	TxHash             string  `json:"tx_hash"`
+	TokenId            int64   `json:"token_id"`
+	Name               *string `json:"name"`
+	Description        *string `json:"description"`
+}
+
+type SourceFileMint struct {
+	ID                 int64   `json:"id"`
+	SourceFileUploadId int64   `json:"source_file_upload_id"`
+	NftTxHash          string  `json:"nft_tx_hash"`
+	MintAddress        string  `json:"mint_address"`
+	NftCollectionId    int64   `json:"nft_collection_id"`
+	TokenId            int64   `json:"token_id"`
+	Name               *string `json:"name"`
+	Description        *string `json:"description"`
+	CreateAt           int64   `json:"create_at"`
+	UpdateAt           int64   `json:"update_at"`
+}
+
+func (mcsCient *McsClient) RecordMintInfo(recordMintInfoParams *RecordMintInfoParams) (*SourceFileMint, error) {
+	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_STORAGE_RECORD_MINT_INFO)
+
+	var sourceFileMint SourceFileMint
+	err := HttpPost(apiUrl, mcsCient.JwtToken, recordMintInfoParams, &sourceFileMint)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
-	var getNftCollectionsResponse GetNftCollectionsResponse
-	err = json.Unmarshal(result, &getNftCollectionsResponse)
+	return &sourceFileMint, nil
+}
+
+type SourceFileMintOut struct {
+	SourceFileMint
+	NftCollectionAddress  string  `json:"nft_collection_address"`
+	NftCollectionName     *string `json:"nft_collection_name"`
+	NftCollectionImageUrl *string `json:"nft_collection_image_url"`
+}
+
+func (mcsCient *McsClient) GetMintInfo(sourceFileUploadId int64) ([]*SourceFileMintOut, error) {
+	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_STORAGE_GET_MINT_INFO, strconv.FormatInt(sourceFileUploadId, 10))
+
+	var sourceFileMints []*SourceFileMintOut
+	err := HttpGet(apiUrl, mcsCient.JwtToken, nil, &sourceFileMints)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
-	if !strings.EqualFold(getNftCollectionsResponse.Status, constants.HTTP_STATUS_SUCCESS) {
-		err := fmt.Errorf("get parameters failed, status:%s,message:%s", getNftCollectionsResponse.Status, getNftCollectionsResponse.Message)
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	return getNftCollectionsResponse.Data, nil
+	return sourceFileMints, nil
 }

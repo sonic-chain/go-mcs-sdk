@@ -3,10 +3,9 @@ package api
 import (
 	"bytes"
 	"fmt"
+	"go-mcs-sdk/mcs/api/common/constants"
 	"go-mcs-sdk/mcs/common"
-	"go-mcs-sdk/mcs/common/constants"
 	"io"
-	"io/ioutil"
 	"log"
 	"mime/multipart"
 	"net/http"
@@ -16,6 +15,8 @@ import (
 	"regexp"
 	"strconv"
 	"unsafe"
+
+	libutils "github.com/filswan/go-swan-lib/utils"
 )
 
 type BucketClient struct {
@@ -27,9 +28,9 @@ func NewBucketClient() *BucketClient {
 	return &bucketClient
 }
 
-func (client *BucketClient) GetBuckets() ([]byte, error) {
-	httpRequestUrl := client.BaseURL + constants.BUCKET_LIST
-	bucketListInfoBytes, err := common.HttpGet(httpRequestUrl, client.JwtToken, nil)
+func (client *McsClient) GetBuckets() ([]byte, error) {
+	apiUrl := libutils.UrlJoin(client.BaseUrl, constants.BUCKET_LIST)
+	bucketListInfoBytes, err := common.HttpGet(apiUrl, client.JwtToken, nil)
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -38,11 +39,11 @@ func (client *BucketClient) GetBuckets() ([]byte, error) {
 	return bucketListInfoBytes, nil
 }
 
-func (client *BucketClient) CreateBucket(bucketName string) ([]byte, error) {
-	httpRequestUrl := client.BaseURL + constants.CREATE_BUCKET
+func (client *McsClient) CreateBucket(bucketName string) ([]byte, error) {
+	apiUrl := libutils.UrlJoin(client.BaseUrl, constants.CREATE_BUCKET)
 	params := make(map[string]string)
 	params["bucket_name"] = bucketName
-	response, err := common.HttpPost(httpRequestUrl, client.JwtToken, params)
+	response, err := common.HttpPost(apiUrl, client.JwtToken, params)
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -51,9 +52,9 @@ func (client *BucketClient) CreateBucket(bucketName string) ([]byte, error) {
 	return response, nil
 }
 
-func (client *BucketClient) DeleteBucket(bucketUid string) ([]byte, error) {
-	httpRequestUrl := client.BaseURL + constants.DELETE_BUCKET + bucketUid
-	response, err := common.HttpGet(httpRequestUrl, client.JwtToken, nil)
+func (client *McsClient) DeleteBucket(bucketUid string) ([]byte, error) {
+	apiUrl := libutils.UrlJoin(client.BaseUrl, constants.DELETE_BUCKET+bucketUid)
+	response, err := common.HttpGet(apiUrl, client.JwtToken, nil)
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -62,11 +63,11 @@ func (client *BucketClient) DeleteBucket(bucketUid string) ([]byte, error) {
 	return response, nil
 }
 
-func (client *BucketClient) GetFileInfo(fileId int) ([]byte, error) {
-	httpRequestUrl := client.BaseURL + constants.FILE_INFO + strconv.Itoa(fileId)
+func (client *McsClient) GetFileInfo(fileId int) ([]byte, error) {
+	apiUrl := libutils.UrlJoin(client.BaseUrl, constants.FILE_INFO, strconv.Itoa(fileId))
 	params := make(map[string]int)
 	params["file_id"] = fileId
-	response, err := common.HttpGet(httpRequestUrl, client.JwtToken, params)
+	response, err := common.HttpGet(apiUrl, client.JwtToken, params)
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -75,11 +76,11 @@ func (client *BucketClient) GetFileInfo(fileId int) ([]byte, error) {
 	return response, nil
 }
 
-func (client *BucketClient) DeleteFile(fileId int) ([]byte, error) {
-	httpRequestUrl := client.BaseURL + constants.DELETE_FILE + strconv.Itoa(fileId)
+func (client *McsClient) DeleteFile(fileId int) ([]byte, error) {
+	apiUrl := libutils.UrlJoin(client.BaseUrl, constants.DELETE_FILE, strconv.Itoa(fileId))
 	params := make(map[string]int)
 	params["file_id"] = fileId
-	response, err := common.HttpGet(httpRequestUrl, client.JwtToken, params)
+	response, err := common.HttpGet(apiUrl, client.JwtToken, params)
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -88,9 +89,9 @@ func (client *BucketClient) DeleteFile(fileId int) ([]byte, error) {
 	return response, nil
 }
 
-func (client *BucketClient) GetFileList(fileUid, limit, offset string) ([]byte, error) {
-	httpRequestUrl := client.BaseURL + constants.FILE_LIST + fileUid + "&limit=" + limit + "&offset=" + offset
-	response, err := common.HttpGet(httpRequestUrl, client.JwtToken, nil)
+func (client *McsClient) GetFileList(fileUid, limit, offset string) ([]byte, error) {
+	apiUrl := libutils.UrlJoin(client.BaseUrl, constants.FILE_LIST) + fileUid + "&limit=" + limit + "&offset=" + offset
+	response, err := common.HttpGet(apiUrl, client.JwtToken, nil)
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -99,13 +100,13 @@ func (client *BucketClient) GetFileList(fileUid, limit, offset string) ([]byte, 
 	return response, nil
 }
 
-func (client *BucketClient) CreateFolder(fileName, prefix, bucketUid string) ([]byte, error) {
-	httpRequestUrl := client.BaseURL + constants.CREATE_FOLDER
+func (client *McsClient) CreateFolder(fileName, prefix, bucketUid string) ([]byte, error) {
+	apiUrl := libutils.UrlJoin(client.BaseUrl, constants.CREATE_FOLDER)
 	params := make(map[string]string)
 	params["file_name"] = fileName
 	params["prefix"] = prefix
 	params["bucket_uid"] = bucketUid
-	response, err := common.HttpPost(httpRequestUrl, client.JwtToken, params)
+	response, err := common.HttpPost(apiUrl, client.JwtToken, params)
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -114,14 +115,14 @@ func (client *BucketClient) CreateFolder(fileName, prefix, bucketUid string) ([]
 	return response, nil
 }
 
-func (client *BucketClient) CheckFile(bucketUid, fileHash, fileName, prefix string) ([]byte, error) {
-	httpRequestUrl := client.BaseURL + constants.CHECK_UPLOAD
+func (client *McsClient) CheckFile(bucketUid, fileHash, fileName, prefix string) ([]byte, error) {
+	apiUrl := libutils.UrlJoin(client.BaseUrl, constants.CHECK_UPLOAD)
 	params := make(map[string]string)
 	params["bucket_uid"] = bucketUid
 	params["file_hash"] = fileHash
 	params["file_name"] = fileName
 	params["prefix"] = prefix
-	response, err := common.HttpPost(httpRequestUrl, client.JwtToken, params)
+	response, err := common.HttpPost(apiUrl, client.JwtToken, params)
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -130,8 +131,8 @@ func (client *BucketClient) CheckFile(bucketUid, fileHash, fileName, prefix stri
 	return response, nil
 }
 
-func (client *BucketClient) UploadChunk(fileHash, uploadFilePath string) ([]byte, error) {
-	httpRequestUrl := client.BaseURL + constants.UPLOAD_CHUNK
+func (client *McsClient) UploadChunk(fileHash, uploadFilePath string) ([]byte, error) {
+	apiUrl := libutils.UrlJoin(client.BaseUrl, constants.UPLOAD_CHUNK)
 	fileNameWithSuffix := path.Base(uploadFilePath)
 	payload := &bytes.Buffer{}
 	writer := multipart.NewWriter(payload)
@@ -160,7 +161,7 @@ func (client *BucketClient) UploadChunk(fileHash, uploadFilePath string) ([]byte
 		log.Println(err)
 		return nil, err
 	}
-	request, err := http.NewRequest("POST", httpRequestUrl, payload)
+	request, err := http.NewRequest("POST", apiUrl, payload)
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -174,7 +175,7 @@ func (client *BucketClient) UploadChunk(fileHash, uploadFilePath string) ([]byte
 		return nil, err
 	}
 	defer response.Body.Close()
-	responseBytes, err := ioutil.ReadAll(response.Body)
+	responseBytes, err := io.ReadAll(response.Body)
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -183,14 +184,14 @@ func (client *BucketClient) UploadChunk(fileHash, uploadFilePath string) ([]byte
 	return responseBytes, nil
 }
 
-func (client *BucketClient) MergeRequest(bucketUid, fileHash, fileName, prefix string) ([]byte, error) {
-	httpRequestUrl := client.BaseURL + constants.MERGE_FILE
+func (client *McsClient) MergeRequest(bucketUid, fileHash, fileName, prefix string) ([]byte, error) {
+	apiUrl := libutils.UrlJoin(client.BaseUrl, constants.MERGE_FILE)
 	params := make(map[string]string)
 	params["bucket_uid"] = bucketUid
 	params["file_hash"] = fileHash
 	params["file_name"] = fileName
 	params["prefix"] = prefix
-	response, err := common.HttpPost(httpRequestUrl, client.JwtToken, params)
+	response, err := common.HttpPost(apiUrl, client.JwtToken, params)
 	if err != nil {
 		log.Println(err)
 		return nil, err
