@@ -123,7 +123,7 @@ func (mcsCient *McsClient) GetSystemParam() (*SystemParam, error) {
 	return &systemParam, nil
 }
 
-func GetFilPrice() (float64, error) {
+func GetHistoricalAveragePriceVerified() (float64, error) {
 	apiUrl := constants.API_URL_FIL_PRICE_API
 
 	var storageStats struct {
@@ -152,22 +152,19 @@ func GetFilPrice() (float64, error) {
 		return -1, err
 	}
 
-	priceFloat = priceFloat / constants.BYTES_1GB / 1e8
 	return priceFloat, err
 }
 
-func GetAmount(sizeByte int64, rate float64) (float64, error) {
-	price, err := GetFilPrice()
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return -1, err
+// USDC * 1e6
+func GetAmount(fizeSizeByte int64, historicalAveragePriceVerified, fileCoinPrice float64, copyNumber int) (int64, error) {
+	fileSizeGb := float64(fizeSizeByte) / constants.BYTES_1GB
+
+	amount := historicalAveragePriceVerified * fileSizeGb * float64(constants.DURATION_DAYS_DEFAULT) * float64(copyNumber) * fileCoinPrice
+
+	amount = amount * 1e6
+	if amount <= 2 {
+		amount = 2
 	}
 
-	amount := float64(sizeByte) * price * rate * constants.DURATION_DAYS_DEFAULT / 365
-
-	if amount == 0 {
-		amount = 0.000002
-	}
-
-	return amount, nil
+	return int64(amount), nil
 }

@@ -134,7 +134,7 @@ type PayForFileParams struct {
 	RpcUrl       string
 }
 
-func (mcsCient *MCSClient) PayForFile(params PayForFileParams) (*string, error) {
+func (mcsCient *McsClient) PayForFile(params PayForFileParams) (*string, error) {
 	historicalAveragePriceVerified, err := GetHistoricalAveragePriceVerified()
 	if err != nil {
 		logs.GetLogger().Error(err)
