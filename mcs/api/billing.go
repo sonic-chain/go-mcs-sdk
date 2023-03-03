@@ -240,8 +240,8 @@ func (mcsCient *MCSClient) PayForFile(params PayForFileParams) (*string, error) 
 	lockTime := int64(constants.DURATION_DAYS_DEFAULT) * constants.SECOND_PER_DAY
 	var paymentParam = contract.IPaymentMinimallockPaymentParam{
 		Id:         params.WCid,
-		MinPayment: big.NewInt(int64(amount)),
-		Amount:     big.NewInt(int64(amount * float64(systemParams.PayMultiplyFactor))),
+		MinPayment: big.NewInt(amount),
+		Amount:     big.NewInt(int64(float64(amount) * float64(systemParams.PayMultiplyFactor))),
 		LockTime:   big.NewInt(lockTime),
 		Recipient:  common.HexToAddress(systemParams.PaymentRecipientAddress),
 		Size:       big.NewInt(params.FileSizeByte),

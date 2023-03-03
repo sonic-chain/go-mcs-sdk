@@ -79,6 +79,7 @@ func TestPayForFile(t *testing.T) {
 		PrivateKey:   config.GetConfig().PrivateKey,
 		RpcUrl:       config.GetConfig().RpcUrl,
 	}
+
 	txHash, err := mcsClient.PayForFile(payForFileParams)
 	if err != nil {
 		logs.GetLogger().Error(err)
