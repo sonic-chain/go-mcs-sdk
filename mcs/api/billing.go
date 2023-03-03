@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"crypto/ecdsa"
 	"fmt"
 	"go-mcs-sdk/mcs/api/common/constants"
 	"go-mcs-sdk/mcs/contract"
@@ -129,7 +130,6 @@ func (mcsCient *McsClient) GetBillingHistory(billingHistoryParams BillingHistory
 type PayForFileParams struct {
 	WCid         string
 	FileSizeByte int64
-	Rate         float64
 	PrivateKey   string
 	RpcUrl       string
 }
@@ -183,22 +183,30 @@ func (mcsCient *McsClient) PayForFile(params PayForFileParams) (*string, error) 
 		return nil, err
 	}
 
+	minPayment := big.NewInt(amount)
+	amount2Lock := big.NewInt(int64(float64(amount) * float64(systemParams.PayMultiplyFactor)))
 	lockTime := int64(constants.DURATION_DAYS_DEFAULT) * constants.SECOND_PER_DAY
 	var paymentParam = contract.IPaymentMinimallockPaymentParam{
 		Id:         params.WCid,
-		MinPayment: big.NewInt(amount),
-		Amount:     big.NewInt(int64(float64(amount) * float64(systemParams.PayMultiplyFactor))),
+		MinPayment: minPayment,
+		Amount:     amount2Lock,
 		LockTime:   big.NewInt(lockTime),
 		Recipient:  common.HexToAddress(systemParams.PaymentRecipientAddress),
 		Size:       big.NewInt(params.FileSizeByte),
 		CopyLimit:  constants.COPY_NUMBER_LIMIT,
 	}
 
+	txHashApprove, err := Approve(params, systemParams, privateKey, amount2Lock)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+	logs.GetLogger().Info(*txHashApprove)
+
 	tx, err := SwanPayment.LockTokenPayment(&bind.TransactOpts{
 		From:   auth.From,
 		Signer: auth.Signer,
 	}, paymentParam)
-
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -213,5 +221,83 @@ func (mcsCient *McsClient) PayForFile(params PayForFileParams) (*string, error) 
 
 	txHash := tx.Hash().String()
 
+	return &txHash, nil
+}
+
+func Approve(params PayForFileParams, systemParams *SystemParam, privateKey *ecdsa.PrivateKey, amount *big.Int) (*string, error) {
+	publicKey := privateKey.Public()
+	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
+	if !ok {
+		err := fmt.Errorf("cannot assert type: publicKey is not of type *ecdsa.PublicKey")
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	walletAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
+
+	client, err := ethclient.Dial(params.RpcUrl)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	ERC20, err := contract.NewERC20(common.HexToAddress(systemParams.UsdcAddress), client)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	balance, err := ERC20.BalanceOf(&bind.CallOpts{
+		Pending:     false,
+		From:        common.Address{},
+		BlockNumber: nil,
+		Context:     nil,
+	}, walletAddress)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	logs.GetLogger().Info(walletAddress)
+	balanceInt64 := balance.Int64()
+
+	if amount.Int64() > balanceInt64 {
+		err := fmt.Errorf("BalanceOf error")
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	USDCSpender := common.HexToAddress(systemParams.PaymentContractAddress)
+
+	ChainId, err := client.ChainID(context.Background())
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	auth, err := bind.NewKeyedTransactorWithChainID(privateKey, ChainId)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	logs.GetLogger().Info("USDCSpender:", USDCSpender)
+	tx, err := ERC20.Approve(&bind.TransactOpts{
+		From:   auth.From,
+		Signer: auth.Signer,
+	}, USDCSpender, amount)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	bind.WaitMined(context.Background(), client, tx)
+	tx, _, err = client.TransactionByHash(context.Background(), tx.Hash())
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	txHash := tx.Hash().String()
 	return &txHash, nil
 }
