@@ -75,7 +75,6 @@ func TestPayForFile(t *testing.T) {
 	payForFileParams := PayForFileParams{
 		WCid:         "9153d0c9-1f1f-4605-ad5d-61baf2ea8ffbQmbeBMxC8yBk67xZYPhAgyUMuxCW6DZdfFPhGbt9WFva3q",
 		FileSizeByte: 17545,
-		Rate:         15000000,
 		PrivateKey:   config.GetConfig().PrivateKey,
 		RpcUrl:       config.GetConfig().RpcUrl,
 	}

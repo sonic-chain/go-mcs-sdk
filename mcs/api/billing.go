@@ -130,7 +130,6 @@ func (mcsCient *McsClient) GetBillingHistory(billingHistoryParams BillingHistory
 type PayForFileParams struct {
 	WCid         string
 	FileSizeByte int64
-	Rate         float64
 	PrivateKey   string
 	RpcUrl       string
 }
