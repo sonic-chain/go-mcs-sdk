@@ -105,16 +105,14 @@ func GetHistoricalAveragePriceVerified() (float64, error) { //unit:FIL/GiB/Day
 	return priceFloat, err
 }
 
-// USDC * 1e6
-func GetAmount(fizeSizeByte int64, historicalAveragePriceVerified, fileCoinPrice float64, copyNumber int) (int64, error) {
+func GetAmount(fizeSizeByte int64, historicalAveragePriceVerified, fileCoinPrice float64, copyNumber int) (float64, error) {
 	fileSizeGb := float64(fizeSizeByte) / constants.BYTES_1GB
 
 	amount := historicalAveragePriceVerified * fileSizeGb * float64(constants.DURATION_DAYS_DEFAULT) * float64(copyNumber) * fileCoinPrice
 
-	amount = amount * 1e6
-	if amount <= 2 {
-		amount = 2
+	if amount <= 0 {
+		amount = 0.000002
 	}
 
-	return int64(amount), nil
+	return amount, nil
 }
