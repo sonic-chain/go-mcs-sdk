@@ -96,7 +96,7 @@ func TestMcsGetSourceFileUpload(t *testing.T) {
 		return
 	}
 
-	sourceFileUpload, err := mcsClient.GetSourceFileUpload(151321)
+	sourceFileUpload, err := mcsClient.GetSourceFileUpload(148234)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return

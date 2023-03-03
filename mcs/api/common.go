@@ -79,7 +79,7 @@ type FilPrice struct {
 	Status string `json:"status"`
 }
 
-func GetHistoricalAveragePriceVerified() (float64, error) { //unit:FIL/GiB/Day
+func GetFilPrice() (float64, error) {
 	response, err := web.HttpGetNoToken(constants.API_URL_FIL_PRICE_API, nil)
 	if err != nil {
 		logs.GetLogger().Error(err)
@@ -102,15 +102,20 @@ func GetHistoricalAveragePriceVerified() (float64, error) { //unit:FIL/GiB/Day
 		return -1, err
 	}
 
+	priceFloat = priceFloat / constants.BYTES_1GB / 1e8
 	return priceFloat, err
 }
 
-func GetAmount(fizeSizeByte int64, historicalAveragePriceVerified, fileCoinPrice float64, copyNumber int) (float64, error) {
-	fileSizeGb := float64(fizeSizeByte) / constants.BYTES_1GB
+func GetAmount(sizeByte int64, rate float64) (float64, error) {
+	price, err := GetFilPrice()
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return -1, err
+	}
 
-	amount := historicalAveragePriceVerified * fileSizeGb * float64(constants.DURATION_DAYS_DEFAULT) * float64(copyNumber) * fileCoinPrice
+	amount := float64(sizeByte) * price * rate * constants.DURATION_DAYS_DEFAULT / 365
 
-	if amount <= 0 {
+	if amount == 0 {
 		amount = 0.000002
 	}
 

@@ -13,8 +13,6 @@ type Configuration struct {
 	AccessToken string `toml:"access_token"`
 	Network     string `toml:"network"`
 	File2Upload string `toml:"file_to_upload"`
-	RpcUrl      string `toml:"rpc_url"`
-	PrivateKey  string `toml:"private_key"`
 }
 
 var config *Configuration

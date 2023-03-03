@@ -1,7 +1,6 @@
 package api
 
 import (
-	"go-mcs-sdk/mcs/config"
 	"testing"
 
 	"github.com/filswan/go-swan-lib/logs"
@@ -63,27 +62,4 @@ func TestGetBillingHistory(t *testing.T) {
 	}
 
 	logs.GetLogger().Info(*recCnt)
-}
-
-func TestPayForFile(t *testing.T) {
-	mcsClient, err := GetMcsClient()
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return
-	}
-
-	payForFileParams := PayForFileParams{
-		WCid:         "9153d0c9-1f1f-4605-ad5d-61baf2ea8ffbQmbeBMxC8yBk67xZYPhAgyUMuxCW6DZdfFPhGbt9WFva3q",
-		FileSizeByte: 17545,
-		Rate:         15000000,
-		PrivateKey:   config.GetConfig().PrivateKey,
-		RpcUrl:       config.GetConfig().RpcUrl,
-	}
-	txHash, err := mcsClient.PayForFile(payForFileParams)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return
-	}
-
-	logs.GetLogger().Info(*txHash)
 }

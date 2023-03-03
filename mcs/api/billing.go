@@ -181,32 +181,22 @@ func (mcsCient *MCSClient) GetBillingHistory(billingHistoryParams BillingHistory
 }
 
 type PayForFileParams struct {
-	WCid         string
-	FileSizeByte int64
-	Rate         float64
-	PrivateKey   string
-	RpcUrl       string
+	WCid                    string
+	FileSizeByte            int64
+	Rate                    float64
+	PayMultiplyFactor       float64
+	PrivateKey              string
+	RpcUrl                  string
+	PaymentRecipientAddress string
+	PaymentContractAddress  string
 }
 
-func (mcsCient *MCSClient) PayForFile(params PayForFileParams) (*string, error) {
-	historicalAveragePriceVerified, err := GetHistoricalAveragePriceVerified()
+func PayForFile(params PayForFileParams) (*string, error) {
+	amount, err := GetAmount(params.FileSizeByte, params.Rate)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
-
-	systemParams, err := mcsCient.GetSystemParam()
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	amount, err := GetAmount(params.FileSizeByte, historicalAveragePriceVerified, systemParams.FilecoinPrice, constants.COPY_NUMBER_LIMIT)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
 	privateKey, err := crypto.HexToECDSA(params.PrivateKey)
 	if err != nil {
 		logs.GetLogger().Error(err)
@@ -218,7 +208,6 @@ func (mcsCient *MCSClient) PayForFile(params PayForFileParams) (*string, error) 
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
-
 	ChainId, err := client.ChainID(context.Background())
 	if err != nil {
 		logs.GetLogger().Error(err)
@@ -231,7 +220,7 @@ func (mcsCient *MCSClient) PayForFile(params PayForFileParams) (*string, error) 
 		return nil, err
 	}
 
-	SwanPayment, err := contract.NewSwanPayment(common.HexToAddress(systemParams.PaymentContractAddress), client)
+	SwanPayment, err := contract.NewSwanPayment(common.HexToAddress(params.PaymentContractAddress), client)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -241,13 +230,12 @@ func (mcsCient *MCSClient) PayForFile(params PayForFileParams) (*string, error) 
 	var paymentParam = contract.IPaymentMinimallockPaymentParam{
 		Id:         params.WCid,
 		MinPayment: big.NewInt(int64(amount)),
-		Amount:     big.NewInt(int64(amount * float64(systemParams.PayMultiplyFactor))),
+		Amount:     big.NewInt(int64(float64(amount) * params.PayMultiplyFactor)),
 		LockTime:   big.NewInt(lockTime),
-		Recipient:  common.HexToAddress(systemParams.PaymentRecipientAddress),
+		Recipient:  common.HexToAddress(params.PaymentRecipientAddress),
 		Size:       big.NewInt(params.FileSizeByte),
-		CopyLimit:  constants.COPY_NUMBER_LIMIT,
+		CopyLimit:  5,
 	}
-
 	tx, err := SwanPayment.LockTokenPayment(&bind.TransactOpts{
 		From:   auth.From,
 		Signer: auth.Signer,
