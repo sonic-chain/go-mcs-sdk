@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"crypto/ecdsa"
 	"fmt"
 	"go-mcs-sdk/mcs/api/common/constants"
 	"go-mcs-sdk/mcs/contract"
@@ -194,11 +195,17 @@ func (mcsCient *McsClient) PayForFile(params PayForFileParams) (*string, error) 
 		CopyLimit:  constants.COPY_NUMBER_LIMIT,
 	}
 
+	txHashApprove, err := Approve(params, systemParams, privateKey, amount)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+	logs.GetLogger().Info(*txHashApprove)
+
 	tx, err := SwanPayment.LockTokenPayment(&bind.TransactOpts{
 		From:   auth.From,
 		Signer: auth.Signer,
 	}, paymentParam)
-
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -213,5 +220,78 @@ func (mcsCient *McsClient) PayForFile(params PayForFileParams) (*string, error) 
 
 	txHash := tx.Hash().String()
 
+	return &txHash, nil
+}
+
+func Approve(params PayForFileParams, systemParams *SystemParam, privateKey *ecdsa.PrivateKey, amount int64) (*string, error) {
+	USDCSpender := common.HexToAddress(systemParams.PaymentContractAddress)
+
+	publicKey := privateKey.Public()
+	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
+	if !ok {
+		err := fmt.Errorf("cannot assert type: publicKey is not of type *ecdsa.PublicKey")
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	WalletAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
+
+	client, err := ethclient.Dial(params.RpcUrl)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+	ChainId, err := client.ChainID(context.Background())
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	auth, err := bind.NewKeyedTransactorWithChainID(privateKey, ChainId)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	ERC20, err := contract.NewERC20(common.HexToAddress(systemParams.UsdcAddress), client)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	balance, err := ERC20.BalanceOf(&bind.CallOpts{
+		Pending:     false,
+		From:        common.Address{},
+		BlockNumber: nil,
+		Context:     nil,
+	}, WalletAddress)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	if amount > balance.Int64() {
+		err := fmt.Errorf("BalanceOf error")
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	tx, err := ERC20.Approve(&bind.TransactOpts{
+		From:   auth.From,
+		Signer: auth.Signer,
+	}, USDCSpender, big.NewInt(amount))
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	bind.WaitMined(context.Background(), client, tx)
+	tx, _, err = client.TransactionByHash(context.Background(), tx.Hash())
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	txHash := tx.Hash().String()
 	return &txHash, nil
 }
