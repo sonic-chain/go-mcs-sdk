@@ -58,12 +58,6 @@ const (
 	API_URL_BUCKET_FILE_MERGE_FILE                   = "/api/v2/oss_file/merge"
 	API_URL_BUCKET_FILE_GET_FILE_LIST                = "/api/v2/oss_file/get_file_list"
 
-	// contract
-	USDC_ABI          = "ERC20.json"
-	SWAN_PAYMENT_ABI  = "SwanPayment.json"
-	MINT_ABI          = "SwanNFT.json"
-	CONTRACT_TIME_OUT = 300
-
 	BYTES_1KB = 1024
 	BYTES_1MB = BYTES_1KB * BYTES_1KB
 	BYTES_1GB = BYTES_1MB * BYTES_1KB
