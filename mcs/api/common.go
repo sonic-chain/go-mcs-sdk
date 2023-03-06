@@ -3,7 +3,6 @@ package api
 import (
 	"go-mcs-sdk/mcs/api/common/constants"
 	"go-mcs-sdk/mcs/api/common/utils"
-	"net/http"
 	"net/url"
 	"regexp"
 	"strconv"
@@ -12,32 +11,6 @@ import (
 	"github.com/filswan/go-swan-lib/logs"
 	libutils "github.com/filswan/go-swan-lib/utils"
 )
-
-type Response struct {
-	Status  string      `json:"status"`
-	Message string      `json:"message"`
-	Data    interface{} `json:"data"`
-}
-
-func HttpPost(uri, tokenString string, params, result interface{}) error {
-	err := utils.HttpRequest(http.MethodPost, uri, &tokenString, params, nil, result)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return err
-	}
-
-	return nil
-}
-
-func HttpGet(uri, tokenString string, params, result interface{}) error {
-	err := utils.HttpRequest(http.MethodGet, uri, &tokenString, params, nil, result)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return err
-	}
-
-	return nil
-}
 
 type McsClient struct {
 	Network  string `json:"network"`
@@ -77,7 +50,7 @@ func LoginByApikey(apikey, accessToken, network string) (*McsClient, error) {
 		JwtToken string `json:"jwt_token"`
 	}
 
-	err := HttpPost(apiUrl, "", loginByApikeyParams, &loginByApikeyResponse)
+	err := utils.HttpPost(apiUrl, "", loginByApikeyParams, &loginByApikeyResponse)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -114,7 +87,7 @@ func (mcsCient *McsClient) GetSystemParam() (*SystemParam, error) {
 	params := url.Values{}
 
 	var systemParam SystemParam
-	err := HttpGet(apiUrl, mcsCient.JwtToken, strings.NewReader(params.Encode()), &systemParam)
+	err := utils.HttpGet(apiUrl, mcsCient.JwtToken, strings.NewReader(params.Encode()), &systemParam)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -136,7 +109,7 @@ func GetHistoricalAveragePriceVerified() (float64, error) {
 		HistoricalAveragePriceVerified   string `json:"historical_average_price_verified"`
 	}
 
-	err := HttpGet(apiUrl, "", nil, &storageStats)
+	err := utils.HttpGet(apiUrl, "", nil, &storageStats)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return -1, err

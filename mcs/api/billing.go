@@ -5,6 +5,7 @@ import (
 	"crypto/ecdsa"
 	"fmt"
 	"go-mcs-sdk/mcs/api/common/constants"
+	"go-mcs-sdk/mcs/api/common/utils"
 	"go-mcs-sdk/mcs/contract"
 	"math/big"
 	"net/url"
@@ -23,7 +24,7 @@ func (mcsCient *McsClient) GetFileCoinPrice() (*float64, error) {
 	params := url.Values{}
 
 	var price float64
-	err := HttpGet(apiUrl, mcsCient.JwtToken, strings.NewReader(params.Encode()), &price)
+	err := utils.HttpGet(apiUrl, mcsCient.JwtToken, strings.NewReader(params.Encode()), &price)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -45,7 +46,7 @@ func (mcsCient *McsClient) GetLockPaymentInfo(fileUploadId int64) (*LockPaymentI
 	params := url.Values{}
 
 	var lockPaymentInfo LockPaymentInfo
-	err := HttpGet(apiUrl, mcsCient.JwtToken, strings.NewReader(params.Encode()), &lockPaymentInfo)
+	err := utils.HttpGet(apiUrl, mcsCient.JwtToken, strings.NewReader(params.Encode()), &lockPaymentInfo)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -118,7 +119,7 @@ func (mcsCient *McsClient) GetBillingHistory(billingHistoryParams BillingHistory
 		TotalRecordCount int64             `json:"total_record_count"`
 	}
 
-	err := HttpGet(apiUrl, mcsCient.JwtToken, nil, &billings)
+	err := utils.HttpGet(apiUrl, mcsCient.JwtToken, nil, &billings)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, nil, err

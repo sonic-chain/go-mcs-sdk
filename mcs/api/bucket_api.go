@@ -39,19 +39,6 @@ func (client *McsClient) GetBuckets() ([]byte, error) {
 	return bucketListInfoBytes, nil
 }
 
-func (client *McsClient) CreateBucket(bucketName string) ([]byte, error) {
-	apiUrl := libutils.UrlJoin(client.BaseUrl, constants.CREATE_BUCKET)
-	params := make(map[string]string)
-	params["bucket_name"] = bucketName
-	response, err := common.HttpPost(apiUrl, client.JwtToken, params)
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-	log.Println(*(*string)(unsafe.Pointer(&response)))
-	return response, nil
-}
-
 func (client *McsClient) DeleteBucket(bucketUid string) ([]byte, error) {
 	apiUrl := libutils.UrlJoin(client.BaseUrl, constants.DELETE_BUCKET+bucketUid)
 	response, err := common.HttpGet(apiUrl, client.JwtToken, nil)
