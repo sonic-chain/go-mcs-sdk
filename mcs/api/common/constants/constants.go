@@ -54,8 +54,8 @@ const (
 	API_URL_BUCKET_FILE_CREATE_FOLDER                = "/api/v2/oss_file/create_folder"
 	API_URL_BUCKET_FILE_GET_FILE_INFO_BY_OBJECT_NAME = "/api/v2/oss_file/get_file_by_object_name"
 	API_URL_BUCKET_FILE_CHECK_UPLOAD                 = "/api/v2/oss_file/check"
-	UPLOAD_CHUNK                                     = "/api/v2/oss_file/upload"
-	MERGE_FILE                                       = "/api/v2/oss_file/merge"
+	API_URL_BUCKET_FILE_UPLOAD_CHUNK                 = "/api/v2/oss_file/upload"
+	API_URL_BUCKET_FILE_MERGE_FILE                   = "/api/v2/oss_file/merge"
 	FILE_LIST                                        = "/api/v2/oss_file/get_file_list"
 
 	// contract

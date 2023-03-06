@@ -1,10 +1,18 @@
 package bucket
 
 import (
+	"bytes"
+	"fmt"
 	"go-mcs-sdk/mcs/api/common/constants"
 	"go-mcs-sdk/mcs/api/common/utils"
+	"io"
 	"log"
+	"mime/multipart"
+	"net/http"
+	"os"
+	"path"
 	"strconv"
+	"unsafe"
 
 	"github.com/filswan/go-swan-lib/logs"
 	libutils "github.com/filswan/go-swan-lib/utils"
@@ -98,6 +106,84 @@ type OssFileInfo struct {
 
 func (bucketClient *BucketClient) CheckFile(bucketUid, fileHash, fileName, prefix string) (*OssFileInfo, error) {
 	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_CHECK_UPLOAD)
+
+	var params struct {
+		FileName  string `json:"file_name"`
+		FileHash  string `json:"file_hash"`
+		Prefix    string `json:"prefix"`
+		BucketUid string `json:"bucket_uid"`
+	}
+
+	params.FileName = fileName
+	params.FileHash = fileHash
+	params.Prefix = prefix
+	params.BucketUid = bucketUid
+
+	var ossFileInfo OssFileInfo
+	err := utils.HttpPost(apiUrl, bucketClient.JwtToken, &params, &ossFileInfo)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	return &ossFileInfo, nil
+}
+
+func (bucketClient *BucketClient) UploadFileChunk(fileHash, uploadFilePath string) ([]byte, error) {
+	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_UPLOAD_CHUNK)
+	fileNameWithSuffix := path.Base(uploadFilePath)
+	payload := &bytes.Buffer{}
+	writer := multipart.NewWriter(payload)
+	file, err := os.Open(uploadFilePath)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	part1, err := writer.CreateFormFile("file", fileNameWithSuffix)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	_, err = io.Copy(part1, file)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	err = writer.WriteField("hash", fileHash)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	err = writer.Close()
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	request, err := http.NewRequest("POST", apiUrl, payload)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	request.Header.Add("Authorization", fmt.Sprintf("Bearer %s", bucketClient.JwtToken))
+	request.Header.Add("Content-Type", writer.FormDataContentType())
+	response, err := http.DefaultClient.Do(request)
+	//response, err := httpClient.Post(httpRequestUrl,bodyWriter.FormDataContentType(),bodyBuffer)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	defer response.Body.Close()
+	responseBytes, err := io.ReadAll(response.Body)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	log.Println(*(*string)(unsafe.Pointer(&responseBytes)))
+	return responseBytes, nil
+}
+
+func (bucketClient *BucketClient) MergeRequest(bucketUid, fileHash, fileName, prefix string) (*OssFileInfo, error) {
+	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_MERGE_FILE)
 
 	var params struct {
 		FileName  string `json:"file_name"`
