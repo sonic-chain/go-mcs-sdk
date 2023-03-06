@@ -1,8 +1,8 @@
-package common
+package auth
 
 import (
 	"go-mcs-sdk/mcs/api/common/constants"
-	"go-mcs-sdk/mcs/api/common/utils"
+	"go-mcs-sdk/mcs/api/common/web"
 	"go-mcs-sdk/mcs/config"
 
 	"github.com/filswan/go-swan-lib/logs"
@@ -67,7 +67,7 @@ func LoginByApikey(apikey, accessToken, network string) (*McsClient, error) {
 		JwtToken string `json:"jwt_token"`
 	}
 
-	err := utils.HttpPost(apiUrl, "", params, &loginByApikeyResponse)
+	err := web.HttpPost(apiUrl, "", params, &loginByApikeyResponse)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err

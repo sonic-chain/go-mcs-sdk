@@ -1,19 +1,19 @@
 package bucket
 
 import (
-	"go-mcs-sdk/mcs/api/common"
+	"go-mcs-sdk/mcs/api/common/auth"
 	"go-mcs-sdk/mcs/api/common/constants"
-	"go-mcs-sdk/mcs/api/common/utils"
+	"go-mcs-sdk/mcs/api/common/web"
 
 	"github.com/filswan/go-swan-lib/logs"
 	libutils "github.com/filswan/go-swan-lib/utils"
 )
 
 type BucketClient struct {
-	common.McsClient
+	auth.McsClient
 }
 
-func GetBucketClientFromMcsClient(mcsClient common.McsClient) BucketClient {
+func GetBucketClientFromMcsClient(mcsClient auth.McsClient) BucketClient {
 	var bucketClient = BucketClient{}
 
 	bucketClient.BaseUrl = mcsClient.BaseUrl
@@ -30,7 +30,7 @@ func (bucketClient *BucketClient) CreateBucket(bucketName string) error {
 	}
 	bucket.BucketName = bucketName
 
-	err := utils.HttpPost(apiUrl, bucketClient.JwtToken, &bucket, nil)
+	err := web.HttpPost(apiUrl, bucketClient.JwtToken, &bucket, nil)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return err
@@ -56,7 +56,7 @@ func (bucketClient *BucketClient) GetBuckets() ([]*Bucket, error) {
 	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_GET_BUCKET_LIST)
 
 	var buckets []*Bucket
-	err := utils.HttpGet(apiUrl, bucketClient.JwtToken, nil, buckets)
+	err := web.HttpGet(apiUrl, bucketClient.JwtToken, nil, buckets)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -68,7 +68,7 @@ func (bucketClient *BucketClient) GetBuckets() ([]*Bucket, error) {
 func (bucketClient *BucketClient) DeleteBucket(bucketId int64) error {
 	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_DELETE_BUCKET)
 
-	err := utils.HttpGet(apiUrl, bucketClient.JwtToken, &bucketId, nil)
+	err := web.HttpGet(apiUrl, bucketClient.JwtToken, &bucketId, nil)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return err
@@ -87,7 +87,7 @@ func (bucketClient *BucketClient) RenameBucket(newBucketName string, bucketUid s
 	renameBucketParams.BucketName = newBucketName
 	renameBucketParams.BucketUid = bucketUid
 
-	err := utils.HttpGet(apiUrl, bucketClient.JwtToken, &renameBucketParams, nil)
+	err := web.HttpGet(apiUrl, bucketClient.JwtToken, &renameBucketParams, nil)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return err
@@ -101,7 +101,7 @@ func (bucketClient *BucketClient) GetTotalStorageSize(newBucketName string, buck
 
 	var totalStorageSize int64
 
-	err := utils.HttpGet(apiUrl, bucketClient.JwtToken, nil, &totalStorageSize)
+	err := web.HttpGet(apiUrl, bucketClient.JwtToken, nil, &totalStorageSize)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err

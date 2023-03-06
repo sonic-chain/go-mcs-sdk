@@ -1,9 +1,9 @@
 package api
 
 import (
-	"go-mcs-sdk/mcs/api/common"
+	"go-mcs-sdk/mcs/api/common/auth"
 	"go-mcs-sdk/mcs/api/common/constants"
-	"go-mcs-sdk/mcs/api/common/utils"
+	"go-mcs-sdk/mcs/api/common/web"
 	"net/url"
 	"regexp"
 	"strconv"
@@ -18,7 +18,7 @@ type OnChainClient struct {
 	JwtToken string `json:"jwt_token"`
 }
 
-func GetOnChainClientFromMcsClient(mcsClient common.McsClient) OnChainClient {
+func GetOnChainClientFromMcsClient(mcsClient auth.McsClient) OnChainClient {
 	var onChainClient = OnChainClient{}
 
 	onChainClient.BaseUrl = mcsClient.BaseUrl
@@ -49,7 +49,7 @@ func (onChainClient *OnChainClient) GetSystemParam() (*SystemParam, error) {
 	params := url.Values{}
 
 	var systemParam SystemParam
-	err := utils.HttpGet(apiUrl, onChainClient.JwtToken, strings.NewReader(params.Encode()), &systemParam)
+	err := web.HttpGet(apiUrl, onChainClient.JwtToken, strings.NewReader(params.Encode()), &systemParam)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -71,7 +71,7 @@ func GetHistoricalAveragePriceVerified() (float64, error) {
 		HistoricalAveragePriceVerified   string `json:"historical_average_price_verified"`
 	}
 
-	err := utils.HttpGet(apiUrl, "", nil, &storageStats)
+	err := web.HttpGet(apiUrl, "", nil, &storageStats)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return -1, err

@@ -5,7 +5,7 @@ import (
 	"crypto/ecdsa"
 	"fmt"
 	"go-mcs-sdk/mcs/api/common/constants"
-	"go-mcs-sdk/mcs/api/common/utils"
+	"go-mcs-sdk/mcs/api/common/web"
 	"go-mcs-sdk/mcs/contract"
 	"math/big"
 	"net/url"
@@ -24,7 +24,7 @@ func (onChainClient *OnChainClient) GetFileCoinPrice() (*float64, error) {
 	params := url.Values{}
 
 	var price float64
-	err := utils.HttpGet(apiUrl, onChainClient.JwtToken, strings.NewReader(params.Encode()), &price)
+	err := web.HttpGet(apiUrl, onChainClient.JwtToken, strings.NewReader(params.Encode()), &price)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -46,7 +46,7 @@ func (client *OnChainClient) GetLockPaymentInfo(fileUploadId int64) (*LockPaymen
 	params := url.Values{}
 
 	var lockPaymentInfo LockPaymentInfo
-	err := utils.HttpGet(apiUrl, client.JwtToken, strings.NewReader(params.Encode()), &lockPaymentInfo)
+	err := web.HttpGet(apiUrl, client.JwtToken, strings.NewReader(params.Encode()), &lockPaymentInfo)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -119,7 +119,7 @@ func (onChainClient *OnChainClient) GetBillingHistory(billingHistoryParams Billi
 		TotalRecordCount int64             `json:"total_record_count"`
 	}
 
-	err := utils.HttpGet(apiUrl, onChainClient.JwtToken, nil, &billings)
+	err := web.HttpGet(apiUrl, onChainClient.JwtToken, nil, &billings)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, nil, err

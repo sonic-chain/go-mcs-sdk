@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"go-mcs-sdk/mcs/api/common/constants"
-	"go-mcs-sdk/mcs/api/common/utils"
+	"go-mcs-sdk/mcs/api/common/web"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -204,7 +204,7 @@ func (onChainClient *OnChainClient) GetDeals(dealsParams DealsParams) ([]*Deal, 
 		TotalRecordCount int64   `json:"total_record_count"`
 	}
 
-	err := utils.HttpGet(apiUrl, onChainClient.JwtToken, nil, &deals)
+	err := web.HttpGet(apiUrl, onChainClient.JwtToken, nil, &deals)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, nil, err
@@ -263,7 +263,7 @@ func (onChainClient *OnChainClient) GetDealDetail(sourceFileUploadId, dealId int
 	apiUrl := libutils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_STORAGE_GET_DEAL_DETAIL, params)
 
 	var dealDetail GetDealDetailResponseData
-	err := utils.HttpGet(apiUrl, onChainClient.JwtToken, nil, &dealDetail)
+	err := web.HttpGet(apiUrl, onChainClient.JwtToken, nil, &dealDetail)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, nil, nil, err
@@ -290,7 +290,7 @@ func (onChainClient *OnChainClient) GetDealLogs(offlineDealId int64) ([]*Offline
 	var dealLogs struct {
 		OfflineDealLogs []*OfflineDealLog `json:"offline_deal_log"`
 	}
-	err := utils.HttpGet(apiUrl, onChainClient.JwtToken, nil, &dealLogs)
+	err := web.HttpGet(apiUrl, onChainClient.JwtToken, nil, &dealLogs)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -313,7 +313,7 @@ func (onChainClient *OnChainClient) GetSourceFileUpload(sourceFileUploadId int64
 		SourceFileUpload *SourceFileUpload `json:"source_file_upload"`
 	}
 
-	err := utils.HttpGet(apiUrl, onChainClient.JwtToken, nil, &sourceFileUpload)
+	err := web.HttpGet(apiUrl, onChainClient.JwtToken, nil, &sourceFileUpload)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -325,7 +325,7 @@ func (onChainClient *OnChainClient) GetSourceFileUpload(sourceFileUploadId int64
 func (onChainClient *OnChainClient) UnpinSourceFile(sourceFileUploadId int64) error {
 	apiUrl := libutils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_STORAGE_UNPIN_SOURCE_FILE, strconv.FormatInt(sourceFileUploadId, 10))
 
-	err := utils.HttpPost(apiUrl, onChainClient.JwtToken, nil, nil)
+	err := web.HttpPost(apiUrl, onChainClient.JwtToken, nil, nil)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return err
@@ -347,7 +347,7 @@ type NftCollectionParams struct {
 func (onChainClient *OnChainClient) WriteNftCollection(nftCollectionParams NftCollectionParams) error {
 	apiUrl := libutils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_STORAGE_WRITE_NFT_COLLECTION)
 
-	err := utils.HttpPost(apiUrl, onChainClient.JwtToken, nftCollectionParams, nil)
+	err := web.HttpPost(apiUrl, onChainClient.JwtToken, nftCollectionParams, nil)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return err
@@ -377,7 +377,7 @@ func (onChainClient *OnChainClient) GetNftCollections() ([]*NftCollection, error
 	apiUrl := libutils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_STORAGE_GET_NFT_COLLECTIONS)
 
 	var nftCollections []*NftCollection
-	err := utils.HttpGet(apiUrl, onChainClient.JwtToken, nil, &nftCollections)
+	err := web.HttpGet(apiUrl, onChainClient.JwtToken, nil, &nftCollections)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -412,7 +412,7 @@ func (onChainClient *OnChainClient) RecordMintInfo(recordMintInfoParams *RecordM
 	apiUrl := libutils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_STORAGE_RECORD_MINT_INFO)
 
 	var sourceFileMint SourceFileMint
-	err := utils.HttpPost(apiUrl, onChainClient.JwtToken, recordMintInfoParams, &sourceFileMint)
+	err := web.HttpPost(apiUrl, onChainClient.JwtToken, recordMintInfoParams, &sourceFileMint)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -432,7 +432,7 @@ func (onChainClient *OnChainClient) GetMintInfo(sourceFileUploadId int64) ([]*So
 	apiUrl := libutils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_STORAGE_GET_MINT_INFO, strconv.FormatInt(sourceFileUploadId, 10))
 
 	var sourceFileMints []*SourceFileMintOut
-	err := utils.HttpGet(apiUrl, onChainClient.JwtToken, nil, &sourceFileMints)
+	err := web.HttpGet(apiUrl, onChainClient.JwtToken, nil, &sourceFileMints)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err

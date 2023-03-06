@@ -2,7 +2,7 @@ package api
 
 import (
 	"go-mcs-sdk/mcs/api/common/constants"
-	"go-mcs-sdk/mcs/api/common/utils"
+	"go-mcs-sdk/mcs/api/common/web"
 
 	"github.com/filswan/go-swan-lib/logs"
 	libutils "github.com/filswan/go-swan-lib/utils"
@@ -18,7 +18,7 @@ func (onChainClient *OnChainClient) GetDeals2PreSign() ([]*Deal2PreSign, error) 
 	apiUrl := libutils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_DAO_GET_DEALS_2_PRE_SIGN)
 
 	var deals []*Deal2PreSign
-	err := utils.HttpGet(apiUrl, onChainClient.JwtToken, nil, &deals)
+	err := web.HttpGet(apiUrl, onChainClient.JwtToken, nil, &deals)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -45,7 +45,7 @@ func (onChainClient *OnChainClient) GetDeals2Sign() ([]*Deal2Sign, error) {
 	apiUrl := libutils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_DAO_GET_DEALS_2_SIGN)
 
 	var deals []*Deal2Sign
-	err := utils.HttpGet(apiUrl, onChainClient.JwtToken, nil, &deals)
+	err := web.HttpGet(apiUrl, onChainClient.JwtToken, nil, &deals)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -58,7 +58,7 @@ func (onChainClient *OnChainClient) GetDeals2SignHash() ([]*Deal2Sign, error) {
 	apiUrl := libutils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_DAO_GET_DEALS_2_SIGN_HASH)
 
 	var deals []*Deal2Sign
-	err := utils.HttpGet(apiUrl, onChainClient.JwtToken, nil, &deals)
+	err := web.HttpGet(apiUrl, onChainClient.JwtToken, nil, &deals)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err

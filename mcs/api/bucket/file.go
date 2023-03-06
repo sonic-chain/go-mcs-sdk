@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"go-mcs-sdk/mcs/api/common/constants"
-	"go-mcs-sdk/mcs/api/common/utils"
+	"go-mcs-sdk/mcs/api/common/web"
 	"io"
 	"log"
 	"mime/multipart"
@@ -37,7 +37,7 @@ func (bucketClient *BucketClient) GetFileInfo(fileId int) (*OssFile, error) {
 	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_GET_FILE_INFO)
 
 	var fileInfo OssFile
-	err := utils.HttpGet(apiUrl, bucketClient.JwtToken, &fileId, &fileInfo)
+	err := web.HttpGet(apiUrl, bucketClient.JwtToken, &fileId, &fileInfo)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -49,7 +49,7 @@ func (bucketClient *BucketClient) GetFileInfo(fileId int) (*OssFile, error) {
 func (bucketClient *BucketClient) DeleteFile(fileId int) error {
 	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_DELETE_FILE, strconv.Itoa(fileId))
 
-	err := utils.HttpGet(apiUrl, bucketClient.JwtToken, &fileId, nil)
+	err := web.HttpGet(apiUrl, bucketClient.JwtToken, &fileId, nil)
 	if err != nil {
 		log.Println(err)
 		return err
@@ -71,7 +71,7 @@ func (bucketClient *BucketClient) CreateFolder(fileName, prefix, bucketUid strin
 	params.Prefix = prefix
 	params.BucketUid = bucketUid
 
-	err := utils.HttpPost(apiUrl, bucketClient.JwtToken, &params, nil)
+	err := web.HttpPost(apiUrl, bucketClient.JwtToken, &params, nil)
 	if err != nil {
 		log.Println(err)
 		return err
@@ -85,7 +85,7 @@ func (bucketClient *BucketClient) GetFileInfoByObjectName(objectName, bucketUid 
 	apiUrl = apiUrl + "?bucket_uid=" + bucketUid + "&objectName=" + objectName
 
 	var fileInfo OssFile
-	err := utils.HttpGet(apiUrl, bucketClient.JwtToken, nil, &fileInfo)
+	err := web.HttpGet(apiUrl, bucketClient.JwtToken, nil, &fileInfo)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -120,7 +120,7 @@ func (bucketClient *BucketClient) CheckFile(bucketUid, fileHash, fileName, prefi
 	params.BucketUid = bucketUid
 
 	var ossFileInfo OssFileInfo
-	err := utils.HttpPost(apiUrl, bucketClient.JwtToken, &params, &ossFileInfo)
+	err := web.HttpPost(apiUrl, bucketClient.JwtToken, &params, &ossFileInfo)
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -198,7 +198,7 @@ func (bucketClient *BucketClient) MergeFile(bucketUid, fileHash, fileName, prefi
 	params.BucketUid = bucketUid
 
 	var ossFileInfo OssFileInfo
-	err := utils.HttpPost(apiUrl, bucketClient.JwtToken, &params, &ossFileInfo)
+	err := web.HttpPost(apiUrl, bucketClient.JwtToken, &params, &ossFileInfo)
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -211,7 +211,7 @@ func (bucketClient *BucketClient) GetFileList(fileUid, limit, offset string) ([]
 	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_GET_FILE_LIST) + fileUid + "&limit=" + limit + "&offset=" + offset
 
 	var files []*OssFile
-	err := utils.HttpGet(apiUrl, bucketClient.JwtToken, nil, &files)
+	err := web.HttpGet(apiUrl, bucketClient.JwtToken, nil, &files)
 	if err != nil {
 		log.Println(err)
 		return nil, err
