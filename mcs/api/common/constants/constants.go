@@ -56,7 +56,7 @@ const (
 	API_URL_BUCKET_FILE_CHECK_UPLOAD                 = "/api/v2/oss_file/check"
 	API_URL_BUCKET_FILE_UPLOAD_CHUNK                 = "/api/v2/oss_file/upload"
 	API_URL_BUCKET_FILE_MERGE_FILE                   = "/api/v2/oss_file/merge"
-	FILE_LIST                                        = "/api/v2/oss_file/get_file_list"
+	API_URL_BUCKET_FILE_GET_FILE_LIST                = "/api/v2/oss_file/get_file_list"
 
 	// contract
 	USDC_ABI          = "ERC20.json"

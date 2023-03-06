@@ -182,7 +182,7 @@ func (bucketClient *BucketClient) UploadFileChunk(fileHash, uploadFilePath strin
 	return responseBytes, nil
 }
 
-func (bucketClient *BucketClient) MergeRequest(bucketUid, fileHash, fileName, prefix string) (*OssFileInfo, error) {
+func (bucketClient *BucketClient) MergeFile(bucketUid, fileHash, fileName, prefix string) (*OssFileInfo, error) {
 	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_MERGE_FILE)
 
 	var params struct {
@@ -205,4 +205,17 @@ func (bucketClient *BucketClient) MergeRequest(bucketUid, fileHash, fileName, pr
 	}
 
 	return &ossFileInfo, nil
+}
+
+func (bucketClient *BucketClient) GetFileList(fileUid, limit, offset string) ([]*OssFile, error) {
+	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_GET_FILE_LIST) + fileUid + "&limit=" + limit + "&offset=" + offset
+
+	var files []*OssFile
+	err := utils.HttpGet(apiUrl, bucketClient.JwtToken, nil, &files)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	return files, nil
 }
