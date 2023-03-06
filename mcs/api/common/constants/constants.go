@@ -48,13 +48,15 @@ const (
 	API_URL_BUCKET_DELETE_BUCKET          = "/api/v2/bucket/delete"
 	API_URL_BUCKET_RENAME_BUCKET          = "/api/v2/bucket/rename"
 	API_URL_BUCKET_GET_TOTAL_STORAGE_SIZE = "/api/v2/bucket/get_address_storage_total"
-	FILE_INFO                             = "/api/v2/oss_file/get_file_info"
-	DELETE_FILE                           = "/api/v2/oss_file/delete"
-	CREATE_FOLDER                         = "/api/v2/oss_file/create_folder"
-	CHECK_UPLOAD                          = "/api/v2/oss_file/check"
-	UPLOAD_CHUNK                          = "/api/v2/oss_file/upload"
-	MERGE_FILE                            = "/api/v2/oss_file/merge"
-	FILE_LIST                             = "/api/v2/oss_file/get_file_list"
+
+	API_URL_BUCKET_FILE_GET_FILE_INFO                = "/api/v2/oss_file/get_file_info"
+	API_URL_BUCKET_FILE_DELETE_FILE                  = "/api/v2/oss_file/delete"
+	API_URL_BUCKET_FILE_CREATE_FOLDER                = "/api/v2/oss_file/create_folder"
+	API_URL_BUCKET_FILE_GET_FILE_INFO_BY_OBJECT_NAME = "/api/v2/oss_file/get_file_by_object_name"
+	API_URL_BUCKET_FILE_CHECK_UPLOAD                 = "/api/v2/oss_file/check"
+	UPLOAD_CHUNK                                     = "/api/v2/oss_file/upload"
+	MERGE_FILE                                       = "/api/v2/oss_file/merge"
+	FILE_LIST                                        = "/api/v2/oss_file/get_file_list"
 
 	// contract
 	USDC_ABI          = "ERC20.json"

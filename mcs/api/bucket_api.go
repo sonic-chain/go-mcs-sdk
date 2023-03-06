@@ -13,7 +13,6 @@ import (
 	"path"
 	"path/filepath"
 	"regexp"
-	"strconv"
 	"unsafe"
 
 	libutils "github.com/filswan/go-swan-lib/utils"
@@ -28,66 +27,9 @@ func NewBucketClient() *BucketClient {
 	return &bucketClient
 }
 
-func (client *McsClient) GetFileInfo(fileId int) ([]byte, error) {
-	apiUrl := libutils.UrlJoin(client.BaseUrl, constants.FILE_INFO, strconv.Itoa(fileId))
-	params := make(map[string]int)
-	params["file_id"] = fileId
-	response, err := common.HttpGet(apiUrl, client.JwtToken, params)
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-	log.Println(*(*string)(unsafe.Pointer(&response)))
-	return response, nil
-}
-
-func (client *McsClient) DeleteFile(fileId int) ([]byte, error) {
-	apiUrl := libutils.UrlJoin(client.BaseUrl, constants.DELETE_FILE, strconv.Itoa(fileId))
-	params := make(map[string]int)
-	params["file_id"] = fileId
-	response, err := common.HttpGet(apiUrl, client.JwtToken, params)
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-	log.Println(*(*string)(unsafe.Pointer(&response)))
-	return response, nil
-}
-
 func (client *McsClient) GetFileList(fileUid, limit, offset string) ([]byte, error) {
 	apiUrl := libutils.UrlJoin(client.BaseUrl, constants.FILE_LIST) + fileUid + "&limit=" + limit + "&offset=" + offset
 	response, err := common.HttpGet(apiUrl, client.JwtToken, nil)
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-	log.Println(*(*string)(unsafe.Pointer(&response)))
-	return response, nil
-}
-
-func (client *McsClient) CreateFolder(fileName, prefix, bucketUid string) ([]byte, error) {
-	apiUrl := libutils.UrlJoin(client.BaseUrl, constants.CREATE_FOLDER)
-	params := make(map[string]string)
-	params["file_name"] = fileName
-	params["prefix"] = prefix
-	params["bucket_uid"] = bucketUid
-	response, err := common.HttpPost(apiUrl, client.JwtToken, params)
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-	log.Println(*(*string)(unsafe.Pointer(&response)))
-	return response, nil
-}
-
-func (client *McsClient) CheckFile(bucketUid, fileHash, fileName, prefix string) ([]byte, error) {
-	apiUrl := libutils.UrlJoin(client.BaseUrl, constants.CHECK_UPLOAD)
-	params := make(map[string]string)
-	params["bucket_uid"] = bucketUid
-	params["file_hash"] = fileHash
-	params["file_name"] = fileName
-	params["prefix"] = prefix
-	response, err := common.HttpPost(apiUrl, client.JwtToken, params)
 	if err != nil {
 		log.Println(err)
 		return nil, err
