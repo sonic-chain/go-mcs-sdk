@@ -86,3 +86,17 @@ func (bucketClient *BucketClient) RenameBucket(newBucketName string, bucketUid s
 
 	return nil
 }
+
+func (bucketClient *BucketClient) GetTotalStorageSize(newBucketName string, bucketUid string) (*int64, error) {
+	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_GET_TOTAL_STORAGE_SIZE)
+
+	var totalStorageSize int64
+
+	err := utils.HttpGet(apiUrl, bucketClient.JwtToken, nil, &totalStorageSize)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	return &totalStorageSize, nil
+}
