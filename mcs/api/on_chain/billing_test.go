@@ -8,7 +8,7 @@ import (
 )
 
 func TestGetFileCoinPrice(t *testing.T) {
-	client, err := GetOnChainClient()
+	client, err := GetOnChainClient4Test()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -24,7 +24,7 @@ func TestGetFileCoinPrice(t *testing.T) {
 }
 
 func TestGetLockPaymentInfo(t *testing.T) {
-	client, err := GetOnChainClient()
+	client, err := GetOnChainClient4Test()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -40,7 +40,7 @@ func TestGetLockPaymentInfo(t *testing.T) {
 }
 
 func TestGetBillingHistory(t *testing.T) {
-	client, err := GetOnChainClient()
+	client, err := GetOnChainClient4Test()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -66,7 +66,7 @@ func TestGetBillingHistory(t *testing.T) {
 }
 
 func TestPayForFile(t *testing.T) {
-	client, err := GetOnChainClient()
+	client, err := GetOnChainClient4Test()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return

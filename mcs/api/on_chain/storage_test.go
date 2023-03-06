@@ -10,7 +10,7 @@ import (
 )
 
 func TestUploadFile(t *testing.T) {
-	client, err := GetOnChainClient()
+	client, err := GetOnChainClient4Test()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -26,7 +26,7 @@ func TestUploadFile(t *testing.T) {
 }
 
 func TestGetDeals(t *testing.T) {
-	client, err := GetOnChainClient()
+	client, err := GetOnChainClient4Test()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -52,7 +52,7 @@ func TestGetDeals(t *testing.T) {
 }
 
 func TestGetDealDetail(t *testing.T) {
-	client, err := GetOnChainClient()
+	client, err := GetOnChainClient4Test()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -72,7 +72,7 @@ func TestGetDealDetail(t *testing.T) {
 }
 
 func TestGetDealLogs(t *testing.T) {
-	client, err := GetOnChainClient()
+	client, err := GetOnChainClient4Test()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -90,7 +90,7 @@ func TestGetDealLogs(t *testing.T) {
 }
 
 func TestGetSourceFileUpload(t *testing.T) {
-	client, err := GetOnChainClient()
+	client, err := GetOnChainClient4Test()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -106,7 +106,7 @@ func TestGetSourceFileUpload(t *testing.T) {
 }
 
 func TestUnpinSourceFile(t *testing.T) {
-	client, err := GetOnChainClient()
+	client, err := GetOnChainClient4Test()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -120,7 +120,7 @@ func TestUnpinSourceFile(t *testing.T) {
 }
 
 func TestWriteNftCollection(t *testing.T) {
-	client, err := GetOnChainClient()
+	client, err := GetOnChainClient4Test()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -139,7 +139,7 @@ func TestWriteNftCollection(t *testing.T) {
 }
 
 func TestGetNftCollections(t *testing.T) {
-	client, err := GetOnChainClient()
+	client, err := GetOnChainClient4Test()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -157,7 +157,7 @@ func TestGetNftCollections(t *testing.T) {
 }
 
 func TestRecordMintInfo(t *testing.T) {
-	client, err := GetOnChainClient()
+	client, err := GetOnChainClient4Test()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -184,7 +184,7 @@ func TestRecordMintInfo(t *testing.T) {
 }
 
 func TestGetMintInfo(t *testing.T) {
-	client, err := GetOnChainClient()
+	client, err := GetOnChainClient4Test()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return

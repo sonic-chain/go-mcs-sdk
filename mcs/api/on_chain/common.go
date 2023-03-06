@@ -18,7 +18,7 @@ type OnChainClient struct {
 	JwtToken string `json:"jwt_token"`
 }
 
-func GetOnChainClientFromMcsClient(mcsClient auth.McsClient) OnChainClient {
+func GetOnChainClient(mcsClient auth.McsClient) OnChainClient {
 	var onChainClient = OnChainClient{}
 
 	onChainClient.BaseUrl = mcsClient.BaseUrl

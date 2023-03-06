@@ -13,7 +13,7 @@ type BucketClient struct {
 	auth.McsClient
 }
 
-func GetBucketClientFromMcsClient(mcsClient auth.McsClient) BucketClient {
+func GetBucketClient(mcsClient auth.McsClient) BucketClient {
 	var bucketClient = BucketClient{}
 
 	bucketClient.BaseUrl = mcsClient.BaseUrl

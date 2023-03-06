@@ -7,20 +7,20 @@ import (
 	"github.com/filswan/go-swan-lib/logs"
 )
 
-func GetOnChainClient() (*OnChainClient, error) {
+func GetOnChainClient4Test() (*OnChainClient, error) {
 	mcsClient, err := auth.GetMcsClient()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
-	onChainClient := GetOnChainClientFromMcsClient(*mcsClient)
+	onChainClient := GetOnChainClient(*mcsClient)
 
 	return &onChainClient, nil
 }
 
 func TestLoginByApikey(t *testing.T) {
-	client, err := GetOnChainClient()
+	client, err := GetOnChainClient4Test()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -30,7 +30,7 @@ func TestLoginByApikey(t *testing.T) {
 }
 
 func TestGetSystemParam(t *testing.T) {
-	client, err := GetOnChainClient()
+	client, err := GetOnChainClient4Test()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return

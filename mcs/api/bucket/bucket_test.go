@@ -6,14 +6,14 @@ import (
 	"github.com/filswan/go-swan-lib/logs"
 )
 
-func GetBucketClient() (*BucketClient, error) {
+func GetBucketClient4Test() (*BucketClient, error) {
 	mcsClient, err := auth.GetMcsClient()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
-	bucketClient := GetBucketClientFromMcsClient(*mcsClient)
+	bucketClient := GetBucketClient(*mcsClient)
 
 	return &bucketClient, nil
 }
