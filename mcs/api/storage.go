@@ -305,9 +305,10 @@ func (mcsCient *McsClient) GetDealLogs(offlineDealId int64) ([]*OfflineDealLog, 
 }
 
 type SourceFileUpload struct {
-	WCid   string `json:"w_cid"`
-	Status string `json:"status"`
-	IsFree bool   `json:"is_free"`
+	WCid     string `json:"w_cid"`
+	Status   string `json:"status"`
+	IsFree   bool   `json:"is_free"`
+	FileSize int64  `json:"file_size"`
 }
 
 func (mcsCient *McsClient) GetSourceFileUpload(sourceFileUploadId int64) (*SourceFileUpload, error) {

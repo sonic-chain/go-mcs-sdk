@@ -72,13 +72,7 @@ func TestPayForFile(t *testing.T) {
 		return
 	}
 
-	payForFileParams := PayForFileParams{
-		WCid:         "9153d0c9-1f1f-4605-ad5d-61baf2ea8ffbQmbeBMxC8yBk67xZYPhAgyUMuxCW6DZdfFPhGbt9WFva3q",
-		FileSizeByte: 17545,
-		PrivateKey:   config.GetConfig().PrivateKey,
-		RpcUrl:       config.GetConfig().RpcUrl,
-	}
-	txHash, err := mcsClient.PayForFile(payForFileParams)
+	txHash, err := mcsClient.PayForFile(1, config.GetConfig().PrivateKey, config.GetConfig().RpcUrl)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return

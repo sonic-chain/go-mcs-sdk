@@ -127,14 +127,13 @@ func (mcsCient *McsClient) GetBillingHistory(billingHistoryParams BillingHistory
 	return billings.Billing, &billings.TotalRecordCount, nil
 }
 
-type PayForFileParams struct {
-	WCid         string
-	FileSizeByte int64
-	PrivateKey   string
-	RpcUrl       string
-}
+func (mcsCient *McsClient) PayForFile(sourceFileUploadId int64, privateKeyStr string, rpcUrl string) (*string, error) {
+	sourceFileUpload, err := mcsCient.GetSourceFileUpload(sourceFileUploadId)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
 
-func (mcsCient *McsClient) PayForFile(params PayForFileParams) (*string, error) {
 	historicalAveragePriceVerified, err := GetHistoricalAveragePriceVerified()
 	if err != nil {
 		logs.GetLogger().Error(err)
@@ -147,19 +146,19 @@ func (mcsCient *McsClient) PayForFile(params PayForFileParams) (*string, error) 
 		return nil, err
 	}
 
-	amount, err := GetAmount(params.FileSizeByte, historicalAveragePriceVerified, systemParams.FilecoinPrice, constants.COPY_NUMBER_LIMIT)
+	amount, err := GetAmount(sourceFileUpload.FileSize, historicalAveragePriceVerified, systemParams.FilecoinPrice, constants.COPY_NUMBER_LIMIT)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
-	privateKey, err := crypto.HexToECDSA(params.PrivateKey)
+	privateKey, err := crypto.HexToECDSA(privateKeyStr)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
-	client, err := ethclient.Dial(params.RpcUrl)
+	client, err := ethclient.Dial(rpcUrl)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -187,16 +186,16 @@ func (mcsCient *McsClient) PayForFile(params PayForFileParams) (*string, error) 
 	amount2Lock := big.NewInt(int64(float64(amount) * float64(systemParams.PayMultiplyFactor)))
 	lockTime := int64(constants.DURATION_DAYS_DEFAULT) * constants.SECOND_PER_DAY
 	var paymentParam = contract.IPaymentMinimallockPaymentParam{
-		Id:         params.WCid,
+		Id:         sourceFileUpload.WCid,
 		MinPayment: minPayment,
 		Amount:     amount2Lock,
 		LockTime:   big.NewInt(lockTime),
 		Recipient:  common.HexToAddress(systemParams.PaymentRecipientAddress),
-		Size:       big.NewInt(params.FileSizeByte),
+		Size:       big.NewInt(sourceFileUpload.FileSize),
 		CopyLimit:  constants.COPY_NUMBER_LIMIT,
 	}
 
-	txHashApprove, err := Approve(params, systemParams, privateKey, amount2Lock)
+	txHashApprove, err := Approve(rpcUrl, systemParams, privateKey, amount2Lock)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -224,7 +223,7 @@ func (mcsCient *McsClient) PayForFile(params PayForFileParams) (*string, error) 
 	return &txHash, nil
 }
 
-func Approve(params PayForFileParams, systemParams *SystemParam, privateKey *ecdsa.PrivateKey, amount *big.Int) (*string, error) {
+func Approve(rpcUrl string, systemParams *SystemParam, privateKey *ecdsa.PrivateKey, amount *big.Int) (*string, error) {
 	publicKey := privateKey.Public()
 	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
 	if !ok {
@@ -235,7 +234,7 @@ func Approve(params PayForFileParams, systemParams *SystemParam, privateKey *ecd
 
 	walletAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
 
-	client, err := ethclient.Dial(params.RpcUrl)
+	client, err := ethclient.Dial(rpcUrl)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
