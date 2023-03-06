@@ -1,6 +1,7 @@
 package api
 
 import (
+	"go-mcs-sdk/mcs/api/common"
 	"go-mcs-sdk/mcs/api/common/constants"
 	"go-mcs-sdk/mcs/api/common/utils"
 	"net/url"
@@ -12,55 +13,18 @@ import (
 	libutils "github.com/filswan/go-swan-lib/utils"
 )
 
-type McsClient struct {
+type OnChainClient struct {
 	BaseUrl  string `json:"base_url"`
 	JwtToken string `json:"jwt_token"`
 }
 
-type LoginByApikeyParams struct {
-	Apikey      string `json:"apikey" binding:"required,min=1,max=100"`
-	AccessToken string `json:"access_token" binding:"required,min=1,max=100"`
-	Network     string `json:"network" binding:"required,min=1,max=65535"`
-}
+func GetOnChainClientFromMcsClient(mcsClient common.McsClient) OnChainClient {
+	var onChainClient = OnChainClient{}
 
-func LoginByApikey(apikey, accessToken, network string) (*McsClient, error) {
-	loginByApikeyParams := LoginByApikeyParams{
-		Apikey:      apikey,
-		AccessToken: accessToken,
-		Network:     network,
-	}
+	onChainClient.BaseUrl = mcsClient.BaseUrl
+	onChainClient.JwtToken = mcsClient.JwtToken
 
-	apiUrlBase := ""
-	switch network {
-	case constants.PAYMENT_CHAIN_NAME_POLYGON_MAINNET:
-		apiUrlBase = constants.API_URL_MCS_POLYGON_MAINNET
-	case constants.PAYMENT_CHAIN_NAME_POLYGON_MUMBAI:
-		apiUrlBase = constants.API_URL_MCS_POLYGON_MUMBAI
-	case constants.PAYMENT_CHAIN_NAME_BSC_TESTNET:
-		apiUrlBase = constants.API_URL_MCS_BSC_TESTNET
-	default:
-		apiUrlBase = constants.API_URL_MCS_POLYGON_MAINNET
-		network = constants.PAYMENT_CHAIN_NAME_POLYGON_MAINNET
-	}
-
-	apiUrl := libutils.UrlJoin(apiUrlBase, constants.LOGIN_BY_APIKEY)
-
-	var loginByApikeyResponse struct {
-		JwtToken string `json:"jwt_token"`
-	}
-
-	err := utils.HttpPost(apiUrl, "", loginByApikeyParams, &loginByApikeyResponse)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	mcsClient := McsClient{
-		BaseUrl:  apiUrlBase,
-		JwtToken: loginByApikeyResponse.JwtToken,
-	}
-
-	return &mcsClient, nil
+	return onChainClient
 }
 
 type SystemParam struct {
@@ -80,12 +44,12 @@ type SystemParam struct {
 	FilecoinPrice               float64 `json:"filecoin_price"`
 }
 
-func (mcsCient *McsClient) GetSystemParam() (*SystemParam, error) {
-	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_MCS_GET_PARAMS)
+func (onChainClient *OnChainClient) GetSystemParam() (*SystemParam, error) {
+	apiUrl := libutils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_MCS_GET_PARAMS)
 	params := url.Values{}
 
 	var systemParam SystemParam
-	err := utils.HttpGet(apiUrl, mcsCient.JwtToken, strings.NewReader(params.Encode()), &systemParam)
+	err := utils.HttpGet(apiUrl, onChainClient.JwtToken, strings.NewReader(params.Encode()), &systemParam)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err

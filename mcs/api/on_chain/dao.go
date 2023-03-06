@@ -14,11 +14,11 @@ type Deal2PreSign struct {
 	BatchCount          int   `json:"batch_count"`
 }
 
-func (mcsCient *McsClient) GetDeals2PreSign() ([]*Deal2PreSign, error) {
-	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_DAO_GET_DEALS_2_PRE_SIGN)
+func (onChainClient *OnChainClient) GetDeals2PreSign() ([]*Deal2PreSign, error) {
+	apiUrl := libutils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_DAO_GET_DEALS_2_PRE_SIGN)
 
 	var deals []*Deal2PreSign
-	err := utils.HttpGet(apiUrl, mcsCient.JwtToken, nil, &deals)
+	err := utils.HttpGet(apiUrl, onChainClient.JwtToken, nil, &deals)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -41,11 +41,11 @@ type Deal2Sign struct {
 	BatchInfo     []*Deal2SignBatchInfo `json:"batch_info"`
 }
 
-func (mcsCient *McsClient) GetDeals2Sign() ([]*Deal2Sign, error) {
-	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_DAO_GET_DEALS_2_SIGN)
+func (onChainClient *OnChainClient) GetDeals2Sign() ([]*Deal2Sign, error) {
+	apiUrl := libutils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_DAO_GET_DEALS_2_SIGN)
 
 	var deals []*Deal2Sign
-	err := utils.HttpGet(apiUrl, mcsCient.JwtToken, nil, &deals)
+	err := utils.HttpGet(apiUrl, onChainClient.JwtToken, nil, &deals)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -54,11 +54,11 @@ func (mcsCient *McsClient) GetDeals2Sign() ([]*Deal2Sign, error) {
 	return deals, nil
 }
 
-func (mcsCient *McsClient) GetDeals2SignHash() ([]*Deal2Sign, error) {
-	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_DAO_GET_DEALS_2_SIGN_HASH)
+func (onChainClient *OnChainClient) GetDeals2SignHash() ([]*Deal2Sign, error) {
+	apiUrl := libutils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_DAO_GET_DEALS_2_SIGN_HASH)
 
 	var deals []*Deal2Sign
-	err := utils.HttpGet(apiUrl, mcsCient.JwtToken, nil, &deals)
+	err := utils.HttpGet(apiUrl, onChainClient.JwtToken, nil, &deals)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err

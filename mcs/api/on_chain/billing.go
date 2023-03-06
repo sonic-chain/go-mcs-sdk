@@ -19,12 +19,12 @@ import (
 	libutils "github.com/filswan/go-swan-lib/utils"
 )
 
-func (mcsCient *McsClient) GetFileCoinPrice() (*float64, error) {
-	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_BILLING_FILECOIN_PRICE)
+func (onChainClient *OnChainClient) GetFileCoinPrice() (*float64, error) {
+	apiUrl := libutils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_BILLING_FILECOIN_PRICE)
 	params := url.Values{}
 
 	var price float64
-	err := utils.HttpGet(apiUrl, mcsCient.JwtToken, strings.NewReader(params.Encode()), &price)
+	err := utils.HttpGet(apiUrl, onChainClient.JwtToken, strings.NewReader(params.Encode()), &price)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -40,13 +40,13 @@ type LockPaymentInfo struct {
 	TokenAddress string `json:"token_address"`
 }
 
-func (mcsCient *McsClient) GetLockPaymentInfo(fileUploadId int64) (*LockPaymentInfo, error) {
-	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_BILLING_GET_PAYMENT_INFO)
+func (client *OnChainClient) GetLockPaymentInfo(fileUploadId int64) (*LockPaymentInfo, error) {
+	apiUrl := libutils.UrlJoin(client.BaseUrl, constants.API_URL_BILLING_GET_PAYMENT_INFO)
 	apiUrl = apiUrl + "?source_file_upload_id=" + fmt.Sprintf("%d", fileUploadId)
 	params := url.Values{}
 
 	var lockPaymentInfo LockPaymentInfo
-	err := utils.HttpGet(apiUrl, mcsCient.JwtToken, strings.NewReader(params.Encode()), &lockPaymentInfo)
+	err := utils.HttpGet(apiUrl, client.JwtToken, strings.NewReader(params.Encode()), &lockPaymentInfo)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -78,8 +78,8 @@ type BillingHistoryParams struct {
 	IsAscend   *string `json:"is_ascend"`
 }
 
-func (mcsCient *McsClient) GetBillingHistory(billingHistoryParams BillingHistoryParams) ([]*BillingHistory, *int64, error) {
-	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_BILLING_HISTORY)
+func (onChainClient *OnChainClient) GetBillingHistory(billingHistoryParams BillingHistoryParams) ([]*BillingHistory, *int64, error) {
+	apiUrl := libutils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_BILLING_HISTORY)
 	paramItems := []string{}
 	if billingHistoryParams.PageNumber != nil {
 		paramItems = append(paramItems, "page_number="+fmt.Sprintf("%d", *billingHistoryParams.PageNumber))
@@ -119,7 +119,7 @@ func (mcsCient *McsClient) GetBillingHistory(billingHistoryParams BillingHistory
 		TotalRecordCount int64             `json:"total_record_count"`
 	}
 
-	err := utils.HttpGet(apiUrl, mcsCient.JwtToken, nil, &billings)
+	err := utils.HttpGet(apiUrl, onChainClient.JwtToken, nil, &billings)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, nil, err
@@ -128,8 +128,8 @@ func (mcsCient *McsClient) GetBillingHistory(billingHistoryParams BillingHistory
 	return billings.Billing, &billings.TotalRecordCount, nil
 }
 
-func (mcsCient *McsClient) PayForFile(sourceFileUploadId int64, privateKeyStr string, rpcUrl string) (*string, error) {
-	sourceFileUpload, err := mcsCient.GetSourceFileUpload(sourceFileUploadId)
+func (onChainClient *OnChainClient) PayForFile(sourceFileUploadId int64, privateKeyStr string, rpcUrl string) (*string, error) {
+	sourceFileUpload, err := onChainClient.GetSourceFileUpload(sourceFileUploadId)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -141,7 +141,7 @@ func (mcsCient *McsClient) PayForFile(sourceFileUploadId int64, privateKeyStr st
 		return nil, err
 	}
 
-	systemParams, err := mcsCient.GetSystemParam()
+	systemParams, err := onChainClient.GetSystemParam()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err

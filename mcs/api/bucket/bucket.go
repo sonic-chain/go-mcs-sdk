@@ -1,7 +1,6 @@
 package bucket
 
 import (
-	"go-mcs-sdk/mcs/api"
 	"go-mcs-sdk/mcs/api/common"
 	"go-mcs-sdk/mcs/api/common/constants"
 	"go-mcs-sdk/mcs/api/common/utils"
@@ -11,7 +10,7 @@ import (
 )
 
 type BucketClient struct {
-	api.McsClient
+	common.McsClient
 }
 
 func GetBucketClientFromMcsClient(mcsClient common.McsClient) BucketClient {

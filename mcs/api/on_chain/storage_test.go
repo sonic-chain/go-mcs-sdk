@@ -10,13 +10,13 @@ import (
 )
 
 func TestUploadFile(t *testing.T) {
-	mcsClient, err := GetMcsClient()
+	client, err := GetOnChainClient()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
 	}
 
-	uploadFile, err := mcsClient.UploadFile(config.GetConfig().File2Upload, constants.SOURCE_FILE_TYPE_NORMAL)
+	uploadFile, err := client.UploadFile(config.GetConfig().File2Upload, constants.SOURCE_FILE_TYPE_NORMAL)
 	if err != nil {
 		log.Println(err)
 		return
@@ -26,7 +26,7 @@ func TestUploadFile(t *testing.T) {
 }
 
 func TestGetDeals(t *testing.T) {
-	mcsClient, err := GetMcsClient()
+	client, err := GetOnChainClient()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -38,7 +38,7 @@ func TestGetDeals(t *testing.T) {
 		PageNumber: &pageNumber,
 		PageSize:   &pageSize,
 	}
-	sourceFileUploads, recCnt, err := mcsClient.GetDeals(dealsParams)
+	sourceFileUploads, recCnt, err := client.GetDeals(dealsParams)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -52,13 +52,13 @@ func TestGetDeals(t *testing.T) {
 }
 
 func TestGetDealDetail(t *testing.T) {
-	mcsClient, err := GetMcsClient()
+	client, err := GetOnChainClient()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
 	}
 
-	sourceFileUploadDeal, daoSignatures, daoThreshold, err := mcsClient.GetDealDetail(149717, 198335)
+	sourceFileUploadDeal, daoSignatures, daoThreshold, err := client.GetDealDetail(149717, 198335)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -72,13 +72,13 @@ func TestGetDealDetail(t *testing.T) {
 }
 
 func TestGetDealLogs(t *testing.T) {
-	mcsClient, err := GetMcsClient()
+	client, err := GetOnChainClient()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
 	}
 
-	offlineDealLogs, err := mcsClient.GetDealLogs(1)
+	offlineDealLogs, err := client.GetDealLogs(1)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -90,13 +90,13 @@ func TestGetDealLogs(t *testing.T) {
 }
 
 func TestGetSourceFileUpload(t *testing.T) {
-	mcsClient, err := GetMcsClient()
+	client, err := GetOnChainClient()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
 	}
 
-	sourceFileUpload, err := mcsClient.GetSourceFileUpload(148234)
+	sourceFileUpload, err := client.GetSourceFileUpload(148234)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -106,13 +106,13 @@ func TestGetSourceFileUpload(t *testing.T) {
 }
 
 func TestUnpinSourceFile(t *testing.T) {
-	mcsClient, err := GetMcsClient()
+	client, err := GetOnChainClient()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
 	}
 
-	err = mcsClient.UnpinSourceFile(148234)
+	err = client.UnpinSourceFile(148234)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -120,7 +120,7 @@ func TestUnpinSourceFile(t *testing.T) {
 }
 
 func TestWriteNftCollection(t *testing.T) {
-	mcsClient, err := GetMcsClient()
+	client, err := GetOnChainClient()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -131,7 +131,7 @@ func TestWriteNftCollection(t *testing.T) {
 		TxHash: "0x68c28a439efcb9bbebec7992e0e7bac5d84bd6a06890bf35678f4fdf2ac2e519",
 	}
 
-	err = mcsClient.WriteNftCollection(nftCollectionParams)
+	err = client.WriteNftCollection(nftCollectionParams)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -139,13 +139,13 @@ func TestWriteNftCollection(t *testing.T) {
 }
 
 func TestGetNftCollections(t *testing.T) {
-	mcsClient, err := GetMcsClient()
+	client, err := GetOnChainClient()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
 	}
 
-	nftCollections, err := mcsClient.GetNftCollections()
+	nftCollections, err := client.GetNftCollections()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -157,7 +157,7 @@ func TestGetNftCollections(t *testing.T) {
 }
 
 func TestRecordMintInfo(t *testing.T) {
-	mcsClient, err := GetMcsClient()
+	client, err := GetOnChainClient()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -174,7 +174,7 @@ func TestRecordMintInfo(t *testing.T) {
 		Description:        &description,
 	}
 
-	sourceFileMint, err := mcsClient.RecordMintInfo(recordMintInfoParams)
+	sourceFileMint, err := client.RecordMintInfo(recordMintInfoParams)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -184,13 +184,13 @@ func TestRecordMintInfo(t *testing.T) {
 }
 
 func TestGetMintInfo(t *testing.T) {
-	mcsClient, err := GetMcsClient()
+	client, err := GetOnChainClient()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
 	}
 
-	sourceFileMints, err := mcsClient.GetMintInfo(1)
+	sourceFileMints, err := client.GetMintInfo(1)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return

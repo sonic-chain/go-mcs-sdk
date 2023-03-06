@@ -7,13 +7,13 @@ import (
 )
 
 func TestGetDeals2PreSign(t *testing.T) {
-	mcsClient, err := GetMcsClient()
+	client, err := GetOnChainClient()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
 	}
 
-	deals, err := mcsClient.GetDeals2PreSign()
+	deals, err := client.GetDeals2PreSign()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -25,13 +25,13 @@ func TestGetDeals2PreSign(t *testing.T) {
 }
 
 func TestGetDeals2Sign(t *testing.T) {
-	mcsClient, err := GetMcsClient()
+	client, err := GetOnChainClient()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
 	}
 
-	deals, err := mcsClient.GetDeals2Sign()
+	deals, err := client.GetDeals2Sign()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -43,13 +43,13 @@ func TestGetDeals2Sign(t *testing.T) {
 }
 
 func TestGetDeals2SignHash(t *testing.T) {
-	mcsClient, err := GetMcsClient()
+	client, err := GetOnChainClient()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
 	}
 
-	deals, err := mcsClient.GetDeals2SignHash()
+	deals, err := client.GetDeals2SignHash()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
