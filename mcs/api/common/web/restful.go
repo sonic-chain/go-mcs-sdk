@@ -1,4 +1,4 @@
-package utils
+package web
 
 import (
 	"bytes"
@@ -20,6 +20,32 @@ import (
 
 const HTTP_CONTENT_TYPE_FORM = "application/x-www-form-urlencoded"
 const HTTP_CONTENT_TYPE_JSON = "application/json; charset=UTF-8"
+
+type Response struct {
+	Status  string      `json:"status"`
+	Message string      `json:"message"`
+	Data    interface{} `json:"data"`
+}
+
+func HttpPost(uri, tokenString string, params, result interface{}) error {
+	err := HttpRequest(http.MethodPost, uri, &tokenString, params, nil, result)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return err
+	}
+
+	return nil
+}
+
+func HttpGet(uri, tokenString string, params, result interface{}) error {
+	err := HttpRequest(http.MethodGet, uri, &tokenString, params, nil, result)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return err
+	}
+
+	return nil
+}
 
 type McsResponse struct {
 	Status  string      `json:"status"`

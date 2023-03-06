@@ -5,6 +5,7 @@ import (
 	"crypto/ecdsa"
 	"fmt"
 	"go-mcs-sdk/mcs/api/common/constants"
+	"go-mcs-sdk/mcs/api/common/web"
 	"go-mcs-sdk/mcs/contract"
 	"math/big"
 	"net/url"
@@ -18,12 +19,12 @@ import (
 	libutils "github.com/filswan/go-swan-lib/utils"
 )
 
-func (mcsCient *McsClient) GetFileCoinPrice() (*float64, error) {
-	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_BILLING_FILECOIN_PRICE)
+func (onChainClient *OnChainClient) GetFileCoinPrice() (*float64, error) {
+	apiUrl := libutils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_BILLING_FILECOIN_PRICE)
 	params := url.Values{}
 
 	var price float64
-	err := HttpGet(apiUrl, mcsCient.JwtToken, strings.NewReader(params.Encode()), &price)
+	err := web.HttpGet(apiUrl, onChainClient.JwtToken, strings.NewReader(params.Encode()), &price)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -39,13 +40,13 @@ type LockPaymentInfo struct {
 	TokenAddress string `json:"token_address"`
 }
 
-func (mcsCient *McsClient) GetLockPaymentInfo(fileUploadId int64) (*LockPaymentInfo, error) {
-	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_BILLING_GET_PAYMENT_INFO)
+func (client *OnChainClient) GetLockPaymentInfo(fileUploadId int64) (*LockPaymentInfo, error) {
+	apiUrl := libutils.UrlJoin(client.BaseUrl, constants.API_URL_BILLING_GET_PAYMENT_INFO)
 	apiUrl = apiUrl + "?source_file_upload_id=" + fmt.Sprintf("%d", fileUploadId)
 	params := url.Values{}
 
 	var lockPaymentInfo LockPaymentInfo
-	err := HttpGet(apiUrl, mcsCient.JwtToken, strings.NewReader(params.Encode()), &lockPaymentInfo)
+	err := web.HttpGet(apiUrl, client.JwtToken, strings.NewReader(params.Encode()), &lockPaymentInfo)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -77,8 +78,8 @@ type BillingHistoryParams struct {
 	IsAscend   *string `json:"is_ascend"`
 }
 
-func (mcsCient *McsClient) GetBillingHistory(billingHistoryParams BillingHistoryParams) ([]*BillingHistory, *int64, error) {
-	apiUrl := libutils.UrlJoin(mcsCient.BaseUrl, constants.API_URL_BILLING_HISTORY)
+func (onChainClient *OnChainClient) GetBillingHistory(billingHistoryParams BillingHistoryParams) ([]*BillingHistory, *int64, error) {
+	apiUrl := libutils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_BILLING_HISTORY)
 	paramItems := []string{}
 	if billingHistoryParams.PageNumber != nil {
 		paramItems = append(paramItems, "page_number="+fmt.Sprintf("%d", *billingHistoryParams.PageNumber))
@@ -118,7 +119,7 @@ func (mcsCient *McsClient) GetBillingHistory(billingHistoryParams BillingHistory
 		TotalRecordCount int64             `json:"total_record_count"`
 	}
 
-	err := HttpGet(apiUrl, mcsCient.JwtToken, nil, &billings)
+	err := web.HttpGet(apiUrl, onChainClient.JwtToken, nil, &billings)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, nil, err
@@ -127,39 +128,38 @@ func (mcsCient *McsClient) GetBillingHistory(billingHistoryParams BillingHistory
 	return billings.Billing, &billings.TotalRecordCount, nil
 }
 
-type PayForFileParams struct {
-	WCid         string
-	FileSizeByte int64
-	PrivateKey   string
-	RpcUrl       string
-}
+func (onChainClient *OnChainClient) PayForFile(sourceFileUploadId int64, privateKeyStr string, rpcUrl string) (*string, error) {
+	sourceFileUpload, err := onChainClient.GetSourceFileUpload(sourceFileUploadId)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
 
-func (mcsCient *McsClient) PayForFile(params PayForFileParams) (*string, error) {
 	historicalAveragePriceVerified, err := GetHistoricalAveragePriceVerified()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
-	systemParams, err := mcsCient.GetSystemParam()
+	systemParams, err := onChainClient.GetSystemParam()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
-	amount, err := GetAmount(params.FileSizeByte, historicalAveragePriceVerified, systemParams.FilecoinPrice, constants.COPY_NUMBER_LIMIT)
+	amount, err := GetAmount(sourceFileUpload.FileSize, historicalAveragePriceVerified, systemParams.FilecoinPrice, constants.COPY_NUMBER_LIMIT)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
-	privateKey, err := crypto.HexToECDSA(params.PrivateKey)
+	privateKey, err := crypto.HexToECDSA(privateKeyStr)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
-	client, err := ethclient.Dial(params.RpcUrl)
+	client, err := ethclient.Dial(rpcUrl)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -187,16 +187,16 @@ func (mcsCient *McsClient) PayForFile(params PayForFileParams) (*string, error) 
 	amount2Lock := big.NewInt(int64(float64(amount) * float64(systemParams.PayMultiplyFactor)))
 	lockTime := int64(constants.DURATION_DAYS_DEFAULT) * constants.SECOND_PER_DAY
 	var paymentParam = contract.IPaymentMinimallockPaymentParam{
-		Id:         params.WCid,
+		Id:         sourceFileUpload.WCid,
 		MinPayment: minPayment,
 		Amount:     amount2Lock,
 		LockTime:   big.NewInt(lockTime),
 		Recipient:  common.HexToAddress(systemParams.PaymentRecipientAddress),
-		Size:       big.NewInt(params.FileSizeByte),
+		Size:       big.NewInt(sourceFileUpload.FileSize),
 		CopyLimit:  constants.COPY_NUMBER_LIMIT,
 	}
 
-	txHashApprove, err := Approve(params, systemParams, privateKey, amount2Lock)
+	txHashApprove, err := Approve(rpcUrl, systemParams, privateKey, amount2Lock)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -224,7 +224,7 @@ func (mcsCient *McsClient) PayForFile(params PayForFileParams) (*string, error) 
 	return &txHash, nil
 }
 
-func Approve(params PayForFileParams, systemParams *SystemParam, privateKey *ecdsa.PrivateKey, amount *big.Int) (*string, error) {
+func Approve(rpcUrl string, systemParams *SystemParam, privateKey *ecdsa.PrivateKey, amount *big.Int) (*string, error) {
 	publicKey := privateKey.Public()
 	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
 	if !ok {
@@ -235,7 +235,7 @@ func Approve(params PayForFileParams, systemParams *SystemParam, privateKey *ecd
 
 	walletAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
 
-	client, err := ethclient.Dial(params.RpcUrl)
+	client, err := ethclient.Dial(rpcUrl)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err

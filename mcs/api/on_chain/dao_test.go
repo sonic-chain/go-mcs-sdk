@@ -7,16 +7,9 @@ import (
 )
 
 func TestGetDeals2PreSign(t *testing.T) {
-	mcsClient, err := GetMcsClient()
+	deals, err := onChainClient.GetDeals2PreSign()
 	if err != nil {
-		logs.GetLogger().Error(err)
-		return
-	}
-
-	deals, err := mcsClient.GetDeals2PreSign()
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return
+		logs.GetLogger().Fatal(err)
 	}
 
 	for _, deal := range deals {
@@ -25,16 +18,9 @@ func TestGetDeals2PreSign(t *testing.T) {
 }
 
 func TestGetDeals2Sign(t *testing.T) {
-	mcsClient, err := GetMcsClient()
+	deals, err := onChainClient.GetDeals2Sign()
 	if err != nil {
-		logs.GetLogger().Error(err)
-		return
-	}
-
-	deals, err := mcsClient.GetDeals2Sign()
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return
+		logs.GetLogger().Fatal(err)
 	}
 
 	for _, deal := range deals {
@@ -43,16 +29,9 @@ func TestGetDeals2Sign(t *testing.T) {
 }
 
 func TestGetDeals2SignHash(t *testing.T) {
-	mcsClient, err := GetMcsClient()
+	deals, err := onChainClient.GetDeals2SignHash()
 	if err != nil {
-		logs.GetLogger().Error(err)
-		return
-	}
-
-	deals, err := mcsClient.GetDeals2SignHash()
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return
+		logs.GetLogger().Fatal(err)
 	}
 
 	for _, deal := range deals {
