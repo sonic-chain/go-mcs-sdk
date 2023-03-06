@@ -13,7 +13,6 @@ import (
 )
 
 type McsClient struct {
-	Network  string `json:"network"`
 	BaseUrl  string `json:"base_url"`
 	JwtToken string `json:"jwt_token"`
 }
@@ -57,7 +56,6 @@ func LoginByApikey(apikey, accessToken, network string) (*McsClient, error) {
 	}
 
 	mcsClient := McsClient{
-		Network:  network,
 		BaseUrl:  apiUrlBase,
 		JwtToken: loginByApikeyResponse.JwtToken,
 	}
