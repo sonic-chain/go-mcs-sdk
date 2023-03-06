@@ -29,3 +29,60 @@ func (bucketClient *BucketClient) CreateBucket(bucketName string) error {
 
 	return nil
 }
+
+type Bucket struct {
+	BucketUid  string `json:"bucket_uid"`
+	Address    string `json:"address"`
+	MaxSize    int64  `json:"max_size"`
+	Size       int64  `json:"size"`
+	IsFree     bool   `json:"is_free"`
+	PaymentTx  string `json:"payment_tx"`
+	IsActive   bool   `json:"is_active"`
+	IsDeleted  bool   `json:"is_deleted"`
+	BucketName string `json:"bucket_name"`
+	FileNumber int64  `json:"file_number"`
+}
+
+func (bucketClient *BucketClient) GetBuckets() ([]*Bucket, error) {
+	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_GET_BUCKET_LIST)
+
+	var buckets []*Bucket
+	err := utils.HttpGet(apiUrl, bucketClient.JwtToken, nil, buckets)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	return buckets, nil
+}
+
+func (bucketClient *BucketClient) DeleteBucket(bucketId int64) error {
+	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_DELETE_BUCKET)
+
+	err := utils.HttpGet(apiUrl, bucketClient.JwtToken, &bucketId, nil)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return err
+	}
+
+	return nil
+}
+
+func (bucketClient *BucketClient) RenameBucket(newBucketName string, bucketUid string) error {
+	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_DELETE_BUCKET)
+
+	var renameBucketParams struct {
+		BucketName string `form:"bucket_name" json:"bucket_name"`
+		BucketUid  string `form:"bucket_uid" json:"bucket_uid"`
+	}
+	renameBucketParams.BucketName = newBucketName
+	renameBucketParams.BucketUid = bucketUid
+
+	err := utils.HttpGet(apiUrl, bucketClient.JwtToken, &renameBucketParams, nil)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return err
+	}
+
+	return nil
+}

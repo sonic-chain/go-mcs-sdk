@@ -28,28 +28,6 @@ func NewBucketClient() *BucketClient {
 	return &bucketClient
 }
 
-func (client *McsClient) GetBuckets() ([]byte, error) {
-	apiUrl := libutils.UrlJoin(client.BaseUrl, constants.BUCKET_LIST)
-	bucketListInfoBytes, err := common.HttpGet(apiUrl, client.JwtToken, nil)
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-	log.Println(*(*string)(unsafe.Pointer(&bucketListInfoBytes)))
-	return bucketListInfoBytes, nil
-}
-
-func (client *McsClient) DeleteBucket(bucketUid string) ([]byte, error) {
-	apiUrl := libutils.UrlJoin(client.BaseUrl, constants.DELETE_BUCKET+bucketUid)
-	response, err := common.HttpGet(apiUrl, client.JwtToken, nil)
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-	log.Println(*(*string)(unsafe.Pointer(&response)))
-	return response, nil
-}
-
 func (client *McsClient) GetFileInfo(fileId int) ([]byte, error) {
 	apiUrl := libutils.UrlJoin(client.BaseUrl, constants.FILE_INFO, strconv.Itoa(fileId))
 	params := make(map[string]int)

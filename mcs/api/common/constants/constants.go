@@ -43,16 +43,17 @@ const (
 	API_URL_DAO_GET_DEALS_2_SIGN_HASH = "/api/v1/dao/deals_to_sign_hash/x"
 
 	// bucket api
-	API_URL_BUCKET_CREATE_BUCKET = "/api/v2/bucket/create"
-	BUCKET_LIST                  = "/api/v2/bucket/get_bucket_list"
-	DELETE_BUCKET                = "/api/v2/bucket/delete"
-	FILE_INFO                    = "/api/v2/oss_file/get_file_info"
-	DELETE_FILE                  = "/api/v2/oss_file/delete"
-	CREATE_FOLDER                = "/api/v2/oss_file/create_folder"
-	CHECK_UPLOAD                 = "/api/v2/oss_file/check"
-	UPLOAD_CHUNK                 = "/api/v2/oss_file/upload"
-	MERGE_FILE                   = "/api/v2/oss_file/merge"
-	FILE_LIST                    = "/api/v2/oss_file/get_file_list"
+	API_URL_BUCKET_CREATE_BUCKET   = "/api/v2/bucket/create"
+	API_URL_BUCKET_GET_BUCKET_LIST = "/api/v2/bucket/get_bucket_list"
+	API_URL_BUCKET_DELETE_BUCKET   = "/api/v2/bucket/delete"
+	API_URL_BUCKET_RENAME_BUCKET   = "/api/v2/bucket/rename"
+	FILE_INFO                      = "/api/v2/oss_file/get_file_info"
+	DELETE_FILE                    = "/api/v2/oss_file/delete"
+	CREATE_FOLDER                  = "/api/v2/oss_file/create_folder"
+	CHECK_UPLOAD                   = "/api/v2/oss_file/check"
+	UPLOAD_CHUNK                   = "/api/v2/oss_file/upload"
+	MERGE_FILE                     = "/api/v2/oss_file/merge"
+	FILE_LIST                      = "/api/v2/oss_file/get_file_list"
 
 	// contract
 	USDC_ABI          = "ERC20.json"
