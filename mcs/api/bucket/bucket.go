@@ -22,7 +22,7 @@ func GetBucketClient(mcsClient auth.McsClient) *BucketClient {
 	return bucketClient
 }
 
-func (bucketClient *BucketClient) CreateBucket(bucketName string) error {
+func (bucketClient *BucketClient) CreateBucket(bucketName string) (*string, error) {
 	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_CREATE_BUCKET)
 
 	var bucket struct {
@@ -30,13 +30,14 @@ func (bucketClient *BucketClient) CreateBucket(bucketName string) error {
 	}
 	bucket.BucketName = bucketName
 
-	err := web.HttpPost(apiUrl, bucketClient.JwtToken, &bucket, nil)
+	var bucketUid string
+	err := web.HttpPost(apiUrl, bucketClient.JwtToken, &bucket, &bucketUid)
 	if err != nil {
 		logs.GetLogger().Error(err)
-		return err
+		return nil, err
 	}
 
-	return nil
+	return &bucketUid, nil
 }
 
 type Bucket struct {
