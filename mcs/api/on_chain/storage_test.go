@@ -10,13 +10,7 @@ import (
 )
 
 func TestUploadFile(t *testing.T) {
-	client, err := GetOnChainClient4Test()
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return
-	}
-
-	uploadFile, err := client.UploadFile(config.GetConfig().File2Upload, constants.SOURCE_FILE_TYPE_NORMAL)
+	uploadFile, err := onChainClient.UploadFile(config.GetConfig().File2Upload, constants.SOURCE_FILE_TYPE_NORMAL)
 	if err != nil {
 		log.Println(err)
 		return
@@ -26,19 +20,13 @@ func TestUploadFile(t *testing.T) {
 }
 
 func TestGetDeals(t *testing.T) {
-	client, err := GetOnChainClient4Test()
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return
-	}
-
 	pageNumber := 1
 	pageSize := 10
 	dealsParams := DealsParams{
 		PageNumber: &pageNumber,
 		PageSize:   &pageSize,
 	}
-	sourceFileUploads, recCnt, err := client.GetDeals(dealsParams)
+	sourceFileUploads, recCnt, err := onChainClient.GetDeals(dealsParams)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -52,13 +40,7 @@ func TestGetDeals(t *testing.T) {
 }
 
 func TestGetDealDetail(t *testing.T) {
-	client, err := GetOnChainClient4Test()
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return
-	}
-
-	sourceFileUploadDeal, daoSignatures, daoThreshold, err := client.GetDealDetail(149717, 198335)
+	sourceFileUploadDeal, daoSignatures, daoThreshold, err := onChainClient.GetDealDetail(149717, 198335)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -72,13 +54,7 @@ func TestGetDealDetail(t *testing.T) {
 }
 
 func TestGetDealLogs(t *testing.T) {
-	client, err := GetOnChainClient4Test()
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return
-	}
-
-	offlineDealLogs, err := client.GetDealLogs(1)
+	offlineDealLogs, err := onChainClient.GetDealLogs(1)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -90,13 +66,7 @@ func TestGetDealLogs(t *testing.T) {
 }
 
 func TestGetSourceFileUpload(t *testing.T) {
-	client, err := GetOnChainClient4Test()
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return
-	}
-
-	sourceFileUpload, err := client.GetSourceFileUpload(148234)
+	sourceFileUpload, err := onChainClient.GetSourceFileUpload(148234)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -106,13 +76,7 @@ func TestGetSourceFileUpload(t *testing.T) {
 }
 
 func TestUnpinSourceFile(t *testing.T) {
-	client, err := GetOnChainClient4Test()
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return
-	}
-
-	err = client.UnpinSourceFile(148234)
+	err := onChainClient.UnpinSourceFile(148234)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -120,18 +84,12 @@ func TestUnpinSourceFile(t *testing.T) {
 }
 
 func TestWriteNftCollection(t *testing.T) {
-	client, err := GetOnChainClient4Test()
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return
-	}
-
 	nftCollectionParams := NftCollectionParams{
 		Name:   "aaadd",
 		TxHash: "0x68c28a439efcb9bbebec7992e0e7bac5d84bd6a06890bf35678f4fdf2ac2e519",
 	}
 
-	err = client.WriteNftCollection(nftCollectionParams)
+	err := onChainClient.WriteNftCollection(nftCollectionParams)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -139,13 +97,7 @@ func TestWriteNftCollection(t *testing.T) {
 }
 
 func TestGetNftCollections(t *testing.T) {
-	client, err := GetOnChainClient4Test()
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return
-	}
-
-	nftCollections, err := client.GetNftCollections()
+	nftCollections, err := onChainClient.GetNftCollections()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -157,12 +109,6 @@ func TestGetNftCollections(t *testing.T) {
 }
 
 func TestRecordMintInfo(t *testing.T) {
-	client, err := GetOnChainClient4Test()
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return
-	}
-
 	name := "abc"
 	description := "hello"
 	recordMintInfoParams := &RecordMintInfoParams{
@@ -174,7 +120,7 @@ func TestRecordMintInfo(t *testing.T) {
 		Description:        &description,
 	}
 
-	sourceFileMint, err := client.RecordMintInfo(recordMintInfoParams)
+	sourceFileMint, err := onChainClient.RecordMintInfo(recordMintInfoParams)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -184,13 +130,7 @@ func TestRecordMintInfo(t *testing.T) {
 }
 
 func TestGetMintInfo(t *testing.T) {
-	client, err := GetOnChainClient4Test()
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return
-	}
-
-	sourceFileMints, err := client.GetMintInfo(1)
+	sourceFileMints, err := onChainClient.GetMintInfo(1)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return

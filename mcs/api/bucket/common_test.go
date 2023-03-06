@@ -1,21 +1,27 @@
-package auth
+package bucket
 
 import (
+	"go-mcs-sdk/mcs/api/common/auth"
 	"go-mcs-sdk/mcs/config"
-	"testing"
 
 	"github.com/filswan/go-swan-lib/logs"
 )
 
-func TestLoginByApikey(t *testing.T) {
+var onChainClient *BucketClient
+
+func init() {
+	if onChainClient != nil {
+		return
+	}
+
 	apikey := config.GetConfig().Apikey
 	accessToken := config.GetConfig().AccessToken
 	network := config.GetConfig().Network
 
-	mcsClient, err := LoginByApikey(apikey, accessToken, network)
+	mcsClient, err := auth.LoginByApikey(apikey, accessToken, network)
 	if err != nil {
 		logs.GetLogger().Fatal(err)
 	}
 
-	logs.GetLogger().Info(mcsClient)
+	onChainClient = GetBucketClient(*mcsClient)
 }

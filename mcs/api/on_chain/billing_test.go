@@ -8,13 +8,7 @@ import (
 )
 
 func TestGetFileCoinPrice(t *testing.T) {
-	client, err := GetOnChainClient4Test()
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return
-	}
-
-	filecoinPrice, err := client.GetFileCoinPrice()
+	filecoinPrice, err := onChainClient.GetFileCoinPrice()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -24,13 +18,7 @@ func TestGetFileCoinPrice(t *testing.T) {
 }
 
 func TestGetLockPaymentInfo(t *testing.T) {
-	client, err := GetOnChainClient4Test()
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return
-	}
-
-	lockPaymentInfo, err := client.GetLockPaymentInfo(2131)
+	lockPaymentInfo, err := onChainClient.GetLockPaymentInfo(2131)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -40,19 +28,13 @@ func TestGetLockPaymentInfo(t *testing.T) {
 }
 
 func TestGetBillingHistory(t *testing.T) {
-	client, err := GetOnChainClient4Test()
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return
-	}
-
 	pageNumber := 1
 	pageSize := 10
 	billingHistoryParams := BillingHistoryParams{
 		PageNumber: &pageNumber,
 		PageSize:   &pageSize,
 	}
-	billings, recCnt, err := client.GetBillingHistory(billingHistoryParams)
+	billings, recCnt, err := onChainClient.GetBillingHistory(billingHistoryParams)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
@@ -66,13 +48,7 @@ func TestGetBillingHistory(t *testing.T) {
 }
 
 func TestPayForFile(t *testing.T) {
-	client, err := GetOnChainClient4Test()
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return
-	}
-
-	txHash, err := client.PayForFile(1, config.GetConfig().PrivateKey, config.GetConfig().RpcUrl)
+	txHash, err := onChainClient.PayForFile(1, config.GetConfig().PrivateKey, config.GetConfig().RpcUrl)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return

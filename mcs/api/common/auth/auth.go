@@ -3,27 +3,10 @@ package auth
 import (
 	"go-mcs-sdk/mcs/api/common/constants"
 	"go-mcs-sdk/mcs/api/common/web"
-	"go-mcs-sdk/mcs/config"
 
 	"github.com/filswan/go-swan-lib/logs"
 	libutils "github.com/filswan/go-swan-lib/utils"
 )
-
-func GetMcsClient() (*McsClient, error) {
-	apikey := config.GetConfig().Apikey
-	accessToken := config.GetConfig().AccessToken
-	network := config.GetConfig().Network
-
-	mcsClient, err := LoginByApikey(apikey, accessToken, network)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	logs.GetLogger().Info(mcsClient)
-
-	return mcsClient, nil
-}
 
 type McsClient struct {
 	Network  string `json:"network"`

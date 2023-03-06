@@ -2,41 +2,33 @@ package api
 
 import (
 	"go-mcs-sdk/mcs/api/common/auth"
+	"go-mcs-sdk/mcs/config"
 	"testing"
 
 	"github.com/filswan/go-swan-lib/logs"
 )
 
-func GetOnChainClient4Test() (*OnChainClient, error) {
-	mcsClient, err := auth.GetMcsClient()
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
+var onChainClient *OnChainClient
 
-	onChainClient := GetOnChainClient(*mcsClient)
-
-	return &onChainClient, nil
-}
-
-func TestLoginByApikey(t *testing.T) {
-	client, err := GetOnChainClient4Test()
-	if err != nil {
-		logs.GetLogger().Error(err)
+func init() {
+	if onChainClient != nil {
 		return
 	}
 
-	logs.GetLogger().Info(client)
+	apikey := config.GetConfig().Apikey
+	accessToken := config.GetConfig().AccessToken
+	network := config.GetConfig().Network
+
+	mcsClient, err := auth.LoginByApikey(apikey, accessToken, network)
+	if err != nil {
+		logs.GetLogger().Fatal(err)
+	}
+
+	onChainClient = GetOnChainClient(*mcsClient)
 }
 
 func TestGetSystemParam(t *testing.T) {
-	client, err := GetOnChainClient4Test()
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return
-	}
-
-	params, err := client.GetSystemParam()
+	params, err := onChainClient.GetSystemParam()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return
