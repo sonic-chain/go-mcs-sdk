@@ -30,8 +30,7 @@ func init() {
 func TestGetSystemParam(t *testing.T) {
 	params, err := onChainClient.GetSystemParam()
 	if err != nil {
-		logs.GetLogger().Error(err)
-		return
+		logs.GetLogger().Fatal(err)
 	}
 
 	logs.GetLogger().Info(params)
@@ -40,8 +39,7 @@ func TestGetSystemParam(t *testing.T) {
 func TestGetFilPrice(t *testing.T) {
 	price, err := GetHistoricalAveragePriceVerified()
 	if err != nil {
-		logs.GetLogger().Error(err)
-		return
+		logs.GetLogger().Fatal(err)
 	}
 
 	logs.GetLogger().Info(price)
@@ -50,8 +48,7 @@ func TestGetFilPrice(t *testing.T) {
 func TestGetAmount(t *testing.T) {
 	amount, err := GetAmount(1, 0.1, 1, 2)
 	if err != nil {
-		logs.GetLogger().Error(err)
-		return
+		logs.GetLogger().Fatal(err)
 	}
 
 	logs.GetLogger().Info(amount)
