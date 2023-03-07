@@ -57,7 +57,7 @@ func (bucketClient *BucketClient) GetBuckets() ([]*Bucket, error) {
 	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_GET_BUCKET_LIST)
 
 	var buckets []*Bucket
-	err := web.HttpGet(apiUrl, bucketClient.JwtToken, nil, buckets)
+	err := web.HttpGet(apiUrl, bucketClient.JwtToken, nil, &buckets)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -66,10 +66,11 @@ func (bucketClient *BucketClient) GetBuckets() ([]*Bucket, error) {
 	return buckets, nil
 }
 
-func (bucketClient *BucketClient) DeleteBucket(bucketId int64) error {
+func (bucketClient *BucketClient) DeleteBucket(bucketUid string) error {
 	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_DELETE_BUCKET)
+	apiUrl = apiUrl + "?bucket_uid=" + bucketUid
 
-	err := web.HttpGet(apiUrl, bucketClient.JwtToken, &bucketId, nil)
+	err := web.HttpGet(apiUrl, bucketClient.JwtToken, nil, nil)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return err
@@ -79,16 +80,17 @@ func (bucketClient *BucketClient) DeleteBucket(bucketId int64) error {
 }
 
 func (bucketClient *BucketClient) RenameBucket(newBucketName string, bucketUid string) error {
-	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_DELETE_BUCKET)
+	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_RENAME_BUCKET)
 
-	var renameBucketParams struct {
-		BucketName string `form:"bucket_name" json:"bucket_name"`
-		BucketUid  string `form:"bucket_uid" json:"bucket_uid"`
+	var params struct {
+		BucketName string `json:"bucket_name"`
+		BucketUid  string `json:"bucket_uid"`
 	}
-	renameBucketParams.BucketName = newBucketName
-	renameBucketParams.BucketUid = bucketUid
+	params.BucketName = newBucketName
+	params.BucketUid = bucketUid
 
-	err := web.HttpGet(apiUrl, bucketClient.JwtToken, &renameBucketParams, nil)
+	var result string
+	err := web.HttpPost(apiUrl, bucketClient.JwtToken, &params, &result)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return err
@@ -97,7 +99,7 @@ func (bucketClient *BucketClient) RenameBucket(newBucketName string, bucketUid s
 	return nil
 }
 
-func (bucketClient *BucketClient) GetTotalStorageSize(newBucketName string, bucketUid string) (*int64, error) {
+func (bucketClient *BucketClient) GetTotalStorageSize() (*int64, error) {
 	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_GET_TOTAL_STORAGE_SIZE)
 
 	var totalStorageSize int64
