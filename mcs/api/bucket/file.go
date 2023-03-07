@@ -35,9 +35,10 @@ type OssFile struct {
 
 func (bucketClient *BucketClient) GetFileInfo(fileId int) (*OssFile, error) {
 	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_GET_FILE_INFO)
+	apiUrl = apiUrl + "?file_id=" + strconv.Itoa(fileId)
 
 	var fileInfo OssFile
-	err := web.HttpGet(apiUrl, bucketClient.JwtToken, &fileId, &fileInfo)
+	err := web.HttpGet(apiUrl, bucketClient.JwtToken, nil, &fileInfo)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -47,9 +48,10 @@ func (bucketClient *BucketClient) GetFileInfo(fileId int) (*OssFile, error) {
 }
 
 func (bucketClient *BucketClient) DeleteFile(fileId int) error {
-	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_DELETE_FILE, strconv.Itoa(fileId))
+	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_DELETE_FILE)
+	apiUrl = apiUrl + "?file_id=" + strconv.Itoa(fileId)
 
-	err := web.HttpGet(apiUrl, bucketClient.JwtToken, &fileId, nil)
+	err := web.HttpGet(apiUrl, bucketClient.JwtToken, nil, nil)
 	if err != nil {
 		log.Println(err)
 		return err
@@ -58,7 +60,7 @@ func (bucketClient *BucketClient) DeleteFile(fileId int) error {
 	return nil
 }
 
-func (bucketClient *BucketClient) CreateFolder(fileName, prefix, bucketUid string) error {
+func (bucketClient *BucketClient) CreateFolder(fileName, prefix, bucketUid string) (*string, error) {
 	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_CREATE_FOLDER)
 
 	var params struct {
@@ -71,13 +73,14 @@ func (bucketClient *BucketClient) CreateFolder(fileName, prefix, bucketUid strin
 	params.Prefix = prefix
 	params.BucketUid = bucketUid
 
-	err := web.HttpPost(apiUrl, bucketClient.JwtToken, &params, nil)
+	var folderName string
+	err := web.HttpPost(apiUrl, bucketClient.JwtToken, &params, &folderName)
 	if err != nil {
 		log.Println(err)
-		return err
+		return nil, err
 	}
 
-	return nil
+	return &folderName, nil
 }
 
 func (bucketClient *BucketClient) GetFileInfoByObjectName(objectName, bucketUid string) (*OssFile, error) {
