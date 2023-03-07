@@ -30,3 +30,12 @@ func TestCreateFolder(t *testing.T) {
 
 	logs.GetLogger().Info(*folderName)
 }
+
+func TestGetFileInfoByObjectName(t *testing.T) {
+	folderName, err := onChainClient.GetFileInfoByObjectName("ddsfads/duration7", "a7303d2a-acd2-48ac-a062-8454bbf148d2")
+	if err != nil {
+		logs.GetLogger().Fatal(err)
+	}
+
+	logs.GetLogger().Info(*folderName)
+}

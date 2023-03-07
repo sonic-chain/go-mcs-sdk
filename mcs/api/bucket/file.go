@@ -84,8 +84,8 @@ func (bucketClient *BucketClient) CreateFolder(fileName, prefix, bucketUid strin
 }
 
 func (bucketClient *BucketClient) GetFileInfoByObjectName(objectName, bucketUid string) (*OssFile, error) {
-	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_GET_FILE_INFO)
-	apiUrl = apiUrl + "?bucket_uid=" + bucketUid + "&objectName=" + objectName
+	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_GET_FILE_INFO_BY_OBJECT_NAME)
+	apiUrl = apiUrl + "?bucket_uid=" + bucketUid + "&object_name=" + objectName
 
 	var fileInfo OssFile
 	err := web.HttpGet(apiUrl, bucketClient.JwtToken, nil, &fileInfo)
