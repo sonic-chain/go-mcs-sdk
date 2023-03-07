@@ -12,8 +12,10 @@ import (
 	"os"
 	"path"
 	"strconv"
+	"strings"
 	"unsafe"
 
+	"github.com/codingsince1985/checksum"
 	"github.com/filswan/go-swan-lib/logs"
 	libutils "github.com/filswan/go-swan-lib/utils"
 )
@@ -97,6 +99,107 @@ func (bucketClient *BucketClient) GetFileInfoByObjectName(objectName, bucketUid 
 	return &fileInfo, nil
 }
 
+func getPrefixFileName(objectName string) (string, string) {
+	lastIndex := strings.LastIndex(objectName, "/")
+
+	if lastIndex == -1 {
+		return "", objectName
+	}
+
+	prefix := objectName[0:lastIndex]
+	fileName := objectName[lastIndex+1:]
+
+	return prefix, fileName
+}
+
+func (bucketClient *BucketClient) getBucketUid(bucketName string) (*string, error) {
+	buckets, err := bucketClient.GetBuckets()
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	for _, bucket := range buckets {
+		if bucket.BucketName == bucketName {
+			return &bucket.BucketUid, nil
+		}
+	}
+
+	return nil, nil
+}
+
+func (bucketClient *BucketClient) UploadFile(bucketName, objectName, filePath string, replace bool) error {
+	prefix, fileName := getPrefixFileName(objectName)
+
+	bucketUid, err := bucketClient.getBucketUid(bucketName)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return err
+	}
+
+	osFileInfo, err := os.Stat(filePath)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return err
+	}
+
+	fileSize := osFileInfo.Size()
+
+	fileHashMd5, err := checksum.MD5sum(filePath)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return err
+	}
+
+	ossFileInfo, err := bucketClient.CheckFile(*bucketUid, prefix, fileHashMd5, fileName)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return err
+	}
+
+	if ossFileInfo.FileIsExist && replace {
+		err = bucketClient.DeleteFile(int(ossFileInfo.FileId))
+		if err != nil {
+			logs.GetLogger().Error(err)
+			return err
+		}
+		ossFileInfo, err = bucketClient.CheckFile(*bucketUid, prefix, fileHashMd5, fileName)
+		if err != nil {
+			logs.GetLogger().Error(err)
+			return err
+		}
+	}
+
+	if !ossFileInfo.FileIsExist {
+		if !ossFileInfo.IpfsIsExist {
+			file, err := os.Open(filePath)
+			if err != nil {
+				logs.GetLogger().Error(err)
+				return err
+			}
+			chunks := make([][]byte, 3)
+			bytesReadTotal := int64(0)
+			chunkSizeMax := int64(10485760)
+			for bytesReadTotal < fileSize {
+				var chunkSize int64
+				if fileSize-bytesReadTotal >= chunkSizeMax {
+					chunkSize = chunkSizeMax
+				} else {
+					chunkSize = fileSize - bytesReadTotal
+				}
+				chunk := make([]byte, chunkSize)
+				bytesRead, err := file.Read(chunk)
+				if err != nil {
+					logs.GetLogger().Error(err)
+					return err
+				}
+				bytesReadTotal = bytesReadTotal + int64(bytesRead)
+				chunks = append(chunks, chunk)
+			}
+		}
+	}
+}
+
 type OssFileInfo struct {
 	FileId      uint   `form:"file_id" json:"file_id"`
 	FileHash    string `form:"file_hash" json:"file_hash"`
@@ -107,7 +210,7 @@ type OssFileInfo struct {
 	//IpfsUrl     string `form:"ipfs_url" json:"ipfs_url"`
 }
 
-func (bucketClient *BucketClient) CheckFile(bucketUid, fileHash, fileName, prefix string) (*OssFileInfo, error) {
+func (bucketClient *BucketClient) CheckFile(bucketUid, prefix, fileHash, fileName string) (*OssFileInfo, error) {
 	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_CHECK_UPLOAD)
 
 	var params struct {

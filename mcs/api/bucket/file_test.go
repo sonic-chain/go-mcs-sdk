@@ -39,3 +39,21 @@ func TestGetFileInfoByObjectName(t *testing.T) {
 
 	logs.GetLogger().Info(*folderName)
 }
+
+func TestCheckFile(t *testing.T) {
+	fileInfo, err := onChainClient.CheckFile("a7303d2a-acd2-48ac-a062-8454bbf148d2", "ddsfads", "0c3ec30ad80e40d02d66d681a9ba24c4", "duration7")
+	if err != nil {
+		logs.GetLogger().Fatal(err)
+	}
+
+	logs.GetLogger().Info(*fileInfo)
+}
+
+func TestUploadFileChunk(t *testing.T) {
+	fileInfo, err := onChainClient.UploadFileChunk("a7303d2a-acd2-48ac-a062-8454bbf148d2", "/Users/dorachen/work/duration9")
+	if err != nil {
+		logs.GetLogger().Fatal(err)
+	}
+
+	logs.GetLogger().Info(string(fileInfo))
+}
