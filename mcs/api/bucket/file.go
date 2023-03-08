@@ -183,7 +183,7 @@ func (bucketClient *BucketClient) UploadFile(bucketName, objectName, filePath st
 				return err
 			}
 			bytesReadTotal := int64(0)
-			chunkSizeMax := int64(1000 * constants.BYTES_1MB)
+			chunkSizeMax := int64(10 * constants.BYTES_1MB)
 			chunNo := 0
 			for bytesReadTotal < fileSize {
 				var chunkSize int64
@@ -362,7 +362,7 @@ func (bucketClient *BucketClient) MergeFile(bucketUid, fileHash, fileName, prefi
 	params.BucketUid = bucketUid
 
 	var ossFileInfo OssFileInfo
-	err := web.HttpPost(apiUrl, bucketClient.JwtToken, &params, &ossFileInfo)
+	err := web.HttpPostTimeout(apiUrl, bucketClient.JwtToken, &params, 600, &ossFileInfo)
 	if err != nil {
 		log.Println(err)
 		return nil, err
