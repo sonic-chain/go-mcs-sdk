@@ -2,6 +2,7 @@ package bucket
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"go-mcs-sdk/mcs/api/common/constants"
 	"go-mcs-sdk/mcs/api/common/web"
@@ -10,10 +11,9 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
-	"path"
+	"path/filepath"
 	"strconv"
 	"strings"
-	"unsafe"
 
 	"github.com/codingsince1985/checksum"
 	"github.com/filswan/go-swan-lib/logs"
@@ -177,15 +177,16 @@ func (bucketClient *BucketClient) UploadFile(bucketName, objectName, filePath st
 				logs.GetLogger().Error(err)
 				return err
 			}
-			chunks := make([][]byte, 3)
 			bytesReadTotal := int64(0)
 			chunkSizeMax := int64(10485760)
+			chunNo := 0
 			for bytesReadTotal < fileSize {
 				var chunkSize int64
-				if fileSize-bytesReadTotal >= chunkSizeMax {
+				bytesLeft := fileSize - bytesReadTotal
+				if bytesLeft >= chunkSizeMax {
 					chunkSize = chunkSizeMax
 				} else {
-					chunkSize = fileSize - bytesReadTotal
+					chunkSize = bytesLeft
 				}
 				chunk := make([]byte, chunkSize)
 				bytesRead, err := file.Read(chunk)
@@ -194,10 +195,24 @@ func (bucketClient *BucketClient) UploadFile(bucketName, objectName, filePath st
 					return err
 				}
 				bytesReadTotal = bytesReadTotal + int64(bytesRead)
-				chunks = append(chunks, chunk)
+				chunNo = chunNo + 1
+
+				_, err = bucketClient.UploadFileChunk(fileHashMd5, fileName+strconv.Itoa(chunNo), chunk)
+				if err != nil {
+					logs.GetLogger().Error(err)
+					return err
+				}
+			}
+
+			_, err = bucketClient.MergeFile(*bucketUid, fileHashMd5, fileName, prefix)
+			if err != nil {
+				logs.GetLogger().Error(err)
+				return err
 			}
 		}
 	}
+
+	return nil
 }
 
 type OssFileInfo struct {
@@ -228,64 +243,79 @@ func (bucketClient *BucketClient) CheckFile(bucketUid, prefix, fileHash, fileNam
 	var ossFileInfo OssFileInfo
 	err := web.HttpPost(apiUrl, bucketClient.JwtToken, &params, &ossFileInfo)
 	if err != nil {
-		log.Println(err)
+		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
 	return &ossFileInfo, nil
 }
 
-func (bucketClient *BucketClient) UploadFileChunk(fileHash, uploadFilePath string) ([]byte, error) {
+func (bucketClient *BucketClient) UploadFileChunk(fileHash, fileName string, chunk []byte) ([]string, error) {
 	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_UPLOAD_CHUNK)
-	fileNameWithSuffix := path.Base(uploadFilePath)
-	payload := &bytes.Buffer{}
-	writer := multipart.NewWriter(payload)
-	file, err := os.Open(uploadFilePath)
+
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	defer writer.Close()
+
+	part, err := writer.CreateFormFile("file", filepath.Base(fileName))
 	if err != nil {
-		log.Println(err)
+		logs.GetLogger().Error(err)
 		return nil, err
 	}
-	part1, err := writer.CreateFormFile("file", fileNameWithSuffix)
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-	_, err = io.Copy(part1, file)
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
+	io.Copy(part, bytes.NewReader(chunk))
+
 	err = writer.WriteField("hash", fileHash)
 	if err != nil {
-		log.Println(err)
+		logs.GetLogger().Error(err)
 		return nil, err
 	}
-	err = writer.Close()
+
+	request, err := http.NewRequest("POST", apiUrl, body)
 	if err != nil {
-		log.Println(err)
+		logs.GetLogger().Error(err)
 		return nil, err
 	}
-	request, err := http.NewRequest("POST", apiUrl, payload)
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
+
 	request.Header.Add("Authorization", fmt.Sprintf("Bearer %s", bucketClient.JwtToken))
 	request.Header.Add("Content-Type", writer.FormDataContentType())
-	response, err := http.DefaultClient.Do(request)
-	//response, err := httpClient.Post(httpRequestUrl,bodyWriter.FormDataContentType(),bodyBuffer)
+	client := &http.Client{}
+	response, err := client.Do(request)
 	if err != nil {
-		log.Println(err)
+		logs.GetLogger().Error(err)
 		return nil, err
 	}
 	defer response.Body.Close()
+
+	if response.StatusCode != http.StatusOK {
+		err := fmt.Errorf("http status: %s, code:%d, url:%s", response.Status, response.StatusCode, apiUrl)
+		logs.GetLogger().Error(err)
+		switch response.StatusCode {
+		case http.StatusNotFound:
+			logs.GetLogger().Error("please check your url:", apiUrl)
+		case http.StatusUnauthorized:
+			logs.GetLogger().Error("Please check your token:", bucketClient.JwtToken)
+		}
+	}
+
 	responseBytes, err := io.ReadAll(response.Body)
 	if err != nil {
-		log.Println(err)
+		logs.GetLogger().Error(err)
 		return nil, err
 	}
-	log.Println(*(*string)(unsafe.Pointer(&responseBytes)))
-	return responseBytes, nil
+
+	var responseData struct {
+		Status  string   `json:"status"`
+		Message string   `json:"message"`
+		Data    []string `json:"data"`
+	}
+
+	err = json.Unmarshal(responseBytes, &responseData)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	return responseData.Data, nil
 }
 
 func (bucketClient *BucketClient) MergeFile(bucketUid, fileHash, fileName, prefix string) (*OssFileInfo, error) {
