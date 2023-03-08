@@ -8,11 +8,13 @@ import (
 	"go-mcs-sdk/mcs/api/common/web"
 	"io"
 	"log"
+	"math"
 	"mime/multipart"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/codingsince1985/checksum"
 	"github.com/filswan/go-swan-lib/logs"
@@ -185,6 +187,11 @@ func (bucketClient *BucketClient) UploadFile(bucketName, objectName, filePath st
 			bytesReadTotal := int64(0)
 			chunkSizeMax := int64(10 * constants.BYTES_1MB)
 			chunNo := 0
+			chunkCnt := int(math.Ceil(float64(fileSize) / float64(chunkSizeMax)))
+			var wg sync.WaitGroup
+			defer wg.Done()
+			wg.Add(chunkCnt)
+
 			for bytesReadTotal < fileSize {
 				var chunkSize int64
 				bytesLeft := fileSize - bytesReadTotal
@@ -210,11 +217,12 @@ func (bucketClient *BucketClient) UploadFile(bucketName, objectName, filePath st
 				}
 			}
 
-			_, err = bucketClient.MergeFile(*bucketUid, fileHashMd5, fileName, prefix)
-			if err != nil {
-				logs.GetLogger().Error(err)
-				return err
-			}
+			wg.Wait()
+			go bucketClient.MergeFile(*bucketUid, fileHashMd5, fileName, prefix)
+			//if err != nil {
+			//	logs.GetLogger().Error(err)
+			//	return err
+			//}
 		}
 	}
 
