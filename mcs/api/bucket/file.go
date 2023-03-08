@@ -178,7 +178,7 @@ func (bucketClient *BucketClient) UploadFile(bucketName, objectName, filePath st
 				return err
 			}
 			bytesReadTotal := int64(0)
-			chunkSizeMax := int64(10485760)
+			chunkSizeMax := int64(1000 * constants.BYTES_1MB)
 			chunNo := 0
 			for bytesReadTotal < fileSize {
 				var chunkSize int64
@@ -189,15 +189,16 @@ func (bucketClient *BucketClient) UploadFile(bucketName, objectName, filePath st
 					chunkSize = bytesLeft
 				}
 				chunk := make([]byte, chunkSize)
-				bytesRead, err := file.Read(chunk)
+				_, err := file.ReadAt(chunk, bytesReadTotal)
 				if err != nil {
 					logs.GetLogger().Error(err)
 					return err
 				}
-				bytesReadTotal = bytesReadTotal + int64(bytesRead)
+				bytesReadTotal = bytesReadTotal + chunkSize
 				chunNo = chunNo + 1
 
-				_, err = bucketClient.UploadFileChunk(fileHashMd5, fileName+strconv.Itoa(chunNo), chunk)
+				partFileName := strconv.Itoa(chunNo) + "_" + fileName
+				_, err = bucketClient.UploadFileChunk(fileHashMd5, partFileName, chunk)
 				if err != nil {
 					logs.GetLogger().Error(err)
 					return err
@@ -255,16 +256,32 @@ func (bucketClient *BucketClient) UploadFileChunk(fileHash, fileName string, chu
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
-	defer writer.Close()
 
 	part, err := writer.CreateFormFile("file", filepath.Base(fileName))
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
-	io.Copy(part, bytes.NewReader(chunk))
+
+	//chunkReader := bytes.NewReader(chunk)
+
+	//chunkReader.WriteTo(part)
+
+	//io.Copy(part, chunkReader)
+	n, err := part.Write(chunk)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+	logs.GetLogger().Info(n)
 
 	err = writer.WriteField("hash", fileHash)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	err = writer.Close()
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -303,19 +320,25 @@ func (bucketClient *BucketClient) UploadFileChunk(fileHash, fileName string, chu
 		return nil, err
 	}
 
-	var responseData struct {
+	var mcsResponse struct {
 		Status  string   `json:"status"`
 		Message string   `json:"message"`
 		Data    []string `json:"data"`
 	}
 
-	err = json.Unmarshal(responseBytes, &responseData)
+	err = json.Unmarshal(responseBytes, &mcsResponse)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
-	return responseData.Data, nil
+	if !strings.EqualFold(mcsResponse.Status, constants.HTTP_STATUS_SUCCESS) {
+		err := fmt.Errorf("%s failed, status:%s, message:%s", apiUrl, mcsResponse.Status, mcsResponse.Message)
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	return mcsResponse.Data, nil
 }
 
 func (bucketClient *BucketClient) MergeFile(bucketUid, fileHash, fileName, prefix string) (*OssFileInfo, error) {
