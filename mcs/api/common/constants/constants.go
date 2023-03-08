@@ -10,7 +10,7 @@ const (
 
 	// common
 	API_URL_MCS_POLYGON_MAINNET = "https://api.multichain.storage"
-	API_URL_MCS_POLYGON_MUMBAI  = "https://calibration-mcs-api.filswan.com" //"http://127.0.0.1:8889" //
+	API_URL_MCS_POLYGON_MUMBAI  = "http://127.0.0.1:8889" // "https://calibration-mcs-api.filswan.com" //
 	API_URL_MCS_BSC_TESTNET     = "https://calibration-mcs-bsc.filswan.com"
 	API_URL_FIL_PRICE_API       = "https://api.filswan.com/stats/storage"
 

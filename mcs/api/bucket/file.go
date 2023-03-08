@@ -11,7 +11,6 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -137,6 +136,12 @@ func (bucketClient *BucketClient) UploadFile(bucketName, objectName, filePath st
 		return err
 	}
 
+	if bucketUid == nil {
+		err := fmt.Errorf("bucket:%s not exists", bucketName)
+		logs.GetLogger().Error(err)
+		return err
+	}
+
 	osFileInfo, err := os.Stat(filePath)
 	if err != nil {
 		logs.GetLogger().Error(err)
@@ -257,18 +262,18 @@ func (bucketClient *BucketClient) UploadFileChunk(fileHash, fileName string, chu
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	part, err := writer.CreateFormFile("file", filepath.Base(fileName))
+	part, err := writer.CreateFormFile("file", fileName)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
-	//chunkReader := bytes.NewReader(chunk)
+	chunkReader := bytes.NewReader(chunk)
 
 	//chunkReader.WriteTo(part)
 
-	//io.Copy(part, chunkReader)
-	n, err := part.Write(chunk)
+	n, err := io.Copy(part, chunkReader)
+	//n, err := part.Write(chunk)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
