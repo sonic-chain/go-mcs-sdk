@@ -50,7 +50,7 @@ func TestCheckFile(t *testing.T) {
 }
 
 func TestUploadFileChunk(t *testing.T) {
-	err := onChainClient.UploadFile("abc", "ddd/duration20", "/Users/dorachen/work/duration11", true)
+	err := onChainClient.UploadFile("abc", "ddd/duration21", "/Users/dorachen/work/duration11", true)
 	if err != nil {
 		logs.GetLogger().Fatal(err)
 	}

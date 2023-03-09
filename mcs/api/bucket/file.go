@@ -234,7 +234,7 @@ func (bucketClient *BucketClient) UploadFile(bucketName, objectName, filePath st
 
 				wg.Add(1)
 				go func() {
-					logs.GetLogger().Info("chunk No.:", chunNo, ", chunk size:", chunkSize)
+					logs.GetLogger().Info("file name:", partFileName, ", chunk size:", chunkSize)
 					_, err = bucketClient.UploadFileChunk(fileHashMd5, partFileName, chunk)
 					if err != nil {
 						logs.GetLogger().Error(err)
