@@ -7,6 +7,7 @@ require (
 	github.com/codingsince1985/checksum v1.2.6
 	github.com/ethereum/go-ethereum v1.10.21
 	github.com/filswan/go-swan-lib v0.2.137
+	github.com/jinzhu/gorm v1.9.16
 )
 
 require (
@@ -19,6 +20,7 @@ require (
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
+	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/rifflock/lfshook v0.0.0-20180920164130-b9218ef580f5 // indirect
 	github.com/rjeczalik/notify v0.9.1 // indirect
 	github.com/shirou/gopsutil v3.21.4-0.20210419000835-c7a38de76ee5+incompatible // indirect

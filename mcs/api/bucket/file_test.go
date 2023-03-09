@@ -15,8 +15,8 @@ func TestGetFileInfo(t *testing.T) {
 	logs.GetLogger().Info(*fileInfo)
 }
 
-func TestDeleteFile(t *testing.T) {
-	err := onChainClient.DeleteFile(6591)
+func TestDeleteFileByFileId(t *testing.T) {
+	err := onChainClient.DeleteFileByFileId(6591)
 	if err != nil {
 		logs.GetLogger().Fatal(err)
 	}
@@ -50,7 +50,7 @@ func TestCheckFile(t *testing.T) {
 }
 
 func TestUploadFileChunk(t *testing.T) {
-	err := onChainClient.UploadFile("abc", "ddd/test66666", "/Users/dorachen/work/test4", true)
+	err := onChainClient.UploadFile("abc", "ddd/duration20", "/Users/dorachen/work/duration11", true)
 	if err != nil {
 		logs.GetLogger().Fatal(err)
 	}

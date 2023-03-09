@@ -8,7 +8,6 @@ import (
 	"go-mcs-sdk/mcs/api/common/web"
 	"io"
 	"log"
-	"math"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -19,6 +18,7 @@ import (
 	"github.com/codingsince1985/checksum"
 	"github.com/filswan/go-swan-lib/logs"
 	libutils "github.com/filswan/go-swan-lib/utils"
+	"github.com/jinzhu/gorm"
 )
 
 type OssFile struct {
@@ -34,6 +34,7 @@ type OssFile struct {
 	IsFolder   bool   `json:"is_folder"`
 	ObjectName string `json:"object_name"`
 	Type       int    `json:"type"`
+	gorm.Model
 }
 
 func (bucketClient *BucketClient) GetFileInfo(fileId int) (*OssFile, error) {
@@ -48,6 +49,19 @@ func (bucketClient *BucketClient) GetFileInfo(fileId int) (*OssFile, error) {
 	}
 
 	return &fileInfo, nil
+}
+
+func (bucketClient *BucketClient) DeleteFileByFileId(fileId int) error {
+	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_DELETE_FILE)
+	apiUrl = apiUrl + "?file_id=" + strconv.Itoa(fileId)
+
+	err := web.HttpGet(apiUrl, bucketClient.JwtToken, nil, nil)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	return nil
 }
 
 func (bucketClient *BucketClient) DeleteFile(fileId int) error {
@@ -165,7 +179,17 @@ func (bucketClient *BucketClient) UploadFile(bucketName, objectName, filePath st
 	}
 
 	if ossFileInfo.FileIsExist && replace {
-		err = bucketClient.DeleteFile(int(ossFileInfo.FileId))
+		fileId := ossFileInfo.FileId
+		if fileId == 0 {
+			ossFile, err := bucketClient.GetFileInfoByObjectName(objectName, *bucketUid)
+			if err != nil {
+				logs.GetLogger().Error(err)
+				return err
+			}
+
+			fileId = ossFile.ID
+		}
+		err = bucketClient.DeleteFile(int(fileId))
 		if err != nil {
 			logs.GetLogger().Error(err)
 			return err
@@ -185,18 +209,15 @@ func (bucketClient *BucketClient) UploadFile(bucketName, objectName, filePath st
 				return err
 			}
 			bytesReadTotal := int64(0)
-			chunkSizeMax := int64(10 * constants.BYTES_1MB)
 			chunNo := 0
-			chunkCnt := int(math.Ceil(float64(fileSize) / float64(chunkSizeMax)))
+
 			var wg sync.WaitGroup
-			defer wg.Done()
-			wg.Add(chunkCnt)
 
 			for bytesReadTotal < fileSize {
 				var chunkSize int64
 				bytesLeft := fileSize - bytesReadTotal
-				if bytesLeft >= chunkSizeMax {
-					chunkSize = chunkSizeMax
+				if bytesLeft >= constants.FILE_CHUNK_SIZE_MAX {
+					chunkSize = constants.FILE_CHUNK_SIZE_MAX
 				} else {
 					chunkSize = bytesLeft
 				}
@@ -210,19 +231,24 @@ func (bucketClient *BucketClient) UploadFile(bucketName, objectName, filePath st
 				chunNo = chunNo + 1
 
 				partFileName := strconv.Itoa(chunNo) + "_" + fileName
-				_, err = bucketClient.UploadFileChunk(fileHashMd5, partFileName, chunk)
-				if err != nil {
-					logs.GetLogger().Error(err)
-					return err
-				}
+
+				wg.Add(1)
+				go func() {
+					logs.GetLogger().Info("chunk No.:", chunNo, ", chunk size:", chunkSize)
+					_, err = bucketClient.UploadFileChunk(fileHashMd5, partFileName, chunk)
+					if err != nil {
+						logs.GetLogger().Error(err)
+					}
+					wg.Done()
+				}()
 			}
 
 			wg.Wait()
-			go bucketClient.MergeFile(*bucketUid, fileHashMd5, fileName, prefix)
-			//if err != nil {
-			//	logs.GetLogger().Error(err)
-			//	return err
-			//}
+			_, err = bucketClient.MergeFile(*bucketUid, fileHashMd5, fileName, prefix)
+			if err != nil {
+				logs.GetLogger().Error(err)
+				return err
+			}
 		}
 	}
 
@@ -280,13 +306,12 @@ func (bucketClient *BucketClient) UploadFileChunk(fileHash, fileName string, chu
 
 	//chunkReader.WriteTo(part)
 
-	n, err := io.Copy(part, chunkReader)
+	_, err = io.Copy(part, chunkReader)
 	//n, err := part.Write(chunk)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
-	logs.GetLogger().Info(n)
 
 	err = writer.WriteField("hash", fileHash)
 	if err != nil {
