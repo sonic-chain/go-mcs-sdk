@@ -27,6 +27,15 @@ type Response struct {
 	Data    interface{} `json:"data"`
 }
 
+func HttpPostTimeout(uri, tokenString string, params interface{}, timeoutSecond int, result interface{}) error {
+	err := HttpRequest(http.MethodPost, uri, &tokenString, params, &timeoutSecond, result)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return err
+	}
+
+	return nil
+}
 func HttpPost(uri, tokenString string, params, result interface{}) error {
 	err := HttpRequest(http.MethodPost, uri, &tokenString, params, nil, result)
 	if err != nil {

@@ -10,17 +10,18 @@ const (
 
 	// common
 	API_URL_MCS_POLYGON_MAINNET = "https://api.multichain.storage"
-	API_URL_MCS_POLYGON_MUMBAI  = "https://calibration-mcs-api.filswan.com" //"http://127.0.0.1:8889" //
+	API_URL_MCS_POLYGON_MUMBAI  = "http://127.0.0.1:8889" // "https://calibration-mcs-api.filswan.com" //
 	API_URL_MCS_BSC_TESTNET     = "https://calibration-mcs-bsc.filswan.com"
 	API_URL_FIL_PRICE_API       = "https://api.filswan.com/stats/storage"
 
 	// mcs api
 	API_URL_MCS_GET_PARAMS = "/api/v1/common/system/params"
 
-	USER_REGISTER   = "/api/v1/user/register"
-	USER_LOGIN      = "/api/v1/user/login_by_metamask_signature"
-	GENERATE_APIKEY = "/api/v1/user/generate_api_key"
-	LOGIN_BY_APIKEY = "/api/v1/user/login_by_api_key"
+	API_URL_USER_REGISTER        = "/api/v1/user/register"
+	API_URL_USER_LOGIN           = "/api/v1/user/login_by_metamask_signature"
+	API_URL_USER_GENERATE_APIKEY = "/api/v1/user/generate_api_key"
+	API_URL_USER_LOGIN_BY_APIKEY = "/api/v1/user/login_by_api_key"
+	API_URL_USER_CHECK_LOGIN     = "/api/v1/user/check_login"
 
 	API_URL_BILLING_HISTORY          = "/api/v1/billing"
 	API_URL_BILLING_FILECOIN_PRICE   = "/api/v1/billing/price/filecoin"
@@ -61,6 +62,8 @@ const (
 	BYTES_1KB = 1024
 	BYTES_1MB = BYTES_1KB * BYTES_1KB
 	BYTES_1GB = BYTES_1MB * BYTES_1KB
+
+	FILE_CHUNK_SIZE_MAX = 1 * BYTES_1KB
 
 	DURATION_DAYS_DEFAULT = 525
 	SECOND_PER_DAY        = 24 * 60 * 60
