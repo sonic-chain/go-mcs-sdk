@@ -17,10 +17,10 @@ const (
 	// mcs api
 	API_URL_MCS_GET_PARAMS = "/api/v1/common/system/params"
 
-	USER_REGISTER   = "/api/v1/user/register"
-	USER_LOGIN      = "/api/v1/user/login_by_metamask_signature"
-	GENERATE_APIKEY = "/api/v1/user/generate_api_key"
-	LOGIN_BY_APIKEY = "/api/v1/user/login_by_api_key"
+	API_URL_USER_REGISTER        = "/api/v1/user/register"
+	API_URL_USER_LOGIN           = "/api/v1/user/login_by_metamask_signature"
+	API_URL_USER_GENERATE_APIKEY = "/api/v1/user/generate_api_key"
+	API_URL_USER_LOGIN_BY_APIKEY = "/api/v1/user/login_by_api_key"
 
 	API_URL_BILLING_HISTORY          = "/api/v1/billing"
 	API_URL_BILLING_FILECOIN_PRICE   = "/api/v1/billing/price/filecoin"
