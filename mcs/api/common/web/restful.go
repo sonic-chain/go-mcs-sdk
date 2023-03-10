@@ -36,8 +36,19 @@ func HttpPostTimeout(uri, tokenString string, params interface{}, timeoutSecond 
 
 	return nil
 }
+
 func HttpPost(uri, tokenString string, params, result interface{}) error {
 	err := HttpRequest(http.MethodPost, uri, &tokenString, params, nil, result)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return err
+	}
+
+	return nil
+}
+
+func HttpPut(uri, tokenString string, params, result interface{}) error {
+	err := HttpRequest(http.MethodPut, uri, &tokenString, params, nil, result)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return err

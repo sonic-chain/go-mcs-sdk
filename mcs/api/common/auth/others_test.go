@@ -34,3 +34,19 @@ func TestCheckLogin(t *testing.T) {
 
 	logs.GetLogger().Info(*networkName, ",", *walletAddress)
 }
+
+func TestGenerateApikey(t *testing.T) {
+	apikey, accessToken, err := mcsClient.GenerateApikey(30)
+	if err != nil {
+		logs.GetLogger().Fatal(err)
+	}
+
+	logs.GetLogger().Info(*apikey, ",", *accessToken)
+}
+
+func TestDeleteApikey(t *testing.T) {
+	err := mcsClient.DeleteApikey("2dkFLDsWNYDTkZkz6qB6PG")
+	if err != nil {
+		logs.GetLogger().Fatal(err)
+	}
+}
