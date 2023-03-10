@@ -125,3 +125,15 @@ func (mcsClient *McsClient) GetWallet() (*Wallet, error) {
 
 	return response.Wallet, nil
 }
+
+func (mcsClient *McsClient) SetPopupTime() error {
+	apiUrl := libutils.UrlJoin(mcsClient.BaseUrl, constants.API_URL_USER_SET_POPUP_TIME)
+
+	err := web.HttpPut(apiUrl, mcsClient.JwtToken, nil, nil)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return err
+	}
+
+	return nil
+}

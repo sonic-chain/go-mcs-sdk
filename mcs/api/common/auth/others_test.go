@@ -79,3 +79,10 @@ func TestGetWallet(t *testing.T) {
 
 	logs.GetLogger().Info(*wallet)
 }
+
+func TestSetPopupTime(t *testing.T) {
+	err := mcsClient.SetPopupTime()
+	if err != nil {
+		logs.GetLogger().Fatal(err)
+	}
+}

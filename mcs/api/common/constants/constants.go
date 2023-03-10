@@ -26,6 +26,7 @@ const (
 	API_URL_USER_REGISTER_EMAIL  = "/api/v1/user/register_email"
 	API_URL_USER_GET_APIKEYS     = "/api/v1/user/apikey"
 	API_URL_USER_GET_WALLET      = "/api/v1/user/wallet"
+	API_URL_USER_SET_POPUP_TIME  = "/api/v1/user/wallet/set_popup_time"
 
 	API_URL_BILLING_HISTORY          = "/api/v1/billing"
 	API_URL_BILLING_FILECOIN_PRICE   = "/api/v1/billing/price/filecoin"
