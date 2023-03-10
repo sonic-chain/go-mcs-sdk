@@ -86,3 +86,10 @@ func TestSetPopupTime(t *testing.T) {
 		logs.GetLogger().Fatal(err)
 	}
 }
+
+func TestDeleteEmail(t *testing.T) {
+	err := mcsClient.DeleteEmail()
+	if err != nil {
+		logs.GetLogger().Fatal(err)
+	}
+}

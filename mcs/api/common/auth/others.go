@@ -137,3 +137,15 @@ func (mcsClient *McsClient) SetPopupTime() error {
 
 	return nil
 }
+
+func (mcsClient *McsClient) DeleteEmail() error {
+	apiUrl := libutils.UrlJoin(mcsClient.BaseUrl, constants.API_URL_USER_DELETE_EMAIL)
+
+	err := web.HttpPut(apiUrl, mcsClient.JwtToken, nil, nil)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return err
+	}
+
+	return nil
+}
