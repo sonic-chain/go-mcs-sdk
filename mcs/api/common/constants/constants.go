@@ -24,6 +24,7 @@ const (
 	API_URL_USER_GENERATE_APIKEY = "/api/v1/user/generate_api_key"
 	API_URL_USER_DELETE_APIKEY   = "/api/v1/user/delete_api_key"
 	API_URL_USER_REGISTER_EMAIL  = "/api/v1/user/register_email"
+	API_URL_USER_GET_APIKEYS     = "/api/v1/user/apikey"
 
 	API_URL_BILLING_HISTORY          = "/api/v1/billing"
 	API_URL_BILLING_FILECOIN_PRICE   = "/api/v1/billing/price/filecoin"

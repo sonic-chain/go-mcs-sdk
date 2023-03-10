@@ -57,6 +57,32 @@ func (mcsClient *McsClient) DeleteApikey(apikey string) error {
 	return nil
 }
 
+type Apikey struct {
+	ID          int64  `json:"id"`
+	WalletId    int64  `json:"wallet_id"`
+	ApiKey      string `json:"api_key"`
+	AccessToken string `json:"access_token"`
+	ValidDays   int32  `json:"valid_days"`
+	CreateAt    int64  `json:"create_at"`
+	UpdateAt    int64  `json:"update_at"`
+}
+
+func (mcsClient *McsClient) GetApikeys() ([]*Apikey, error) {
+	apiUrl := libutils.UrlJoin(mcsClient.BaseUrl, constants.API_URL_USER_GET_APIKEYS)
+
+	var response struct {
+		Apikey []*Apikey `json:"apikey"`
+	}
+
+	err := web.HttpGet(apiUrl, mcsClient.JwtToken, nil, &response)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	return response.Apikey, nil
+}
+
 func (mcsClient *McsClient) RegisterEmail(email string) (*string, error) {
 	apiUrl := libutils.UrlJoin(mcsClient.BaseUrl, constants.API_URL_USER_REGISTER_EMAIL)
 	var params struct {

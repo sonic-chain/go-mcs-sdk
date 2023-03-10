@@ -59,3 +59,14 @@ func TestRegisterEmail(t *testing.T) {
 
 	logs.GetLogger().Info(*response)
 }
+
+func TestGetApikeys(t *testing.T) {
+	apikeys, err := mcsClient.GetApikeys()
+	if err != nil {
+		logs.GetLogger().Fatal(err)
+	}
+
+	for _, apikey := range apikeys {
+		logs.GetLogger().Info(*apikey)
+	}
+}
