@@ -99,3 +99,29 @@ func (mcsClient *McsClient) RegisterEmail(email string) (*string, error) {
 
 	return &response, nil
 }
+
+type Wallet struct {
+	ID           int64   `json:"id"`
+	Address      string  `json:"address"`
+	Email        *string `json:"email"`
+	EmailStatus  *int    `json:"email_status"`
+	EmailPopupAt *int64  `json:"email_popup_at"`
+	CreateAt     int64   `json:"create_at"`
+	UpdateAt     int64   `json:"update_at"`
+}
+
+func (mcsClient *McsClient) GetWallet() (*Wallet, error) {
+	apiUrl := libutils.UrlJoin(mcsClient.BaseUrl, constants.API_URL_USER_GET_WALLET)
+
+	var response struct {
+		Wallet *Wallet `json:"wallet"`
+	}
+
+	err := web.HttpGet(apiUrl, mcsClient.JwtToken, nil, &response)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	return response.Wallet, nil
+}

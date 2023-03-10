@@ -70,3 +70,12 @@ func TestGetApikeys(t *testing.T) {
 		logs.GetLogger().Info(*apikey)
 	}
 }
+
+func TestGetWallet(t *testing.T) {
+	wallet, err := mcsClient.GetWallet()
+	if err != nil {
+		logs.GetLogger().Fatal(err)
+	}
+
+	logs.GetLogger().Info(*wallet)
+}
