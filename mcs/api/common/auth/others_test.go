@@ -50,3 +50,12 @@ func TestDeleteApikey(t *testing.T) {
 		logs.GetLogger().Fatal(err)
 	}
 }
+
+func TestRegisterEmail(t *testing.T) {
+	response, err := mcsClient.RegisterEmail("fchen@nbai.io")
+	if err != nil {
+		logs.GetLogger().Fatal(err)
+	}
+
+	logs.GetLogger().Info(*response)
+}

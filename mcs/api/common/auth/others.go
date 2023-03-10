@@ -56,3 +56,20 @@ func (mcsClient *McsClient) DeleteApikey(apikey string) error {
 
 	return nil
 }
+
+func (mcsClient *McsClient) RegisterEmail(email string) (*string, error) {
+	apiUrl := libutils.UrlJoin(mcsClient.BaseUrl, constants.API_URL_USER_REGISTER_EMAIL)
+	var params struct {
+		Email string `json:"email"`
+	}
+	params.Email = email
+
+	var response string
+	err := web.HttpPost(apiUrl, mcsClient.JwtToken, &params, &response)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	return &response, nil
+}
