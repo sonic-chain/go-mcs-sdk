@@ -65,6 +65,8 @@ const (
 	API_URL_BUCKET_FILE_MERGE_FILE                   = "/api/v2/oss_file/merge"
 	API_URL_BUCKET_FILE_GET_FILE_LIST                = "/api/v2/oss_file/get_file_list"
 
+	API_URL_BUCKET_GATEWAY_GET_GATEWAY = "/api/v2/gateway/get_gateway"
+
 	BYTES_1KB = 1024
 	BYTES_1MB = BYTES_1KB * BYTES_1KB
 	BYTES_1GB = BYTES_1MB * BYTES_1KB
