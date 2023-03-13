@@ -19,9 +19,15 @@ const (
 
 	API_URL_USER_REGISTER        = "/api/v1/user/register"
 	API_URL_USER_LOGIN           = "/api/v1/user/login_by_metamask_signature"
-	API_URL_USER_GENERATE_APIKEY = "/api/v1/user/generate_api_key"
 	API_URL_USER_LOGIN_BY_APIKEY = "/api/v1/user/login_by_api_key"
 	API_URL_USER_CHECK_LOGIN     = "/api/v1/user/check_login"
+	API_URL_USER_GENERATE_APIKEY = "/api/v1/user/generate_api_key"
+	API_URL_USER_DELETE_APIKEY   = "/api/v1/user/delete_api_key"
+	API_URL_USER_REGISTER_EMAIL  = "/api/v1/user/register_email"
+	API_URL_USER_GET_APIKEYS     = "/api/v1/user/apikey"
+	API_URL_USER_GET_WALLET      = "/api/v1/user/wallet"
+	API_URL_USER_SET_POPUP_TIME  = "/api/v1/user/wallet/set_popup_time"
+	API_URL_USER_DELETE_EMAIL    = "/api/v1/user/delete_email"
 
 	API_URL_BILLING_HISTORY          = "/api/v1/billing"
 	API_URL_BILLING_FILECOIN_PRICE   = "/api/v1/billing/price/filecoin"
@@ -58,6 +64,8 @@ const (
 	API_URL_BUCKET_FILE_UPLOAD_CHUNK                 = "/api/v2/oss_file/upload"
 	API_URL_BUCKET_FILE_MERGE_FILE                   = "/api/v2/oss_file/merge"
 	API_URL_BUCKET_FILE_GET_FILE_LIST                = "/api/v2/oss_file/get_file_list"
+
+	API_URL_BUCKET_GATEWAY_GET_GATEWAY = "/api/v2/gateway/get_gateway"
 
 	BYTES_1KB = 1024
 	BYTES_1MB = BYTES_1KB * BYTES_1KB

@@ -3,14 +3,15 @@ package bucket
 import (
 	"go-mcs-sdk/mcs/api/common/auth"
 	"go-mcs-sdk/mcs/config"
+	"testing"
 
 	"github.com/filswan/go-swan-lib/logs"
 )
 
-var onChainClient *BucketClient
+var buketClient *BucketClient
 
 func init() {
-	if onChainClient != nil {
+	if buketClient != nil {
 		return
 	}
 
@@ -23,5 +24,16 @@ func init() {
 		logs.GetLogger().Fatal(err)
 	}
 
-	onChainClient = GetBucketClient(*mcsClient)
+	buketClient = GetBucketClient(*mcsClient)
+}
+
+func TestGetGateway(t *testing.T) {
+	subDomains, err := buketClient.GetGateway()
+	if err != nil {
+		logs.GetLogger().Fatal(err)
+	}
+
+	for _, subDomain := range subDomains {
+		logs.GetLogger().Info(subDomain)
+	}
 }

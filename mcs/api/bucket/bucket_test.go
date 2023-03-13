@@ -7,7 +7,7 @@ import (
 )
 
 func TestCreateBucket(t *testing.T) {
-	bucketUid, err := onChainClient.CreateBucket("test23")
+	bucketUid, err := buketClient.CreateBucket("test23")
 	if err != nil {
 		logs.GetLogger().Fatal(err)
 	}
@@ -16,7 +16,7 @@ func TestCreateBucket(t *testing.T) {
 }
 
 func TestGetBuckets(t *testing.T) {
-	buckets, err := onChainClient.GetBuckets()
+	buckets, err := buketClient.GetBuckets()
 	if err != nil {
 		logs.GetLogger().Fatal(err)
 	}
@@ -27,21 +27,21 @@ func TestGetBuckets(t *testing.T) {
 }
 
 func TestDeleteBucket(t *testing.T) {
-	err := onChainClient.DeleteBucket("7bb5d325-e31c-486d-8420-169067dc401b")
+	err := buketClient.DeleteBucket("7bb5d325-e31c-486d-8420-169067dc401b")
 	if err != nil {
 		logs.GetLogger().Fatal(err)
 	}
 }
 
 func TestRenameBucket(t *testing.T) {
-	err := onChainClient.RenameBucket("tests", "a7303d2a-acd2-48ac-a062-8454bbf148d2")
+	err := buketClient.RenameBucket("tests", "a7303d2a-acd2-48ac-a062-8454bbf148d2")
 	if err != nil {
 		logs.GetLogger().Fatal(err)
 	}
 }
 
 func TestGetTotalStorageSize(t *testing.T) {
-	totalStorageSize, err := onChainClient.GetTotalStorageSize()
+	totalStorageSize, err := buketClient.GetTotalStorageSize()
 	if err != nil {
 		logs.GetLogger().Fatal(err)
 	}
