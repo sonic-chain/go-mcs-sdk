@@ -11,6 +11,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"sync"
@@ -384,7 +385,7 @@ func (bucketClient *BucketClient) MergeFile(bucketUid, fileHash, fileName, prefi
 	var ossFileInfo OssFileInfo
 	err := web.HttpPostTimeout(apiUrl, bucketClient.JwtToken, &params, 600, &ossFileInfo)
 	if err != nil {
-		log.Println(err)
+		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
@@ -397,9 +398,113 @@ func (bucketClient *BucketClient) GetFileList(fileUid, limit, offset string) ([]
 	var files []*OssFile
 	err := web.HttpGet(apiUrl, bucketClient.JwtToken, nil, &files)
 	if err != nil {
-		log.Println(err)
+		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
 	return files, nil
+}
+
+type PinFiles2IpfsResponse struct {
+	Status  string  `json:"status"`
+	Message string  `json:"message"`
+	Data    OssFile `json:"data"`
+}
+
+func (bucketClient *BucketClient) PinFiles2Ipfs(bucketName, objectName, folderPath string) (*UploadFile, error) {
+	folderName := filepath.Base(objectName)
+	if strings.Trim(folderName, " ") == "" {
+		folderName = filepath.Base(folderPath)
+	}
+
+	prefix := filepath.Dir(objectName)
+
+	bucketUid, err := bucketClient.getBucketUid(bucketName)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+	payload := &bytes.Buffer{}
+	writer := multipart.NewWriter(payload)
+
+	err = writer.WriteField("folder_name", folderName)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	err = writer.WriteField("prefix", prefix)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	err = writer.WriteField("bucket_uid", *bucketUid)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	file, err := os.Open(filePath)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+	defer file.Close()
+
+	part1, err := writer.CreateFormFile("file", filepath.Base(filePath))
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	_, err = io.Copy(part1, file)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	err = writer.Close()
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_PIN_FILES_2_IPFS)
+	httpClient := &http.Client{}
+	req, err := http.NewRequest("POST", apiUrl, payload)
+
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", bucketClient.JwtToken))
+	req.Header.Set("Content-Type", writer.FormDataContentType())
+	res, err := httpClient.Do(req)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	var pinFiles2IpfsResponse PinFiles2IpfsResponse
+	err = json.Unmarshal(body, &pinFiles2IpfsResponse)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	if !strings.EqualFold(pinFiles2IpfsResponse.Status, constants.HTTP_STATUS_SUCCESS) {
+		err := fmt.Errorf("get parameters failed, status:%s,message:%s", pinFiles2IpfsResponse.Status, pinFiles2IpfsResponse.Message)
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	return &pinFiles2IpfsResponse.Data, nil
 }

@@ -64,6 +64,7 @@ const (
 	API_URL_BUCKET_FILE_UPLOAD_CHUNK                 = "/api/v2/oss_file/upload"
 	API_URL_BUCKET_FILE_MERGE_FILE                   = "/api/v2/oss_file/merge"
 	API_URL_BUCKET_FILE_GET_FILE_LIST                = "/api/v2/oss_file/get_file_list"
+	API_URL_BUCKET_FILE_PIN_FILES_2_IPFS             = "/api/v2/oss_file/pin_files_to_ipfs"
 
 	API_URL_BUCKET_GATEWAY_GET_GATEWAY = "/api/v2/gateway/get_gateway"
 
