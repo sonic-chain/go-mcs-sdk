@@ -15,8 +15,8 @@ func TestGetFileInfo(t *testing.T) {
 	logs.GetLogger().Info(*fileInfo)
 }
 
-func TestDeleteFileByFileId(t *testing.T) {
-	err := buketClient.DeleteFileByFileId(6591)
+func TestDeleteFile(t *testing.T) {
+	err := buketClient.DeleteFile(6591)
 	if err != nil {
 		logs.GetLogger().Fatal(err)
 	}

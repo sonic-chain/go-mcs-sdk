@@ -51,19 +51,6 @@ func (bucketClient *BucketClient) GetFileInfo(fileId int) (*OssFile, error) {
 	return &fileInfo, nil
 }
 
-func (bucketClient *BucketClient) DeleteFileByFileId(fileId int) error {
-	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_DELETE_FILE)
-	apiUrl = apiUrl + "?file_id=" + strconv.Itoa(fileId)
-
-	err := web.HttpGet(apiUrl, bucketClient.JwtToken, nil, nil)
-	if err != nil {
-		log.Println(err)
-		return err
-	}
-
-	return nil
-}
-
 func (bucketClient *BucketClient) DeleteFile(fileId int) error {
 	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_DELETE_FILE)
 	apiUrl = apiUrl + "?file_id=" + strconv.Itoa(fileId)
