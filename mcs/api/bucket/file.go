@@ -7,6 +7,7 @@ import (
 	"go-mcs-sdk/mcs/api/common/constants"
 	"go-mcs-sdk/mcs/api/common/web"
 	"io"
+	"io/ioutil"
 	"log"
 	"mime/multipart"
 	"net/http"
@@ -411,7 +412,7 @@ type PinFiles2IpfsResponse struct {
 	Data    OssFile `json:"data"`
 }
 
-func (bucketClient *BucketClient) PinFiles2Ipfs(bucketName, objectName, folderPath string) (*UploadFile, error) {
+func (bucketClient *BucketClient) PinFiles2Ipfs(bucketName, objectName, folderPath string) (*OssFile, error) {
 	folderName := filepath.Base(objectName)
 	if strings.Trim(folderName, " ") == "" {
 		folderName = filepath.Base(folderPath)
@@ -445,23 +446,31 @@ func (bucketClient *BucketClient) PinFiles2Ipfs(bucketName, objectName, folderPa
 		return nil, err
 	}
 
-	file, err := os.Open(filePath)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-	defer file.Close()
-
-	part1, err := writer.CreateFormFile("file", filepath.Base(filePath))
+	fsFiles, err := ioutil.ReadDir(folderPath)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
-	_, err = io.Copy(part1, file)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
+	for _, fsFile := range fsFiles {
+		file, err := os.Open(filepath.Join(folderPath, fsFile.Name()))
+		if err != nil {
+			logs.GetLogger().Error(err)
+			return nil, err
+		}
+		defer file.Close()
+
+		part1, err := writer.CreateFormFile("file", fsFile.Name())
+		if err != nil {
+			logs.GetLogger().Error(err)
+			return nil, err
+		}
+
+		_, err = io.Copy(part1, file)
+		if err != nil {
+			logs.GetLogger().Error(err)
+			return nil, err
+		}
 	}
 
 	err = writer.Close()
