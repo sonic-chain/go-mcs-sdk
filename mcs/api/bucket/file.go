@@ -414,11 +414,11 @@ type PinFiles2IpfsResponse struct {
 
 func (bucketClient *BucketClient) PinFiles2Ipfs(bucketName, objectName, folderPath string) (*OssFile, error) {
 	folderName := filepath.Base(objectName)
+	prefix := strings.TrimRight(objectName, folderName)
+
 	if strings.Trim(folderName, " ") == "" {
 		folderName = filepath.Base(folderPath)
 	}
-
-	prefix := filepath.Dir(objectName)
 
 	bucketUid, err := bucketClient.getBucketUid(bucketName)
 	if err != nil {
@@ -460,7 +460,7 @@ func (bucketClient *BucketClient) PinFiles2Ipfs(bucketName, objectName, folderPa
 		}
 		defer file.Close()
 
-		part1, err := writer.CreateFormFile("file", fsFile.Name())
+		part1, err := writer.CreateFormFile("files", folderName+"/"+fsFile.Name())
 		if err != nil {
 			logs.GetLogger().Error(err)
 			return nil, err

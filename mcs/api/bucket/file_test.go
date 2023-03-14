@@ -55,3 +55,12 @@ func TestUploadFileChunk(t *testing.T) {
 		logs.GetLogger().Fatal(err)
 	}
 }
+
+func TestPinFiles2Ipfs(t *testing.T) {
+	ossFile, err := buketClient.PinFiles2Ipfs("abc", "eee", "/Users/dorachen/work/test2")
+	if err != nil {
+		logs.GetLogger().Fatal(err)
+	}
+
+	logs.GetLogger().Info(*ossFile)
+}
