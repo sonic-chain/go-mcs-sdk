@@ -15,8 +15,8 @@ func TestGetFileInfo(t *testing.T) {
 	logs.GetLogger().Info(*fileInfo)
 }
 
-func TestDeleteFileByFileId(t *testing.T) {
-	err := buketClient.DeleteFileByFileId(6591)
+func TestDeleteFile(t *testing.T) {
+	err := buketClient.DeleteFile(6591)
 	if err != nil {
 		logs.GetLogger().Fatal(err)
 	}
@@ -54,4 +54,13 @@ func TestUploadFileChunk(t *testing.T) {
 	if err != nil {
 		logs.GetLogger().Fatal(err)
 	}
+}
+
+func TestPinFiles2Ipfs(t *testing.T) {
+	ossFile, err := buketClient.PinFiles2Ipfs("abc", "eee", "/Users/dorachen/work/test2")
+	if err != nil {
+		logs.GetLogger().Fatal(err)
+	}
+
+	logs.GetLogger().Info(*ossFile)
 }

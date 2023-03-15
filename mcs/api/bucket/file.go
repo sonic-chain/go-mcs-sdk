@@ -7,10 +7,12 @@ import (
 	"go-mcs-sdk/mcs/api/common/constants"
 	"go-mcs-sdk/mcs/api/common/web"
 	"io"
+	"io/ioutil"
 	"log"
 	"mime/multipart"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"sync"
@@ -49,19 +51,6 @@ func (bucketClient *BucketClient) GetFileInfo(fileId int) (*OssFile, error) {
 	}
 
 	return &fileInfo, nil
-}
-
-func (bucketClient *BucketClient) DeleteFileByFileId(fileId int) error {
-	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_DELETE_FILE)
-	apiUrl = apiUrl + "?file_id=" + strconv.Itoa(fileId)
-
-	err := web.HttpGet(apiUrl, bucketClient.JwtToken, nil, nil)
-	if err != nil {
-		log.Println(err)
-		return err
-	}
-
-	return nil
 }
 
 func (bucketClient *BucketClient) DeleteFile(fileId int) error {
@@ -397,7 +386,7 @@ func (bucketClient *BucketClient) MergeFile(bucketUid, fileHash, fileName, prefi
 	var ossFileInfo OssFileInfo
 	err := web.HttpPostTimeout(apiUrl, bucketClient.JwtToken, &params, 600, &ossFileInfo)
 	if err != nil {
-		log.Println(err)
+		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
@@ -410,9 +399,121 @@ func (bucketClient *BucketClient) GetFileList(fileUid, limit, offset string) ([]
 	var files []*OssFile
 	err := web.HttpGet(apiUrl, bucketClient.JwtToken, nil, &files)
 	if err != nil {
-		log.Println(err)
+		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
 	return files, nil
+}
+
+type PinFiles2IpfsResponse struct {
+	Status  string  `json:"status"`
+	Message string  `json:"message"`
+	Data    OssFile `json:"data"`
+}
+
+func (bucketClient *BucketClient) PinFiles2Ipfs(bucketName, objectName, folderPath string) (*OssFile, error) {
+	folderName := filepath.Base(objectName)
+	prefix := strings.TrimRight(objectName, folderName)
+
+	if strings.Trim(folderName, " ") == "" {
+		folderName = filepath.Base(folderPath)
+	}
+
+	bucketUid, err := bucketClient.getBucketUid(bucketName)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+	payload := &bytes.Buffer{}
+	writer := multipart.NewWriter(payload)
+
+	err = writer.WriteField("folder_name", folderName)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	err = writer.WriteField("prefix", prefix)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	err = writer.WriteField("bucket_uid", *bucketUid)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	fsFiles, err := ioutil.ReadDir(folderPath)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	for _, fsFile := range fsFiles {
+		file, err := os.Open(filepath.Join(folderPath, fsFile.Name()))
+		if err != nil {
+			logs.GetLogger().Error(err)
+			return nil, err
+		}
+		defer file.Close()
+
+		part1, err := writer.CreateFormFile("files", folderName+"/"+fsFile.Name())
+		if err != nil {
+			logs.GetLogger().Error(err)
+			return nil, err
+		}
+
+		_, err = io.Copy(part1, file)
+		if err != nil {
+			logs.GetLogger().Error(err)
+			return nil, err
+		}
+	}
+
+	err = writer.Close()
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_PIN_FILES_2_IPFS)
+	httpClient := &http.Client{}
+	req, err := http.NewRequest("POST", apiUrl, payload)
+
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", bucketClient.JwtToken))
+	req.Header.Set("Content-Type", writer.FormDataContentType())
+	res, err := httpClient.Do(req)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	var pinFiles2IpfsResponse PinFiles2IpfsResponse
+	err = json.Unmarshal(body, &pinFiles2IpfsResponse)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	if !strings.EqualFold(pinFiles2IpfsResponse.Status, constants.HTTP_STATUS_SUCCESS) {
+		err := fmt.Errorf("get parameters failed, status:%s,message:%s", pinFiles2IpfsResponse.Status, pinFiles2IpfsResponse.Message)
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	return &pinFiles2IpfsResponse.Data, nil
 }
