@@ -3,7 +3,4 @@ pkg/
 *.iml
 .env
 *.log
-mcs/api/logs
-mcs/api/logs/info.log
-mcs/api/logs/error.log
-mcs/api/auth/logs/info.log
+
