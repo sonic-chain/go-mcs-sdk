@@ -2,7 +2,7 @@ pkg/
 .idea
 *.iml
 .env
-*logs*
+*.log
 mcs/api/logs
 mcs/api/logs/info.log
 mcs/api/logs/error.log
