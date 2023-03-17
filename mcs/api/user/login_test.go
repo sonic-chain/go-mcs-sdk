@@ -1,10 +1,11 @@
-package auth
+package user
 
 import (
 	"go-mcs-sdk/mcs/config"
 	"testing"
 
 	"github.com/filswan/go-swan-lib/logs"
+	"github.com/tj/assert"
 )
 
 func TestLoginByApikey(t *testing.T) {
@@ -13,9 +14,7 @@ func TestLoginByApikey(t *testing.T) {
 	network := config.GetConfig().Network
 
 	mcsClient, err := LoginByApikey(apikey, accessToken, network)
-	if err != nil {
-		logs.GetLogger().Fatal(err)
-	}
+	assert.Nil(t, err, err.Error())
 
 	logs.GetLogger().Info(mcsClient)
 }

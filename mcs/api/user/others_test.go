@@ -1,7 +1,6 @@
-package auth
+package user
 
 import (
-	"go-mcs-sdk/mcs/config"
 	"testing"
 
 	"github.com/filswan/go-swan-lib/logs"
@@ -9,6 +8,7 @@ import (
 
 var mcsClient *McsClient
 
+/*
 func init() {
 	if mcsClient != nil {
 		return
@@ -23,7 +23,7 @@ func init() {
 	if err != nil {
 		logs.GetLogger().Fatal(err)
 	}
-}
+}*/
 
 func TestCheckLogin(t *testing.T) {
 	mcsClient.JwtToken = "d"

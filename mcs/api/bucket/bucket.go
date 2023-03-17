@@ -1,19 +1,19 @@
 package bucket
 
 import (
-	"go-mcs-sdk/mcs/api/common/auth"
 	"go-mcs-sdk/mcs/api/common/constants"
 	"go-mcs-sdk/mcs/api/common/web"
+	"go-mcs-sdk/mcs/api/user"
 
 	"github.com/filswan/go-swan-lib/logs"
 	libutils "github.com/filswan/go-swan-lib/utils"
 )
 
 type BucketClient struct {
-	auth.McsClient
+	user.McsClient
 }
 
-func GetBucketClient(mcsClient auth.McsClient) *BucketClient {
+func GetBucketClient(mcsClient user.McsClient) *BucketClient {
 	var bucketClient = &BucketClient{}
 
 	bucketClient.BaseUrl = mcsClient.BaseUrl

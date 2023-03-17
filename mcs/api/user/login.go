@@ -1,4 +1,4 @@
-package auth
+package user
 
 import (
 	"go-mcs-sdk/mcs/api/common/constants"

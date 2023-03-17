@@ -1,9 +1,9 @@
 package api
 
 import (
-	"go-mcs-sdk/mcs/api/common/auth"
 	"go-mcs-sdk/mcs/api/common/constants"
 	"go-mcs-sdk/mcs/api/common/web"
+	"go-mcs-sdk/mcs/api/user"
 	"net/url"
 	"regexp"
 	"strconv"
@@ -18,7 +18,7 @@ type OnChainClient struct {
 	JwtToken string `json:"jwt_token"`
 }
 
-func GetOnChainClient(mcsClient auth.McsClient) *OnChainClient {
+func GetOnChainClient(mcsClient user.McsClient) *OnChainClient {
 	var onChainClient = &OnChainClient{}
 
 	onChainClient.BaseUrl = mcsClient.BaseUrl
