@@ -2,6 +2,7 @@ package api
 
 import (
 	"go-mcs-sdk/mcs/api/common/constants"
+	"go-mcs-sdk/mcs/api/common/utils"
 	"go-mcs-sdk/mcs/api/common/web"
 	"go-mcs-sdk/mcs/api/user"
 	"net/url"
@@ -9,8 +10,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/filswan/go-swan-lib/logs"
-	libutils "github.com/filswan/go-swan-lib/utils"
+	"go-mcs-sdk/mcs/api/common/logs"
 )
 
 type OnChainClient struct {
@@ -45,7 +45,7 @@ type SystemParam struct {
 }
 
 func (onChainClient *OnChainClient) GetSystemParam() (*SystemParam, error) {
-	apiUrl := libutils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_MCS_GET_PARAMS)
+	apiUrl := utils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_MCS_GET_PARAMS)
 	params := url.Values{}
 
 	var systemParam SystemParam

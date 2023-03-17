@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"go-mcs-sdk/mcs/api/common/constants"
+	"go-mcs-sdk/mcs/api/common/utils"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -14,8 +15,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/filswan/go-swan-lib/logs"
-	libutils "github.com/filswan/go-swan-lib/utils"
+	"go-mcs-sdk/mcs/api/common/logs"
 )
 
 const HTTP_CONTENT_TYPE_FORM = "application/x-www-form-urlencoded"
@@ -100,7 +100,7 @@ func HttpRequest(httpMethod, uri string, tokenString *string, params interface{}
 		request.Header.Set("Content-Type", HTTP_CONTENT_TYPE_JSON)
 	}
 
-	if !libutils.IsStrEmpty(tokenString) {
+	if !utils.IsStrEmpty(tokenString) {
 		request.Header.Set("Authorization", "Bearer "+*tokenString)
 	}
 

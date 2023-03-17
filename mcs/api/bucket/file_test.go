@@ -3,7 +3,7 @@ package bucket
 import (
 	"testing"
 
-	"github.com/filswan/go-swan-lib/logs"
+	"go-mcs-sdk/mcs/api/common/logs"
 )
 
 func TestGetFileInfo(t *testing.T) {

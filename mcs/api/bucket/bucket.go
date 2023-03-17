@@ -2,11 +2,11 @@ package bucket
 
 import (
 	"go-mcs-sdk/mcs/api/common/constants"
+	"go-mcs-sdk/mcs/api/common/utils"
 	"go-mcs-sdk/mcs/api/common/web"
 	"go-mcs-sdk/mcs/api/user"
 
-	"github.com/filswan/go-swan-lib/logs"
-	libutils "github.com/filswan/go-swan-lib/utils"
+	"go-mcs-sdk/mcs/api/common/logs"
 )
 
 type BucketClient struct {
@@ -23,7 +23,7 @@ func GetBucketClient(mcsClient user.McsClient) *BucketClient {
 }
 
 func (bucketClient *BucketClient) CreateBucket(bucketName string) (*string, error) {
-	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_CREATE_BUCKET)
+	apiUrl := utils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_CREATE_BUCKET)
 
 	var bucket struct {
 		BucketName string `json:"bucket_name"`
@@ -54,7 +54,7 @@ type Bucket struct {
 }
 
 func (bucketClient *BucketClient) GetBuckets() ([]*Bucket, error) {
-	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_GET_BUCKET_LIST)
+	apiUrl := utils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_GET_BUCKET_LIST)
 
 	var buckets []*Bucket
 	err := web.HttpGet(apiUrl, bucketClient.JwtToken, nil, &buckets)
@@ -67,7 +67,7 @@ func (bucketClient *BucketClient) GetBuckets() ([]*Bucket, error) {
 }
 
 func (bucketClient *BucketClient) DeleteBucket(bucketUid string) error {
-	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_DELETE_BUCKET)
+	apiUrl := utils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_DELETE_BUCKET)
 	apiUrl = apiUrl + "?bucket_uid=" + bucketUid
 
 	err := web.HttpGet(apiUrl, bucketClient.JwtToken, nil, nil)
@@ -80,7 +80,7 @@ func (bucketClient *BucketClient) DeleteBucket(bucketUid string) error {
 }
 
 func (bucketClient *BucketClient) RenameBucket(newBucketName string, bucketUid string) error {
-	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_RENAME_BUCKET)
+	apiUrl := utils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_RENAME_BUCKET)
 
 	var params struct {
 		BucketName string `json:"bucket_name"`
@@ -100,7 +100,7 @@ func (bucketClient *BucketClient) RenameBucket(newBucketName string, bucketUid s
 }
 
 func (bucketClient *BucketClient) GetTotalStorageSize() (*int64, error) {
-	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_GET_TOTAL_STORAGE_SIZE)
+	apiUrl := utils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_GET_TOTAL_STORAGE_SIZE)
 
 	var totalStorageSize int64
 

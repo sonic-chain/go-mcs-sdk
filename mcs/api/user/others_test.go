@@ -5,7 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/filswan/go-swan-lib/logs"
+	"go-mcs-sdk/mcs/api/common/logs"
+
 	"github.com/stretchr/testify/assert"
 )
 

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"go-mcs-sdk/mcs/api/common/constants"
+	"go-mcs-sdk/mcs/api/common/utils"
 	"go-mcs-sdk/mcs/api/common/web"
 	"io"
 	"io/ioutil"
@@ -17,9 +18,9 @@ import (
 	"strings"
 	"sync"
 
+	"go-mcs-sdk/mcs/api/common/logs"
+
 	"github.com/codingsince1985/checksum"
-	"github.com/filswan/go-swan-lib/logs"
-	libutils "github.com/filswan/go-swan-lib/utils"
 	"github.com/jinzhu/gorm"
 )
 
@@ -40,7 +41,7 @@ type OssFile struct {
 }
 
 func (bucketClient *BucketClient) GetFileInfo(fileId int) (*OssFile, error) {
-	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_GET_FILE_INFO)
+	apiUrl := utils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_GET_FILE_INFO)
 	apiUrl = apiUrl + "?file_id=" + strconv.Itoa(fileId)
 
 	var fileInfo OssFile
@@ -54,7 +55,7 @@ func (bucketClient *BucketClient) GetFileInfo(fileId int) (*OssFile, error) {
 }
 
 func (bucketClient *BucketClient) DeleteFile(fileId int) error {
-	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_DELETE_FILE)
+	apiUrl := utils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_DELETE_FILE)
 	apiUrl = apiUrl + "?file_id=" + strconv.Itoa(fileId)
 
 	err := web.HttpGet(apiUrl, bucketClient.JwtToken, nil, nil)
@@ -67,7 +68,7 @@ func (bucketClient *BucketClient) DeleteFile(fileId int) error {
 }
 
 func (bucketClient *BucketClient) CreateFolder(fileName, prefix, bucketUid string) (*string, error) {
-	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_CREATE_FOLDER)
+	apiUrl := utils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_CREATE_FOLDER)
 
 	var params struct {
 		FileName  string `json:"file_name"`
@@ -90,7 +91,7 @@ func (bucketClient *BucketClient) CreateFolder(fileName, prefix, bucketUid strin
 }
 
 func (bucketClient *BucketClient) GetFileInfoByObjectName(objectName, bucketUid string) (*OssFile, error) {
-	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_GET_FILE_INFO_BY_OBJECT_NAME)
+	apiUrl := utils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_GET_FILE_INFO_BY_OBJECT_NAME)
 	apiUrl = apiUrl + "?bucket_uid=" + bucketUid + "&object_name=" + objectName
 
 	var fileInfo OssFile
@@ -255,7 +256,7 @@ type OssFileInfo struct {
 }
 
 func (bucketClient *BucketClient) CheckFile(bucketUid, prefix, fileHash, fileName string) (*OssFileInfo, error) {
-	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_CHECK_UPLOAD)
+	apiUrl := utils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_CHECK_UPLOAD)
 
 	var params struct {
 		FileName  string `json:"file_name"`
@@ -280,7 +281,7 @@ func (bucketClient *BucketClient) CheckFile(bucketUid, prefix, fileHash, fileNam
 }
 
 func (bucketClient *BucketClient) UploadFileChunk(fileHash, fileName string, chunk []byte) ([]string, error) {
-	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_UPLOAD_CHUNK)
+	apiUrl := utils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_UPLOAD_CHUNK)
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
@@ -369,7 +370,7 @@ func (bucketClient *BucketClient) UploadFileChunk(fileHash, fileName string, chu
 }
 
 func (bucketClient *BucketClient) MergeFile(bucketUid, fileHash, fileName, prefix string) (*OssFileInfo, error) {
-	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_MERGE_FILE)
+	apiUrl := utils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_MERGE_FILE)
 
 	var params struct {
 		FileName  string `json:"file_name"`
@@ -394,7 +395,7 @@ func (bucketClient *BucketClient) MergeFile(bucketUid, fileHash, fileName, prefi
 }
 
 func (bucketClient *BucketClient) GetFileList(fileUid, limit, offset string) ([]*OssFile, error) {
-	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_GET_FILE_LIST) + fileUid + "&limit=" + limit + "&offset=" + offset
+	apiUrl := utils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_GET_FILE_LIST) + fileUid + "&limit=" + limit + "&offset=" + offset
 
 	var files []*OssFile
 	err := web.HttpGet(apiUrl, bucketClient.JwtToken, nil, &files)
@@ -479,7 +480,7 @@ func (bucketClient *BucketClient) PinFiles2Ipfs(bucketName, objectName, folderPa
 		return nil, err
 	}
 
-	apiUrl := libutils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_PIN_FILES_2_IPFS)
+	apiUrl := utils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_PIN_FILES_2_IPFS)
 	httpClient := &http.Client{}
 	req, err := http.NewRequest("POST", apiUrl, payload)
 

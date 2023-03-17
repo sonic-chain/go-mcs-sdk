@@ -2,15 +2,15 @@ package user
 
 import (
 	"go-mcs-sdk/mcs/api/common/constants"
+	"go-mcs-sdk/mcs/api/common/utils"
 	"go-mcs-sdk/mcs/api/common/web"
 	"strconv"
 
-	"github.com/filswan/go-swan-lib/logs"
-	libutils "github.com/filswan/go-swan-lib/utils"
+	"go-mcs-sdk/mcs/api/common/logs"
 )
 
 func (mcsClient *McsClient) CheckLogin() (*string, *string, error) {
-	apiUrl := libutils.UrlJoin(mcsClient.BaseUrl, constants.API_URL_USER_CHECK_LOGIN)
+	apiUrl := utils.UrlJoin(mcsClient.BaseUrl, constants.API_URL_USER_CHECK_LOGIN)
 
 	var response struct {
 		NetworkName   string `json:"network_name"`
@@ -27,7 +27,7 @@ func (mcsClient *McsClient) CheckLogin() (*string, *string, error) {
 }
 
 func (mcsClient *McsClient) GenerateApikey(validDys int) (*string, *string, error) {
-	apiUrl := libutils.UrlJoin(mcsClient.BaseUrl, constants.API_URL_USER_GENERATE_APIKEY)
+	apiUrl := utils.UrlJoin(mcsClient.BaseUrl, constants.API_URL_USER_GENERATE_APIKEY)
 	apiUrl = apiUrl + "?valid_days=" + strconv.Itoa(validDys)
 
 	var response struct {
@@ -45,7 +45,7 @@ func (mcsClient *McsClient) GenerateApikey(validDys int) (*string, *string, erro
 }
 
 func (mcsClient *McsClient) DeleteApikey(apikey string) error {
-	apiUrl := libutils.UrlJoin(mcsClient.BaseUrl, constants.API_URL_USER_DELETE_APIKEY)
+	apiUrl := utils.UrlJoin(mcsClient.BaseUrl, constants.API_URL_USER_DELETE_APIKEY)
 	apiUrl = apiUrl + "?apikey=" + apikey
 
 	err := web.HttpPut(apiUrl, mcsClient.JwtToken, nil, nil)
@@ -68,7 +68,7 @@ type Apikey struct {
 }
 
 func (mcsClient *McsClient) GetApikeys() ([]*Apikey, error) {
-	apiUrl := libutils.UrlJoin(mcsClient.BaseUrl, constants.API_URL_USER_GET_APIKEYS)
+	apiUrl := utils.UrlJoin(mcsClient.BaseUrl, constants.API_URL_USER_GET_APIKEYS)
 
 	var response struct {
 		Apikey []*Apikey `json:"apikey"`
@@ -84,7 +84,7 @@ func (mcsClient *McsClient) GetApikeys() ([]*Apikey, error) {
 }
 
 func (mcsClient *McsClient) RegisterEmail(email string) (*string, error) {
-	apiUrl := libutils.UrlJoin(mcsClient.BaseUrl, constants.API_URL_USER_REGISTER_EMAIL)
+	apiUrl := utils.UrlJoin(mcsClient.BaseUrl, constants.API_URL_USER_REGISTER_EMAIL)
 	var params struct {
 		Email string `json:"email"`
 	}
@@ -111,7 +111,7 @@ type Wallet struct {
 }
 
 func (mcsClient *McsClient) GetWallet() (*Wallet, error) {
-	apiUrl := libutils.UrlJoin(mcsClient.BaseUrl, constants.API_URL_USER_GET_WALLET)
+	apiUrl := utils.UrlJoin(mcsClient.BaseUrl, constants.API_URL_USER_GET_WALLET)
 
 	var response struct {
 		Wallet *Wallet `json:"wallet"`
@@ -127,7 +127,7 @@ func (mcsClient *McsClient) GetWallet() (*Wallet, error) {
 }
 
 func (mcsClient *McsClient) SetPopupTime() error {
-	apiUrl := libutils.UrlJoin(mcsClient.BaseUrl, constants.API_URL_USER_SET_POPUP_TIME)
+	apiUrl := utils.UrlJoin(mcsClient.BaseUrl, constants.API_URL_USER_SET_POPUP_TIME)
 
 	err := web.HttpPut(apiUrl, mcsClient.JwtToken, nil, nil)
 	if err != nil {
@@ -139,7 +139,7 @@ func (mcsClient *McsClient) SetPopupTime() error {
 }
 
 func (mcsClient *McsClient) DeleteEmail() error {
-	apiUrl := libutils.UrlJoin(mcsClient.BaseUrl, constants.API_URL_USER_DELETE_EMAIL)
+	apiUrl := utils.UrlJoin(mcsClient.BaseUrl, constants.API_URL_USER_DELETE_EMAIL)
 
 	err := web.HttpPut(apiUrl, mcsClient.JwtToken, nil, nil)
 	if err != nil {

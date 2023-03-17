@@ -2,10 +2,10 @@ package user
 
 import (
 	"go-mcs-sdk/mcs/api/common/constants"
+	"go-mcs-sdk/mcs/api/common/utils"
 	"go-mcs-sdk/mcs/api/common/web"
 
-	"github.com/filswan/go-swan-lib/logs"
-	libutils "github.com/filswan/go-swan-lib/utils"
+	"go-mcs-sdk/mcs/api/common/logs"
 )
 
 type McsClient struct {
@@ -43,7 +43,7 @@ func LoginByApikey(apikey, accessToken, network string) (*McsClient, error) {
 	params.AccessToken = accessToken
 	params.Network = network
 
-	apiUrl := libutils.UrlJoin(apiUrlBase, constants.API_URL_USER_LOGIN_BY_APIKEY)
+	apiUrl := utils.UrlJoin(apiUrlBase, constants.API_URL_USER_LOGIN_BY_APIKEY)
 
 	var loginByApikeyResponse struct {
 		JwtToken string `json:"jwt_token"`
@@ -72,7 +72,7 @@ func Register(publicKeyAddress, network string) (*string, error) {
 
 	params.PublicKeyAddress = publicKeyAddress
 
-	apiUrl := libutils.UrlJoin(apiUrlBase, constants.API_URL_USER_REGISTER)
+	apiUrl := utils.UrlJoin(apiUrlBase, constants.API_URL_USER_REGISTER)
 
 	var response struct {
 		Nonce string `json:"nonce"`
@@ -102,7 +102,7 @@ func LoginByPublicKeySignature(nonce, publicKeyAddress, signature, network strin
 	params.Signature = signature
 	params.Network = network
 
-	apiUrl := libutils.UrlJoin(apiUrlBase, constants.API_URL_USER_LOGIN)
+	apiUrl := utils.UrlJoin(apiUrlBase, constants.API_URL_USER_LOGIN)
 
 	var response struct {
 		JwtToken string `json:"jwt_token"`
