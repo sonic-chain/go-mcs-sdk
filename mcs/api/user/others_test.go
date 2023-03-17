@@ -1,14 +1,16 @@
 package user
 
 import (
+	"go-mcs-sdk/mcs/config"
+	"strings"
 	"testing"
 
 	"github.com/filswan/go-swan-lib/logs"
+	"github.com/stretchr/testify/assert"
 )
 
 var mcsClient *McsClient
 
-/*
 func init() {
 	if mcsClient != nil {
 		return
@@ -23,48 +25,39 @@ func init() {
 	if err != nil {
 		logs.GetLogger().Fatal(err)
 	}
-}*/
+}
 
 func TestCheckLogin(t *testing.T) {
-	mcsClient.JwtToken = "d"
 	networkName, walletAddress, err := mcsClient.CheckLogin()
-	if err != nil {
-		logs.GetLogger().Fatal(err)
-	}
-
-	logs.GetLogger().Info(*networkName, ",", *walletAddress)
+	assert.Nil(t, err)
+	assert.NotEmpty(t, networkName)
+	assert.NotEmpty(t, walletAddress)
+	assert.Equal(t, config.GetConfig().Network, *networkName)
+	assert.Contains(t, strings.ToUpper(*walletAddress), "0X")
 }
 
 func TestGenerateApikey(t *testing.T) {
 	apikey, accessToken, err := mcsClient.GenerateApikey(30)
-	if err != nil {
-		logs.GetLogger().Fatal(err)
-	}
-
-	logs.GetLogger().Info(*apikey, ",", *accessToken)
+	assert.Nil(t, err)
+	assert.NotEmpty(t, apikey)
+	assert.NotEmpty(t, accessToken)
 }
 
 func TestDeleteApikey(t *testing.T) {
 	err := mcsClient.DeleteApikey("2dkFLDsWNYDTkZkz6qB6PG")
-	if err != nil {
-		logs.GetLogger().Fatal(err)
-	}
+	assert.Nil(t, err)
 }
 
 func TestRegisterEmail(t *testing.T) {
 	response, err := mcsClient.RegisterEmail("fchen@nbai.io")
-	if err != nil {
-		logs.GetLogger().Fatal(err)
-	}
-
-	logs.GetLogger().Info(*response)
+	assert.Nil(t, err)
+	assert.NotEmpty(t, response)
 }
 
 func TestGetApikeys(t *testing.T) {
 	apikeys, err := mcsClient.GetApikeys()
-	if err != nil {
-		logs.GetLogger().Fatal(err)
-	}
+	assert.Nil(t, err)
+	assert.NotEmpty(t, apikeys)
 
 	for _, apikey := range apikeys {
 		logs.GetLogger().Info(*apikey)
@@ -73,23 +66,18 @@ func TestGetApikeys(t *testing.T) {
 
 func TestGetWallet(t *testing.T) {
 	wallet, err := mcsClient.GetWallet()
-	if err != nil {
-		logs.GetLogger().Fatal(err)
-	}
+	assert.Nil(t, err)
+	assert.NotEmpty(t, wallet)
 
 	logs.GetLogger().Info(*wallet)
 }
 
 func TestSetPopupTime(t *testing.T) {
 	err := mcsClient.SetPopupTime()
-	if err != nil {
-		logs.GetLogger().Fatal(err)
-	}
+	assert.Nil(t, err)
 }
 
 func TestDeleteEmail(t *testing.T) {
 	err := mcsClient.DeleteEmail()
-	if err != nil {
-		logs.GetLogger().Fatal(err)
-	}
+	assert.Nil(t, err)
 }
