@@ -13,6 +13,7 @@ func TestGetFileCoinPrice(t *testing.T) {
 	filecoinPrice, err := onChainClient.GetFileCoinPrice()
 	assert.Nil(t, err)
 	assert.NotEmpty(t, filecoinPrice)
+	assert.GreaterOrEqual(t, *filecoinPrice, 0)
 
 	logs.GetLogger().Info(*filecoinPrice)
 }

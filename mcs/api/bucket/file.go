@@ -234,7 +234,7 @@ func (bucketClient *BucketClient) UploadFile(bucketName, objectName, filePath st
 			}
 
 			wg.Wait()
-			_, err = bucketClient.MergeFile(*bucketUid, fileHashMd5, fileName, prefix)
+			_, err = bucketClient.mergeFile(*bucketUid, fileHashMd5, fileName, prefix)
 			if err != nil {
 				logs.GetLogger().Error(err)
 				return err
@@ -369,7 +369,7 @@ func (bucketClient *BucketClient) UploadFileChunk(fileHash, fileName string, chu
 	return mcsResponse.Data, nil
 }
 
-func (bucketClient *BucketClient) MergeFile(bucketUid, fileHash, fileName, prefix string) (*OssFileInfo, error) {
+func (bucketClient *BucketClient) mergeFile(bucketUid, fileHash, fileName, prefix string) (*OssFileInfo, error) {
 	apiUrl := utils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_MERGE_FILE)
 
 	var params struct {

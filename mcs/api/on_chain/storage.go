@@ -34,6 +34,12 @@ type UploadFileResponse struct {
 }
 
 func (onChainClient *OnChainClient) UploadFile(filePath string, fileType int) (*UploadFile, error) {
+	if fileType != constants.SOURCE_FILE_TYPE_NORMAL && fileType != constants.SOURCE_FILE_TYPE_MINT {
+		err := fmt.Errorf("invalid source file type:%d", fileType)
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
 	httpRequestUrl := utils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_STORAGE_UPLOAD_FILE)
 	payload := &bytes.Buffer{}
 	writer := multipart.NewWriter(payload)
