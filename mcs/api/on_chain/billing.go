@@ -5,22 +5,23 @@ import (
 	"crypto/ecdsa"
 	"fmt"
 	"go-mcs-sdk/mcs/api/common/constants"
+	"go-mcs-sdk/mcs/api/common/utils"
 	"go-mcs-sdk/mcs/api/common/web"
 	"go-mcs-sdk/mcs/contract"
 	"math/big"
 	"net/url"
 	"strings"
 
+	"go-mcs-sdk/mcs/api/common/logs"
+
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/filswan/go-swan-lib/logs"
-	libutils "github.com/filswan/go-swan-lib/utils"
 )
 
 func (onChainClient *OnChainClient) GetFileCoinPrice() (*float64, error) {
-	apiUrl := libutils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_BILLING_FILECOIN_PRICE)
+	apiUrl := utils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_BILLING_FILECOIN_PRICE)
 	params := url.Values{}
 
 	var price float64
@@ -41,7 +42,7 @@ type LockPaymentInfo struct {
 }
 
 func (client *OnChainClient) GetLockPaymentInfo(fileUploadId int64) (*LockPaymentInfo, error) {
-	apiUrl := libutils.UrlJoin(client.BaseUrl, constants.API_URL_BILLING_GET_PAYMENT_INFO)
+	apiUrl := utils.UrlJoin(client.BaseUrl, constants.API_URL_BILLING_GET_PAYMENT_INFO)
 	apiUrl = apiUrl + "?source_file_upload_id=" + fmt.Sprintf("%d", fileUploadId)
 	params := url.Values{}
 
@@ -79,7 +80,7 @@ type BillingHistoryParams struct {
 }
 
 func (onChainClient *OnChainClient) GetBillingHistory(billingHistoryParams BillingHistoryParams) ([]*BillingHistory, *int64, error) {
-	apiUrl := libutils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_BILLING_HISTORY)
+	apiUrl := utils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_BILLING_HISTORY)
 	paramItems := []string{}
 	if billingHistoryParams.PageNumber != nil {
 		paramItems = append(paramItems, "page_number="+fmt.Sprintf("%d", *billingHistoryParams.PageNumber))

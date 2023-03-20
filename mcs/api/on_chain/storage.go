@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"go-mcs-sdk/mcs/api/common/constants"
+	"go-mcs-sdk/mcs/api/common/utils"
 	"go-mcs-sdk/mcs/api/common/web"
 	"io"
 	"mime/multipart"
@@ -14,8 +15,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/filswan/go-swan-lib/logs"
-	libutils "github.com/filswan/go-swan-lib/utils"
+	"go-mcs-sdk/mcs/api/common/logs"
 )
 
 type UploadFile struct {
@@ -34,7 +34,7 @@ type UploadFileResponse struct {
 }
 
 func (onChainClient *OnChainClient) UploadFile(filePath string, fileType int) (*UploadFile, error) {
-	httpRequestUrl := libutils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_STORAGE_UPLOAD_FILE)
+	httpRequestUrl := utils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_STORAGE_UPLOAD_FILE)
 	payload := &bytes.Buffer{}
 	writer := multipart.NewWriter(payload)
 	file, err := os.Open(filePath)
@@ -160,7 +160,7 @@ type DealsParams struct {
 }
 
 func (onChainClient *OnChainClient) GetDeals(dealsParams DealsParams) ([]*Deal, *int64, error) {
-	apiUrl := libutils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_STORAGE_GET_DEALS)
+	apiUrl := utils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_STORAGE_GET_DEALS)
 	paramItems := []string{}
 	if dealsParams.PageNumber != nil {
 		paramItems = append(paramItems, "page_number="+fmt.Sprintf("%d", *dealsParams.PageNumber))
@@ -260,7 +260,7 @@ type GetDealDetailResponseData struct {
 
 func (onChainClient *OnChainClient) GetDealDetail(sourceFileUploadId, dealId int64) (*SourceFileUploadDeal, []*DaoSignature, *int, error) {
 	params := strconv.FormatInt(dealId, 10) + "?source_file_upload_id=" + strconv.FormatInt(sourceFileUploadId, 10)
-	apiUrl := libutils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_STORAGE_GET_DEAL_DETAIL, params)
+	apiUrl := utils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_STORAGE_GET_DEAL_DETAIL, params)
 
 	var dealDetail GetDealDetailResponseData
 	err := web.HttpGet(apiUrl, onChainClient.JwtToken, nil, &dealDetail)
@@ -285,7 +285,7 @@ type OfflineDealLog struct {
 }
 
 func (onChainClient *OnChainClient) GetDealLogs(offlineDealId int64) ([]*OfflineDealLog, error) {
-	apiUrl := libutils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_STORAGE_GET_DEAL_LOG, strconv.FormatInt(offlineDealId, 10))
+	apiUrl := utils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_STORAGE_GET_DEAL_LOG, strconv.FormatInt(offlineDealId, 10))
 
 	var dealLogs struct {
 		OfflineDealLogs []*OfflineDealLog `json:"offline_deal_log"`
@@ -307,7 +307,7 @@ type SourceFileUpload struct {
 }
 
 func (onChainClient *OnChainClient) GetSourceFileUpload(sourceFileUploadId int64) (*SourceFileUpload, error) {
-	apiUrl := libutils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_STORAGE_GET_SOURCE_FILE_UPLOAD, strconv.FormatInt(sourceFileUploadId, 10))
+	apiUrl := utils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_STORAGE_GET_SOURCE_FILE_UPLOAD, strconv.FormatInt(sourceFileUploadId, 10))
 
 	var sourceFileUpload struct {
 		SourceFileUpload *SourceFileUpload `json:"source_file_upload"`
@@ -323,7 +323,7 @@ func (onChainClient *OnChainClient) GetSourceFileUpload(sourceFileUploadId int64
 }
 
 func (onChainClient *OnChainClient) UnpinSourceFile(sourceFileUploadId int64) error {
-	apiUrl := libutils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_STORAGE_UNPIN_SOURCE_FILE, strconv.FormatInt(sourceFileUploadId, 10))
+	apiUrl := utils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_STORAGE_UNPIN_SOURCE_FILE, strconv.FormatInt(sourceFileUploadId, 10))
 
 	err := web.HttpPost(apiUrl, onChainClient.JwtToken, nil, nil)
 	if err != nil {
@@ -345,7 +345,7 @@ type NftCollectionParams struct {
 }
 
 func (onChainClient *OnChainClient) WriteNftCollection(nftCollectionParams NftCollectionParams) error {
-	apiUrl := libutils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_STORAGE_WRITE_NFT_COLLECTION)
+	apiUrl := utils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_STORAGE_WRITE_NFT_COLLECTION)
 
 	err := web.HttpPost(apiUrl, onChainClient.JwtToken, nftCollectionParams, nil)
 	if err != nil {
@@ -374,7 +374,7 @@ type NftCollection struct {
 }
 
 func (onChainClient *OnChainClient) GetNftCollections() ([]*NftCollection, error) {
-	apiUrl := libutils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_STORAGE_GET_NFT_COLLECTIONS)
+	apiUrl := utils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_STORAGE_GET_NFT_COLLECTIONS)
 
 	var nftCollections []*NftCollection
 	err := web.HttpGet(apiUrl, onChainClient.JwtToken, nil, &nftCollections)
@@ -409,7 +409,7 @@ type SourceFileMint struct {
 }
 
 func (onChainClient *OnChainClient) RecordMintInfo(recordMintInfoParams *RecordMintInfoParams) (*SourceFileMint, error) {
-	apiUrl := libutils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_STORAGE_RECORD_MINT_INFO)
+	apiUrl := utils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_STORAGE_RECORD_MINT_INFO)
 
 	var sourceFileMint SourceFileMint
 	err := web.HttpPost(apiUrl, onChainClient.JwtToken, recordMintInfoParams, &sourceFileMint)
@@ -429,7 +429,7 @@ type SourceFileMintOut struct {
 }
 
 func (onChainClient *OnChainClient) GetMintInfo(sourceFileUploadId int64) ([]*SourceFileMintOut, error) {
-	apiUrl := libutils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_STORAGE_GET_MINT_INFO, strconv.FormatInt(sourceFileUploadId, 10))
+	apiUrl := utils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_STORAGE_GET_MINT_INFO, strconv.FormatInt(sourceFileUploadId, 10))
 
 	var sourceFileMints []*SourceFileMintOut
 	err := web.HttpGet(apiUrl, onChainClient.JwtToken, nil, &sourceFileMints)

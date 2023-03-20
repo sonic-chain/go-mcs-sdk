@@ -4,8 +4,9 @@ import (
 	"os"
 	"path/filepath"
 
+	"go-mcs-sdk/mcs/api/common/logs"
+
 	"github.com/BurntSushi/toml"
-	"github.com/filswan/go-swan-lib/logs"
 )
 
 type Configuration struct {

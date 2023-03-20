@@ -1,11 +1,11 @@
 package bucket
 
 import (
-	"go-mcs-sdk/mcs/api/common/auth"
+	"go-mcs-sdk/mcs/api/user"
 	"go-mcs-sdk/mcs/config"
 	"testing"
 
-	"github.com/filswan/go-swan-lib/logs"
+	"go-mcs-sdk/mcs/api/common/logs"
 )
 
 var buketClient *BucketClient
@@ -19,7 +19,7 @@ func init() {
 	accessToken := config.GetConfig().AccessToken
 	network := config.GetConfig().Network
 
-	mcsClient, err := auth.LoginByApikey(apikey, accessToken, network)
+	mcsClient, err := user.LoginByApikey(apikey, accessToken, network)
 	if err != nil {
 		logs.GetLogger().Fatal(err)
 	}
