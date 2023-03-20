@@ -8,7 +8,6 @@ import (
 	"go-mcs-sdk/mcs/api/common/utils"
 	"go-mcs-sdk/mcs/api/common/web"
 	"io"
-	"io/ioutil"
 	"log"
 	"mime/multipart"
 	"net/http"
@@ -162,7 +161,7 @@ func (bucketClient *BucketClient) UploadFile(bucketName, objectName, filePath st
 		return err
 	}
 
-	ossFileInfo, err := bucketClient.CheckFile(*bucketUid, prefix, fileHashMd5, fileName)
+	ossFileInfo, err := bucketClient.checkFile(*bucketUid, prefix, fileHashMd5, fileName)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return err
@@ -184,7 +183,7 @@ func (bucketClient *BucketClient) UploadFile(bucketName, objectName, filePath st
 			logs.GetLogger().Error(err)
 			return err
 		}
-		ossFileInfo, err = bucketClient.CheckFile(*bucketUid, prefix, fileHashMd5, fileName)
+		ossFileInfo, err = bucketClient.checkFile(*bucketUid, prefix, fileHashMd5, fileName)
 		if err != nil {
 			logs.GetLogger().Error(err)
 			return err
@@ -255,7 +254,7 @@ type OssFileInfo struct {
 	//IpfsUrl     string `form:"ipfs_url" json:"ipfs_url"`
 }
 
-func (bucketClient *BucketClient) CheckFile(bucketUid, prefix, fileHash, fileName string) (*OssFileInfo, error) {
+func (bucketClient *BucketClient) checkFile(bucketUid, prefix, fileHash, fileName string) (*OssFileInfo, error) {
 	apiUrl := utils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_CHECK_UPLOAD)
 
 	var params struct {
@@ -447,7 +446,7 @@ func (bucketClient *BucketClient) PinFiles2Ipfs(bucketName, objectName, folderPa
 		return nil, err
 	}
 
-	fsFiles, err := ioutil.ReadDir(folderPath)
+	fsFiles, err := os.ReadDir(folderPath)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
