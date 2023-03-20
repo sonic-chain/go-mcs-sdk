@@ -6,6 +6,8 @@ import (
 	"testing"
 
 	"go-mcs-sdk/mcs/api/common/logs"
+
+	"github.com/stretchr/testify/assert"
 )
 
 var onChainClient *OnChainClient
@@ -32,6 +34,8 @@ func TestGetSystemParam(t *testing.T) {
 	if err != nil {
 		logs.GetLogger().Fatal(err)
 	}
+	assert.Nil(t, err)
+	assert.NotEmpty(t, params)
 
 	logs.GetLogger().Info(params)
 }
@@ -41,6 +45,8 @@ func TestGetFilPrice(t *testing.T) {
 	if err != nil {
 		logs.GetLogger().Fatal(err)
 	}
+	assert.Nil(t, err)
+	assert.NotEmpty(t, price)
 
 	logs.GetLogger().Info(price)
 }
@@ -50,6 +56,8 @@ func TestGetAmount(t *testing.T) {
 	if err != nil {
 		logs.GetLogger().Fatal(err)
 	}
+	assert.Nil(t, err)
+	assert.NotEmpty(t, amount)
 
 	logs.GetLogger().Info(amount)
 }
