@@ -197,7 +197,7 @@ func (onChainClient *OnChainClient) PayForFile(sourceFileUploadId int64, private
 		CopyLimit:  constants.COPY_NUMBER_LIMIT,
 	}
 
-	txHashApprove, err := Approve(rpcUrl, systemParams, privateKey, amount2Lock)
+	txHashApprove, err := approve(rpcUrl, systemParams, privateKey, amount2Lock)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
@@ -225,7 +225,7 @@ func (onChainClient *OnChainClient) PayForFile(sourceFileUploadId int64, private
 	return &txHash, nil
 }
 
-func Approve(rpcUrl string, systemParams *SystemParam, privateKey *ecdsa.PrivateKey, amount *big.Int) (*string, error) {
+func approve(rpcUrl string, systemParams *SystemParam, privateKey *ecdsa.PrivateKey, amount *big.Int) (*string, error) {
 	publicKey := privateKey.Public()
 	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
 	if !ok {

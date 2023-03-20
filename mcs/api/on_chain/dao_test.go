@@ -4,13 +4,14 @@ import (
 	"testing"
 
 	"go-mcs-sdk/mcs/api/common/logs"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGetDeals2PreSign(t *testing.T) {
 	deals, err := onChainClient.GetDeals2PreSign()
-	if err != nil {
-		logs.GetLogger().Fatal(err)
-	}
+	assert.Nil(t, err)
+	assert.NotEmpty(t, deals)
 
 	for _, deal := range deals {
 		logs.GetLogger().Info(deal)
@@ -19,9 +20,8 @@ func TestGetDeals2PreSign(t *testing.T) {
 
 func TestGetDeals2Sign(t *testing.T) {
 	deals, err := onChainClient.GetDeals2Sign()
-	if err != nil {
-		logs.GetLogger().Fatal(err)
-	}
+	assert.Nil(t, err)
+	assert.NotEmpty(t, deals)
 
 	for _, deal := range deals {
 		logs.GetLogger().Info(*deal)
@@ -30,9 +30,8 @@ func TestGetDeals2Sign(t *testing.T) {
 
 func TestGetDeals2SignHash(t *testing.T) {
 	deals, err := onChainClient.GetDeals2SignHash()
-	if err != nil {
-		logs.GetLogger().Fatal(err)
-	}
+	assert.Nil(t, err)
+	assert.NotEmpty(t, deals)
 
 	for _, deal := range deals {
 		logs.GetLogger().Info(*deal)

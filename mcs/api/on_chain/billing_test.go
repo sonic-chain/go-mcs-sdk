@@ -5,22 +5,23 @@ import (
 	"testing"
 
 	"go-mcs-sdk/mcs/api/common/logs"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGetFileCoinPrice(t *testing.T) {
 	filecoinPrice, err := onChainClient.GetFileCoinPrice()
-	if err != nil {
-		logs.GetLogger().Fatal(err)
-	}
+	assert.Nil(t, err)
+	assert.NotEmpty(t, filecoinPrice)
+	assert.GreaterOrEqual(t, *filecoinPrice, 0)
 
 	logs.GetLogger().Info(*filecoinPrice)
 }
 
 func TestGetLockPaymentInfo(t *testing.T) {
 	lockPaymentInfo, err := onChainClient.GetLockPaymentInfo(2131)
-	if err != nil {
-		logs.GetLogger().Fatal(err)
-	}
+	assert.Nil(t, err)
+	assert.NotEmpty(t, lockPaymentInfo)
 
 	logs.GetLogger().Info(*lockPaymentInfo)
 }
@@ -36,6 +37,9 @@ func TestGetBillingHistory(t *testing.T) {
 	if err != nil {
 		logs.GetLogger().Fatal(err)
 	}
+	assert.Nil(t, err)
+	assert.NotEmpty(t, billings)
+	assert.NotEmpty(t, recCnt)
 
 	for _, billing := range billings {
 		logs.GetLogger().Info(*billing)
@@ -49,6 +53,8 @@ func TestPayForFile(t *testing.T) {
 	if err != nil {
 		logs.GetLogger().Fatal(err)
 	}
+	assert.Nil(t, err)
+	assert.NotEmpty(t, txHash)
 
 	logs.GetLogger().Info(*txHash)
 }

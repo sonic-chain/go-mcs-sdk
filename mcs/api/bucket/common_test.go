@@ -6,6 +6,8 @@ import (
 	"testing"
 
 	"go-mcs-sdk/mcs/api/common/logs"
+
+	"github.com/stretchr/testify/assert"
 )
 
 var buketClient *BucketClient
@@ -29,9 +31,8 @@ func init() {
 
 func TestGetGateway(t *testing.T) {
 	subDomains, err := buketClient.GetGateway()
-	if err != nil {
-		logs.GetLogger().Fatal(err)
-	}
+	assert.Nil(t, err)
+	assert.NotEmpty(t, subDomains)
 
 	for _, subDomain := range subDomains {
 		logs.GetLogger().Info(subDomain)
