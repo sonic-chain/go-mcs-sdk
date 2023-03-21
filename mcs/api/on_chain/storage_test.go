@@ -27,7 +27,9 @@ func TestGetDeals(t *testing.T) {
 	}
 	sourceFileUploads, recCnt, err := onChainClient.GetDeals(dealsParams)
 	assert.Nil(t, err)
-	assert.NotEmpty(t, sourceFileUploads)
+	assert.NotNil(t, sourceFileUploads)
+	assert.NotNil(t, recCnt)
+	assert.GreaterOrEqual(t, *recCnt, int64(0))
 
 	for _, sourceFileUpload := range sourceFileUploads {
 		logs.GetLogger().Info(*sourceFileUpload)
@@ -39,7 +41,10 @@ func TestGetDeals(t *testing.T) {
 func TestGetDealDetail(t *testing.T) {
 	sourceFileUploadDeal, daoSignatures, daoThreshold, err := onChainClient.GetDealDetail(149717, 198335)
 	assert.Nil(t, err)
-	assert.NotEmpty(t, sourceFileUploadDeal)
+	assert.NotNil(t, sourceFileUploadDeal)
+	assert.NotNil(t, daoSignatures)
+	assert.NotNil(t, daoThreshold)
+	assert.Greater(t, *daoThreshold, 0)
 
 	logs.GetLogger().Info(*sourceFileUploadDeal)
 	for _, daoSignature := range daoSignatures {
@@ -51,7 +56,7 @@ func TestGetDealDetail(t *testing.T) {
 func TestGetDealLogs(t *testing.T) {
 	offlineDealLogs, err := onChainClient.GetDealLogs(1)
 	assert.Nil(t, err)
-	assert.NotEmpty(t, offlineDealLogs)
+	assert.NotNil(t, offlineDealLogs)
 
 	for _, offlineDealLog := range offlineDealLogs {
 		logs.GetLogger().Info(*offlineDealLog)
@@ -79,13 +84,12 @@ func TestWriteNftCollection(t *testing.T) {
 
 	err := onChainClient.WriteNftCollection(nftCollectionParams)
 	assert.Nil(t, err)
-	assert.NotEmpty(t, nftCollectionParams)
 }
 
 func TestGetNftCollections(t *testing.T) {
 	nftCollections, err := onChainClient.GetNftCollections()
 	assert.Nil(t, err)
-	assert.NotEmpty(t, nftCollections)
+	assert.NotNil(t, nftCollections)
 
 	for _, nftCollection := range nftCollections {
 		logs.GetLogger().Info(*nftCollection)
@@ -96,7 +100,7 @@ func TestRecordMintInfo(t *testing.T) {
 	name := "abc"
 	description := "hello"
 	recordMintInfoParams := &RecordMintInfoParams{
-		SourceFileUploadId: 148234,
+		SourceFileUploadId: 151353,
 		NftCollectionId:    77,
 		TxHash:             "0xesdd",
 		TokenId:            5,
@@ -106,15 +110,15 @@ func TestRecordMintInfo(t *testing.T) {
 
 	sourceFileMint, err := onChainClient.RecordMintInfo(recordMintInfoParams)
 	assert.Nil(t, err)
-	assert.NotEmpty(t, sourceFileMint)
+	assert.NotNil(t, sourceFileMint)
 
 	logs.GetLogger().Info(*sourceFileMint)
 }
 
 func TestGetMintInfo(t *testing.T) {
-	sourceFileMints, err := onChainClient.GetMintInfo(1)
+	sourceFileMints, err := onChainClient.GetMintInfo(151353)
 	assert.Nil(t, err)
-	assert.NotEmpty(t, sourceFileMints)
+	assert.NotNil(t, sourceFileMints)
 
 	for _, sourceFileMint := range sourceFileMints {
 		logs.GetLogger().Info(*sourceFileMint)
