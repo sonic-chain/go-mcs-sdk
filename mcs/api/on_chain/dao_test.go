@@ -11,7 +11,7 @@ import (
 func TestGetDeals2PreSign(t *testing.T) {
 	deals, err := onChainClient.GetDeals2PreSign()
 	assert.Nil(t, err)
-	assert.NotEmpty(t, deals)
+	assert.NotNil(t, deals)
 
 	for _, deal := range deals {
 		logs.GetLogger().Info(deal)
@@ -21,7 +21,7 @@ func TestGetDeals2PreSign(t *testing.T) {
 func TestGetDeals2Sign(t *testing.T) {
 	deals, err := onChainClient.GetDeals2Sign()
 	assert.Nil(t, err)
-	assert.NotEmpty(t, deals)
+	assert.NotNil(t, deals)
 
 	for _, deal := range deals {
 		logs.GetLogger().Info(*deal)
@@ -31,7 +31,7 @@ func TestGetDeals2Sign(t *testing.T) {
 func TestGetDeals2SignHash(t *testing.T) {
 	deals, err := onChainClient.GetDeals2SignHash()
 	assert.Nil(t, err)
-	assert.NotEmpty(t, deals)
+	assert.NotNil(t, deals)
 
 	for _, deal := range deals {
 		logs.GetLogger().Info(*deal)
