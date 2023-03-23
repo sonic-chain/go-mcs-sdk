@@ -534,7 +534,7 @@ func (bucketClient *BucketClient) PinFiles2Ipfs(bucketName, objectName, folderPa
 	return &pinFiles2IpfsResponse.Data, nil
 }
 
-func (bucketClient *BucketClient) DownloadIpfsFolder(buketName, objectName string) error {
+func (bucketClient *BucketClient) DownloadIpfsFolder(buketName, objectName, destFilepath string) error {
 	ossFile, err := bucketClient.GetFileInfoByName(objectName, buketName)
 	if err != nil {
 		logs.GetLogger().Error(err)
@@ -548,8 +548,8 @@ func (bucketClient *BucketClient) DownloadIpfsFolder(buketName, objectName strin
 	}
 
 	apiUrl := utils.UrlJoin(*gateway, "/api/v0/get?arg="+ossFile.PayloadCid+"&create=true")
+	apiUrl = "https://36281b7211.calibration-swan-acl.filswan.com/ipfs/QmSpDirYz4ATgh2u8Pw8W9Dc34GvyeaHZtXS3gpCXWh7hB/duration6"
 
-	temp_path := ".tmp"
 	request, err := http.NewRequest(http.MethodGet, apiUrl, nil)
 	if err != nil {
 		logs.GetLogger().Error(err)
@@ -564,7 +564,7 @@ func (bucketClient *BucketClient) DownloadIpfsFolder(buketName, objectName strin
 
 	defer response.Body.Close()
 
-	f, _ := os.OpenFile(temp_path, os.O_CREATE|os.O_WRONLY, 0644)
+	f, _ := os.OpenFile(destFilepath, os.O_CREATE|os.O_WRONLY, 0644)
 	defer f.Close()
 
 	buf := make([]byte, 32*1024)
@@ -582,11 +582,10 @@ func (bucketClient *BucketClient) DownloadIpfsFolder(buketName, objectName strin
 		if n > 0 {
 			f.Write(buf[:n])
 			downloaded += int64(n)
-			msg := fmt.Sprintf("\rDownloading... %.2f%%", float64(downloaded)/float64(response.ContentLength)*100)
+			msg := fmt.Sprintf("Downloading... %.2f%%", float64(downloaded)/float64(response.ContentLength)*100)
 			logs.GetLogger().Info(msg)
 		}
 	}
-	os.Rename(temp_path, "wordpress.zip")
 
 	return nil
 }

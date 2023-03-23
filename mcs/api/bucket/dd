@@ -1,0 +1,108 @@
+task_id,task_status,miner_id,duration,deal_status,start_epoch,end_epoch,note
+2343,DealSent,726,1521000,FileImported,437913,1958913,StorageDealStaged
+2344,DealSent,726,1521000,FileImported,437914,1958914,StorageDealStaged
+2341,DealSent,726,1531000,FileImported,437912,1968912,StorageDealStaged
+2342,DealSent,726,1531000,FileImported,437913,1968913,StorageDealStaged
+2357,DealSent,726,1532000,FileImported,437950,1969950,StorageDealStaged
+2358,DealSent,726,1532000,FileImported,437951,1969951,StorageDealStaged
+2359,DealSent,726,1532000,FileImported,437952,1969952,StorageDealStaged
+2354,DealSent,726,1533000,FileImported,437947,1970947,StorageDealStaged
+2355,DealSent,726,1533000,FileImported,437948,1970948,StorageDealStaged
+2356,DealSent,726,1533000,FileImported,437949,1970949,StorageDealStaged
+2351,DealSent,726,1534000,FileImported,437944,1971944,StorageDealStaged
+2352,DealSent,726,1534000,FileImported,437945,1971945,StorageDealStaged
+2353,DealSent,726,1534000,FileImported,437946,1971946,StorageDealStaged
+2348,DealSent,726,1535000,FileImported,437948,1972948,StorageDealStaged
+2349,DealSent,726,1535000,FileImported,437949,1972949,StorageDealStaged
+2350,DealSent,726,1535000,FileImported,437950,1972950,StorageDealStaged
+2345,DealSent,726,1536000,FileImported,437945,1973945,StorageDealStaged
+2346,DealSent,726,1536000,FileImported,437946,1973946,StorageDealStaged
+2347,DealSent,726,1536000,FileImported,437947,1973947,StorageDealStaged
+2360,DealSent,726,1537000,FileImported,437951,1974951,StorageDealStaged
+2361,DealSent,726,1537000,FileImported,437952,1974952,StorageDealStaged
+2362,DealSent,726,1537000,FileImported,437953,1974953,StorageDealStaged
+2363,DealSent,726,1538000,FileImported,437944,1975944,StorageDealStaged
+2364,DealSent,726,1538000,FileImported,437945,1975945,StorageDealStaged
+2365,DealSent,726,1538000,FileImported,437946,1975946,StorageDealStaged
+2366,DealSent,726,1539000,FileImported,437947,1976947,StorageDealStaged
+2367,DealSent,726,1539000,FileImported,437948,1976948,StorageDealStaged
+2368,DealSent,726,1539000,FileImported,437949,1976949,StorageDealStaged
+2369,DealSent,726,1539000,FileImported,437950,1976950,StorageDealStaged
+2370,DealSent,726,1540000,FileImported,437951,1977951,StorageDealStaged
+2371,DealSent,726,1540000,FileImported,437952,1977952,StorageDealStaged
+2372,DealSent,726,1540000,FileImported,437953,1977953,StorageDealStaged
+2373,DealSent,726,1540000,FileImported,437954,1977954,StorageDealStaged
+2398,DealSent,726,1540100,FileImported,438039,1978139,"deal is already imported,StorageDealStaged"
+2399,DealSent,726,1540100,FileImported,438040,1978140,"deal is already imported,StorageDealStaged"
+2400,DealSent,726,1540100,FileImported,438041,1978141,"deal is already imported,StorageDealStaged"
+2401,DealSent,726,1540100,FileImported,438045,1978145,"deal is already imported,StorageDealStaged"
+2395,DealSent,726,1540200,FileImported,438036,1978236,StorageDealStaged
+2396,DealSent,726,1540200,FileImported,438037,1978237,"deal is already imported,StorageDealStaged"
+2397,DealSent,726,1540200,FileImported,438038,1978238,"deal is already imported,StorageDealStaged"
+2392,DealSent,726,1540300,FileImported,438033,1978333,StorageDealStaged
+2393,DealSent,726,1540300,FileImported,438034,1978334,StorageDealStaged
+2394,DealSent,726,1540300,FileImported,438035,1978335,StorageDealStaged
+2389,DealSent,726,1540400,FileImported,438030,1978430,StorageDealStaged
+2390,DealSent,726,1540400,FileImported,438031,1978431,StorageDealStaged
+2391,DealSent,726,1540400,FileImported,438032,1978432,StorageDealStaged
+2386,DealSent,726,1540500,FileImported,438042,1978542,"deal is already imported,StorageDealStaged"
+2387,DealSent,726,1540500,FileImported,438043,1978543,"deal is already imported,StorageDealStaged"
+2388,DealSent,726,1540500,FileImported,438044,1978544,"deal is already imported,StorageDealStaged"
+2432,DealSent,726,1540500,ImportFailed,541980,2082480,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 2087502: cannot be more than 1555200 past current epoch 426666"
+2433,DealSent,726,1540500,ImportFailed,541981,2082481,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 2087502: cannot be more than 1555200 past current epoch 426666"
+2434,DealSent,726,1540500,ImportFailed,541982,2082482,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 2087502: cannot be more than 1555200 past current epoch 426666"
+2429,DealSent,726,1540501,ImportFailed,438230,1978731,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426595"
+2430,DealSent,726,1540501,ImportFailed,438231,1978732,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426595"
+2431,DealSent,726,1540501,ImportFailed,438232,1978733,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426595"
+2426,DealSent,726,1540510,ImportFailed,438133,1978643,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426498"
+2427,DealSent,726,1540510,ImportFailed,438134,1978644,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426498"
+2428,DealSent,726,1540510,ImportFailed,438135,1978645,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426498"
+2423,DealSent,726,1540520,ImportFailed,438130,1978650,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426498"
+2424,DealSent,726,1540520,ImportFailed,438131,1978651,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426498"
+2425,DealSent,726,1540520,ImportFailed,438132,1978652,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426498"
+2420,DealSent,726,1540530,ImportFailed,438127,1978657,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426498"
+2421,DealSent,726,1540530,ImportFailed,438128,1978658,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426498"
+2422,DealSent,726,1540530,ImportFailed,438129,1978659,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426498"
+2417,DealSent,726,1540540,ImportFailed,438124,1978664,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426498"
+2418,DealSent,726,1540540,ImportFailed,438125,1978665,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426498"
+2419,DealSent,726,1540540,ImportFailed,438126,1978666,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426498"
+2402,DealSent,726,1540550,ImportFailed,438109,1978659,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426499"
+2403,DealSent,726,1540550,ImportFailed,438110,1978660,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426499"
+2404,DealSent,726,1540550,ImportFailed,438111,1978661,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426499"
+2405,DealSent,726,1540560,ImportFailed,438112,1978672,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426499"
+2406,DealSent,726,1540560,ImportFailed,438113,1978673,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426499"
+2407,DealSent,726,1540560,ImportFailed,438114,1978674,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426499"
+2408,DealSent,726,1540570,ImportFailed,438115,1978685,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426499"
+2409,DealSent,726,1540570,ImportFailed,438116,1978686,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426499"
+2410,DealSent,726,1540570,ImportFailed,438117,1978687,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426499"
+2411,DealSent,726,1540580,ImportFailed,438118,1978698,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426499"
+2412,DealSent,726,1540580,ImportFailed,438119,1978699,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426499"
+2413,DealSent,726,1540580,ImportFailed,438120,1978700,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426499"
+2414,DealSent,726,1540590,ImportFailed,438121,1978711,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426499"
+2415,DealSent,726,1540590,ImportFailed,438122,1978712,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426499"
+2416,DealSent,726,1540590,ImportFailed,438123,1978713,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426498"
+2383,DealSent,726,1540600,ImportFailed,438042,1978642,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426407"
+2384,DealSent,726,1540600,ImportFailed,438043,1978643,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426407"
+2385,DealSent,726,1540600,ImportFailed,438044,1978644,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426407"
+2380,DealSent,726,1540700,ImportFailed,438039,1978739,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426407"
+2381,DealSent,726,1540700,ImportFailed,438040,1978740,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426407"
+2382,DealSent,726,1540700,ImportFailed,438041,1978741,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426407"
+2374,DealSent,726,1540800,ImportFailed,438033,1978833,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426408"
+2375,DealSent,726,1540800,ImportFailed,438034,1978834,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426408"
+2376,DealSent,726,1540800,ImportFailed,438035,1978835,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426408"
+2377,DealSent,726,1540900,ImportFailed,438036,1978936,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426408"
+2378,DealSent,726,1540900,ImportFailed,438037,1978937,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426407"
+2379,DealSent,726,1540900,ImportFailed,438038,1978938,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426407"
+2339,DealSent,726,1541000,ImportFailed,437911,1978911,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426278"
+2340,DealSent,726,1541000,ImportFailed,437912,1978912,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1983822: cannot be more than 1555200 past current epoch 426278"
+2337,DealSent,726,1551000,ImportFailed,437911,1988911,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1992462: cannot be more than 1555200 past current epoch 426276"
+2338,DealSent,726,1551000,ImportFailed,437912,1988912,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1992462: cannot be more than 1555200 past current epoch 426276"
+2335,DealSent,726,1552000,ImportFailed,437909,1989909,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1992462: cannot be more than 1555200 past current epoch 426276"
+2336,DealSent,726,1552000,ImportFailed,437910,1989910,"deal is error before importing,StorageDealError,deal rejected: invalid deal end epoch 1992462: cannot be more than 1555200 past current epoch 426276"
+2333,DealSent,726,1553000,ImportFailed,437906,1990906,"deal is error before importing,StorageDealError,deal rejected: deal duration out of bounds (min, max, provided): 518400, 1555200, 1557436"
+2334,DealSent,726,1553000,ImportFailed,437907,1990907,"deal is error before importing,StorageDealError,deal rejected: deal duration out of bounds (min, max, provided): 518400, 1555200, 1557435"
+2328,DealSent,726,1554000,ImportFailed,437640,1991640,"deal is error before importing,StorageDealError,deal rejected: deal duration out of bounds (min, max, provided): 518400, 1555200, 1557702"
+2329,DealSent,726,1554000,ImportFailed,437641,1991641,"deal is error before importing,StorageDealError,deal rejected: deal duration out of bounds (min, max, provided): 518400, 1555200, 1557701"
+2330,DealSent,726,1554000,ImportFailed,437642,1991642,"deal is error before importing,StorageDealError,deal rejected: deal duration out of bounds (min, max, provided): 518400, 1555200, 1557700"
+2331,DealSent,726,1554000,ImportFailed,437643,1991643,"deal is error before importing,StorageDealError,deal rejected: deal duration out of bounds (min, max, provided): 518400, 1555200, 1557699"
+2332,DealSent,726,1554000,ImportFailed,437644,1991644,"deal is error before importing,StorageDealError,deal rej
