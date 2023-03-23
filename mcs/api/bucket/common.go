@@ -1,6 +1,7 @@
 package bucket
 
 import (
+	"fmt"
 	"go-mcs-sdk/mcs/api/common/constants"
 	"go-mcs-sdk/mcs/api/common/utils"
 	"go-mcs-sdk/mcs/api/common/web"
@@ -8,7 +9,7 @@ import (
 	"go-mcs-sdk/mcs/api/common/logs"
 )
 
-func (bucketClient *BucketClient) GetGateway() ([]string, error) {
+func (bucketClient *BucketClient) GetGateway() (*string, error) {
 	apiUrl := utils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_GATEWAY_GET_GATEWAY)
 
 	var subDomains []string
@@ -19,5 +20,11 @@ func (bucketClient *BucketClient) GetGateway() ([]string, error) {
 		return nil, err
 	}
 
-	return subDomains, nil
+	if len(subDomains) <= 0 {
+		err := fmt.Errorf("no gateway returned")
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	return &subDomains[0], nil
 }

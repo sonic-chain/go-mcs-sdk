@@ -89,33 +89,6 @@ func (bucketClient *BucketClient) CreateFolder(fileName, prefix, bucketUid strin
 	return &folderName, nil
 }
 
-func (bucketClient *BucketClient) GetFileInfoByObjectName(objectName, bucketUid string) (*OssFile, error) {
-	apiUrl := utils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_GET_FILE_INFO_BY_OBJECT_NAME)
-	apiUrl = apiUrl + "?bucket_uid=" + bucketUid + "&object_name=" + objectName
-
-	var fileInfo OssFile
-	err := web.HttpGet(apiUrl, bucketClient.JwtToken, nil, &fileInfo)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	return &fileInfo, nil
-}
-
-func getPrefixFileName(objectName string) (string, string) {
-	lastIndex := strings.LastIndex(objectName, "/")
-
-	if lastIndex == -1 {
-		return "", objectName
-	}
-
-	prefix := objectName[0:lastIndex]
-	fileName := objectName[lastIndex+1:]
-
-	return prefix, fileName
-}
-
 func (bucketClient *BucketClient) getBucketUid(bucketName string) (*string, error) {
 	buckets, err := bucketClient.GetBuckets()
 	if err != nil {
@@ -130,6 +103,49 @@ func (bucketClient *BucketClient) getBucketUid(bucketName string) (*string, erro
 	}
 
 	return nil, nil
+}
+
+func (bucketClient *BucketClient) GetFileInfoByObjectName(objectName, bucketUid string) (*OssFile, error) {
+	apiUrl := utils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_GET_FILE_INFO_BY_OBJECT_NAME)
+	apiUrl = apiUrl + "?bucket_uid=" + bucketUid + "&object_name=" + objectName
+
+	var fileInfo OssFile
+	err := web.HttpGet(apiUrl, bucketClient.JwtToken, nil, &fileInfo)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	return &fileInfo, nil
+}
+
+func (bucketClient *BucketClient) GetFileInfoByName(objectName, bucketName string) (*OssFile, error) {
+	bucketUid, err := bucketClient.getBucketUid(bucketName)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	fileInfo, err := bucketClient.GetFileInfoByObjectName(objectName, *bucketUid)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	return fileInfo, nil
+}
+
+func getPrefixFileName(objectName string) (string, string) {
+	lastIndex := strings.LastIndex(objectName, "/")
+
+	if lastIndex == -1 {
+		return "", objectName
+	}
+
+	prefix := objectName[0:lastIndex]
+	fileName := objectName[lastIndex+1:]
+
+	return prefix, fileName
 }
 
 func (bucketClient *BucketClient) UploadFile(bucketName, objectName, filePath string, replace bool) error {
@@ -516,4 +532,61 @@ func (bucketClient *BucketClient) PinFiles2Ipfs(bucketName, objectName, folderPa
 	}
 
 	return &pinFiles2IpfsResponse.Data, nil
+}
+
+func (bucketClient *BucketClient) DownloadIpfsFolder(buketName, objectName string) error {
+	ossFile, err := bucketClient.GetFileInfoByName(objectName, buketName)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return err
+	}
+
+	gateway, err := bucketClient.GetGateway()
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return err
+	}
+
+	apiUrl := utils.UrlJoin(*gateway, "/api/v0/get?arg="+ossFile.PayloadCid+"&create=true")
+
+	temp_path := ".tmp"
+	request, err := http.NewRequest(http.MethodGet, apiUrl, nil)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return err
+	}
+
+	response, err := http.DefaultClient.Do(request)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return err
+	}
+
+	defer response.Body.Close()
+
+	f, _ := os.OpenFile(temp_path, os.O_CREATE|os.O_WRONLY, 0644)
+	defer f.Close()
+
+	buf := make([]byte, 32*1024)
+	var downloaded int64
+	for {
+		n, err := response.Body.Read(buf)
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			err := fmt.Errorf("error while downloading: %v", err)
+			logs.GetLogger().Error(err)
+			return err
+		}
+		if n > 0 {
+			f.Write(buf[:n])
+			downloaded += int64(n)
+			msg := fmt.Sprintf("\rDownloading... %.2f%%", float64(downloaded)/float64(response.ContentLength)*100)
+			logs.GetLogger().Info(msg)
+		}
+	}
+	os.Rename(temp_path, "wordpress.zip")
+
+	return nil
 }
