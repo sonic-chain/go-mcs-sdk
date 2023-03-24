@@ -30,11 +30,9 @@ func init() {
 }
 
 func TestGetGateway(t *testing.T) {
-	subDomains, err := buketClient.GetGateway()
+	gateway, err := buketClient.GetGateway()
 	assert.Nil(t, err)
-	assert.NotEmpty(t, subDomains)
+	assert.NotEmpty(t, gateway)
 
-	for _, subDomain := range subDomains {
-		logs.GetLogger().Info(subDomain)
-	}
+	logs.GetLogger().Info(*gateway)
 }

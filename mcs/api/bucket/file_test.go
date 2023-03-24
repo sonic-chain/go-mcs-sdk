@@ -1,6 +1,8 @@
 package bucket
 
 import (
+	"fmt"
+	"os"
 	"testing"
 
 	"go-mcs-sdk/mcs/api/common/logs"
@@ -31,11 +33,19 @@ func TestGetFileInfo(t *testing.T) {
 }
 
 func TestGetFileInfoByObjectName(t *testing.T) {
-	folderName, err := buketClient.GetFileInfoByObjectName("test/duration22", "0ef9c94d-9bb9-4ce9-b687-7db732a9ce2e")
+	ossFile, err := buketClient.GetFileInfoByObjectName("test/duration22", "0ef9c94d-9bb9-4ce9-b687-7db732a9ce2e")
 	assert.Nil(t, err)
-	assert.NotEmpty(t, folderName)
+	assert.NotEmpty(t, ossFile)
 
-	logs.GetLogger().Info(*folderName)
+	logs.GetLogger().Info(*ossFile)
+}
+
+func TestGetFileInfoByName(t *testing.T) {
+	ossFile, err := buketClient.GetFileInfoByName("aaa", "abc")
+	assert.Nil(t, err)
+	assert.NotEmpty(t, ossFile)
+
+	logs.GetLogger().Info(*ossFile)
 }
 
 func TestDeleteFile(t *testing.T) {
@@ -49,4 +59,19 @@ func TestPinFiles2Ipfs(t *testing.T) {
 	assert.NotEmpty(t, ossFile)
 
 	logs.GetLogger().Info(*ossFile)
+}
+
+func TestDownloadIpfsFolder(t *testing.T) {
+	err := buketClient.DownloadIpfsFolder("abc", "aaa", "./dd")
+	assert.Nil(t, err)
+}
+
+func TestIpfsFolderDownload1(t *testing.T) {
+	path, err := os.Getwd()
+	if err != nil {
+		logs.GetLogger().Fatal(err)
+	}
+	fmt.Println(path)
+	err = buketClient.DownloadFilesInIpfsFolder("abc", "aaa", path)
+	assert.Nil(t, err)
 }
