@@ -20,6 +20,7 @@ import (
 	"go-mcs-sdk/mcs/api/common/logs"
 
 	"github.com/codingsince1985/checksum"
+	shell "github.com/ipfs/go-ipfs-api"
 	"github.com/jinzhu/gorm"
 )
 
@@ -548,7 +549,7 @@ func (bucketClient *BucketClient) DownloadIpfsFolder(buketName, objectName, dest
 	}
 
 	apiUrl := utils.UrlJoin(*gateway, "/api/v0/get?arg="+ossFile.PayloadCid+"&create=true")
-	apiUrl = "https://36281b7211.calibration-swan-acl.filswan.com/ipfs/QmSpDirYz4ATgh2u8Pw8W9Dc34GvyeaHZtXS3gpCXWh7hB/duration6"
+	logs.GetLogger().Info(*gateway)
 
 	request, err := http.NewRequest(http.MethodGet, apiUrl, nil)
 	if err != nil {
@@ -585,6 +586,30 @@ func (bucketClient *BucketClient) DownloadIpfsFolder(buketName, objectName, dest
 			msg := fmt.Sprintf("Downloading... %.2f%%", float64(downloaded)/float64(response.ContentLength)*100)
 			logs.GetLogger().Info(msg)
 		}
+	}
+
+	return nil
+}
+
+func (bucketClient *BucketClient) DownloadFilesInIpfsFolder(buketName, objectName, destFileDir string) error {
+	ossFile, err := bucketClient.GetFileInfoByName(objectName, buketName)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return err
+	}
+
+	gateway, err := bucketClient.GetGateway()
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return err
+	}
+
+	sh := shell.NewShell(*gateway)
+	logs.GetLogger().Info(*gateway)
+	err = sh.Get(ossFile.PayloadCid, filepath.Base(destFileDir))
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return err
 	}
 
 	return nil

@@ -5,6 +5,7 @@ import (
 	"go-mcs-sdk/mcs/api/common/constants"
 	"go-mcs-sdk/mcs/api/common/utils"
 	"go-mcs-sdk/mcs/api/common/web"
+	"strings"
 
 	"go-mcs-sdk/mcs/api/common/logs"
 )
@@ -26,5 +27,10 @@ func (bucketClient *BucketClient) GetGateway() (*string, error) {
 		return nil, err
 	}
 
-	return &subDomains[0], nil
+	gateway := subDomains[0]
+	if !strings.HasPrefix(gateway, "http") {
+		gateway = "https://" + gateway
+	}
+
+	return &gateway, nil
 }

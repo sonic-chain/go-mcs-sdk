@@ -1,6 +1,8 @@
 package bucket
 
 import (
+	"fmt"
+	"os"
 	"testing"
 
 	"go-mcs-sdk/mcs/api/common/logs"
@@ -61,5 +63,15 @@ func TestPinFiles2Ipfs(t *testing.T) {
 
 func TestDownloadIpfsFolder(t *testing.T) {
 	err := buketClient.DownloadIpfsFolder("abc", "aaa", "./dd")
+	assert.Nil(t, err)
+}
+
+func TestIpfsFolderDownload1(t *testing.T) {
+	path, err := os.Getwd()
+	if err != nil {
+		logs.GetLogger().Fatal(err)
+	}
+	fmt.Println(path)
+	err = buketClient.DownloadFilesInIpfsFolder("abc", "aaa", path)
 	assert.Nil(t, err)
 }
