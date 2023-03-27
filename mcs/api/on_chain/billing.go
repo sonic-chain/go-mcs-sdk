@@ -116,20 +116,6 @@ func (onChainClient *OnChainClient) Pay(sourceFileUploadId int64, privateKeyStr 
 	return &txHash, nil
 }
 
-func (onChainClient *OnChainClient) GetFileCoinPrice() (*float64, error) {
-	apiUrl := utils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_BILLING_FILECOIN_PRICE)
-	params := url.Values{}
-
-	var price float64
-	err := web.HttpGet(apiUrl, onChainClient.JwtToken, strings.NewReader(params.Encode()), &price)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	return &price, nil
-}
-
 type LockPaymentInfo struct {
 	WCid         string `json:"w_cid"`
 	PayAmount    string `json:"pay_amount"`
@@ -137,7 +123,7 @@ type LockPaymentInfo struct {
 	TokenAddress string `json:"token_address"`
 }
 
-func (client *OnChainClient) GetLockPaymentInfo(fileUploadId int64) (*LockPaymentInfo, error) {
+func (client *OnChainClient) GetPaymentInfo(fileUploadId int64) (*LockPaymentInfo, error) {
 	apiUrl := utils.UrlJoin(client.BaseUrl, constants.API_URL_BILLING_GET_PAYMENT_INFO)
 	apiUrl = apiUrl + "?source_file_upload_id=" + fmt.Sprintf("%d", fileUploadId)
 	params := url.Values{}
@@ -150,6 +136,20 @@ func (client *OnChainClient) GetLockPaymentInfo(fileUploadId int64) (*LockPaymen
 	}
 
 	return &lockPaymentInfo, nil
+}
+
+func (onChainClient *OnChainClient) GetFileCoinPrice() (*float64, error) {
+	apiUrl := utils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_BILLING_FILECOIN_PRICE)
+	params := url.Values{}
+
+	var price float64
+	err := web.HttpGet(apiUrl, onChainClient.JwtToken, strings.NewReader(params.Encode()), &price)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	return &price, nil
 }
 
 type BillingHistory struct {

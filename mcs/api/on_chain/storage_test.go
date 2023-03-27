@@ -18,14 +18,14 @@ func TestUpload(t *testing.T) {
 	logs.GetLogger().Info(uploadFile)
 }
 
-func TestGetDeals(t *testing.T) {
+func TestGetUserTaskDeals(t *testing.T) {
 	pageNumber := 1
 	pageSize := 10
 	dealsParams := DealsParams{
 		PageNumber: &pageNumber,
 		PageSize:   &pageSize,
 	}
-	sourceFileUploads, recCnt, err := onChainClient.GetDeals(dealsParams)
+	sourceFileUploads, recCnt, err := onChainClient.GetUserTaskDeals(dealsParams)
 	assert.Nil(t, err)
 	assert.NotNil(t, sourceFileUploads)
 	assert.NotNil(t, recCnt)

@@ -118,6 +118,19 @@ func (onChainClient *OnChainClient) Upload(filePath string, fileType int) (*Uplo
 	return &uploadFileResponse.Data, nil
 }
 
+func (onChainClient *OnChainClient) GetMintInfo(sourceFileUploadId int64) ([]*SourceFileMintOut, error) {
+	apiUrl := utils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_STORAGE_GET_MINT_INFO, strconv.FormatInt(sourceFileUploadId, 10))
+
+	var sourceFileMints []*SourceFileMintOut
+	err := web.HttpGet(apiUrl, onChainClient.JwtToken, nil, &sourceFileMints)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	return sourceFileMints, nil
+}
+
 type OfflineDeal struct {
 	Id             int64   `json:"id"`
 	CarFileId      int64   `json:"car_file_id"`
@@ -165,7 +178,7 @@ type DealsParams struct {
 	IsAscend   *string `json:"is_ascend"`
 }
 
-func (onChainClient *OnChainClient) GetDeals(dealsParams DealsParams) ([]*Deal, *int64, error) {
+func (onChainClient *OnChainClient) GetUserTaskDeals(dealsParams DealsParams) ([]*Deal, *int64, error) {
 	apiUrl := utils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_STORAGE_GET_DEALS)
 	paramItems := []string{}
 	if dealsParams.PageNumber != nil {
@@ -432,17 +445,4 @@ type SourceFileMintOut struct {
 	NftCollectionAddress  string  `json:"nft_collection_address"`
 	NftCollectionName     *string `json:"nft_collection_name"`
 	NftCollectionImageUrl *string `json:"nft_collection_image_url"`
-}
-
-func (onChainClient *OnChainClient) GetMintInfo(sourceFileUploadId int64) ([]*SourceFileMintOut, error) {
-	apiUrl := utils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_STORAGE_GET_MINT_INFO, strconv.FormatInt(sourceFileUploadId, 10))
-
-	var sourceFileMints []*SourceFileMintOut
-	err := web.HttpGet(apiUrl, onChainClient.JwtToken, nil, &sourceFileMints)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	return sourceFileMints, nil
 }

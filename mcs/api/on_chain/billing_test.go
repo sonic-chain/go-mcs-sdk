@@ -18,8 +18,8 @@ func TestGetFileCoinPrice(t *testing.T) {
 	logs.GetLogger().Info(*filecoinPrice)
 }
 
-func TestGetLockPaymentInfo(t *testing.T) {
-	lockPaymentInfo, err := onChainClient.GetLockPaymentInfo(148234)
+func TestGetPaymentInfo(t *testing.T) {
+	lockPaymentInfo, err := onChainClient.GetPaymentInfo(148234)
 	assert.Nil(t, err)
 	assert.NotEmpty(t, lockPaymentInfo)
 
