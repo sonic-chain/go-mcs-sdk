@@ -33,7 +33,7 @@ type UploadFileResponse struct {
 	Data    UploadFile `json:"data"`
 }
 
-func (onChainClient *OnChainClient) UploadFile(filePath string, fileType int) (*UploadFile, error) {
+func (onChainClient *OnChainClient) Upload(filePath string, fileType int) (*UploadFile, error) {
 	if fileType != constants.SOURCE_FILE_TYPE_NORMAL && fileType != constants.SOURCE_FILE_TYPE_MINT {
 		err := fmt.Errorf("invalid source file type:%d", fileType)
 		logs.GetLogger().Error(err)

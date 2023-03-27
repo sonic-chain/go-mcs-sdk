@@ -20,6 +20,102 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
+func (onChainClient *OnChainClient) Pay(sourceFileUploadId int64, privateKeyStr string, rpcUrl string) (*string, error) {
+	sourceFileUpload, err := onChainClient.GetSourceFileUpload(sourceFileUploadId)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	historicalAveragePriceVerified, err := GetHistoricalAveragePriceVerified()
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	systemParams, err := onChainClient.GetSystemParam()
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	amount, err := GetAmount(sourceFileUpload.FileSize, historicalAveragePriceVerified, systemParams.FilecoinPrice, constants.COPY_NUMBER_LIMIT)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	privateKey, err := crypto.HexToECDSA(privateKeyStr)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	client, err := ethclient.Dial(rpcUrl)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	ChainId, err := client.ChainID(context.Background())
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	auth, err := bind.NewKeyedTransactorWithChainID(privateKey, ChainId)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	SwanPayment, err := contract.NewSwanPayment(common.HexToAddress(systemParams.PaymentContractAddress), client)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	minPayment := big.NewInt(amount)
+	amount2Lock := big.NewInt(int64(float64(amount) * float64(systemParams.PayMultiplyFactor)))
+	lockTime := int64(constants.DURATION_DAYS_DEFAULT) * constants.SECOND_PER_DAY
+	var paymentParam = contract.IPaymentMinimallockPaymentParam{
+		Id:         sourceFileUpload.WCid,
+		MinPayment: minPayment,
+		Amount:     amount2Lock,
+		LockTime:   big.NewInt(lockTime),
+		Recipient:  common.HexToAddress(systemParams.PaymentRecipientAddress),
+		Size:       big.NewInt(sourceFileUpload.FileSize),
+		CopyLimit:  constants.COPY_NUMBER_LIMIT,
+	}
+
+	txHashApprove, err := approve(rpcUrl, systemParams, privateKey, amount2Lock)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+	logs.GetLogger().Info(*txHashApprove)
+
+	tx, err := SwanPayment.LockTokenPayment(&bind.TransactOpts{
+		From:   auth.From,
+		Signer: auth.Signer,
+	}, paymentParam)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	bind.WaitMined(context.Background(), client, tx)
+	tx, _, err = client.TransactionByHash(context.Background(), tx.Hash())
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	txHash := tx.Hash().String()
+
+	return &txHash, nil
+}
+
 func (onChainClient *OnChainClient) GetFileCoinPrice() (*float64, error) {
 	apiUrl := utils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_BILLING_FILECOIN_PRICE)
 	params := url.Values{}
@@ -127,102 +223,6 @@ func (onChainClient *OnChainClient) GetBillingHistory(billingHistoryParams Billi
 	}
 
 	return billings.Billing, &billings.TotalRecordCount, nil
-}
-
-func (onChainClient *OnChainClient) PayForFile(sourceFileUploadId int64, privateKeyStr string, rpcUrl string) (*string, error) {
-	sourceFileUpload, err := onChainClient.GetSourceFileUpload(sourceFileUploadId)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	historicalAveragePriceVerified, err := GetHistoricalAveragePriceVerified()
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	systemParams, err := onChainClient.GetSystemParam()
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	amount, err := GetAmount(sourceFileUpload.FileSize, historicalAveragePriceVerified, systemParams.FilecoinPrice, constants.COPY_NUMBER_LIMIT)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	privateKey, err := crypto.HexToECDSA(privateKeyStr)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	client, err := ethclient.Dial(rpcUrl)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	ChainId, err := client.ChainID(context.Background())
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	auth, err := bind.NewKeyedTransactorWithChainID(privateKey, ChainId)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	SwanPayment, err := contract.NewSwanPayment(common.HexToAddress(systemParams.PaymentContractAddress), client)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	minPayment := big.NewInt(amount)
-	amount2Lock := big.NewInt(int64(float64(amount) * float64(systemParams.PayMultiplyFactor)))
-	lockTime := int64(constants.DURATION_DAYS_DEFAULT) * constants.SECOND_PER_DAY
-	var paymentParam = contract.IPaymentMinimallockPaymentParam{
-		Id:         sourceFileUpload.WCid,
-		MinPayment: minPayment,
-		Amount:     amount2Lock,
-		LockTime:   big.NewInt(lockTime),
-		Recipient:  common.HexToAddress(systemParams.PaymentRecipientAddress),
-		Size:       big.NewInt(sourceFileUpload.FileSize),
-		CopyLimit:  constants.COPY_NUMBER_LIMIT,
-	}
-
-	txHashApprove, err := approve(rpcUrl, systemParams, privateKey, amount2Lock)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-	logs.GetLogger().Info(*txHashApprove)
-
-	tx, err := SwanPayment.LockTokenPayment(&bind.TransactOpts{
-		From:   auth.From,
-		Signer: auth.Signer,
-	}, paymentParam)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	bind.WaitMined(context.Background(), client, tx)
-	tx, _, err = client.TransactionByHash(context.Background(), tx.Hash())
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	txHash := tx.Hash().String()
-
-	return &txHash, nil
 }
 
 func approve(rpcUrl string, systemParams *SystemParam, privateKey *ecdsa.PrivateKey, amount *big.Int) (*string, error) {

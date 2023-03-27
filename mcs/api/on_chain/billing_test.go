@@ -46,7 +46,7 @@ func TestGetBillingHistory(t *testing.T) {
 }
 
 func TestPayForFile(t *testing.T) {
-	txHash, err := onChainClient.PayForFile(148234, config.GetConfig().PrivateKey, config.GetConfig().RpcUrl)
+	txHash, err := onChainClient.Pay(148234, config.GetConfig().PrivateKey, config.GetConfig().RpcUrl)
 	assert.Nil(t, err)
 	assert.NotEmpty(t, txHash)
 

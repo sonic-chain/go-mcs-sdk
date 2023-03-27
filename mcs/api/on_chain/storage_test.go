@@ -10,8 +10,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestUploadFile(t *testing.T) {
-	uploadFile, err := onChainClient.UploadFile(config.GetConfig().File2Upload, constants.SOURCE_FILE_TYPE_NORMAL)
+func TestUpload(t *testing.T) {
+	uploadFile, err := onChainClient.Upload(config.GetConfig().File2Upload, constants.SOURCE_FILE_TYPE_NORMAL)
 	assert.Nil(t, err)
 	assert.NotEmpty(t, uploadFile)
 
