@@ -11,6 +11,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestGetFile(t *testing.T) {
+	ossFile, err := buketClient.GetFile("test/duration22", "0ef9c94d-9bb9-4ce9-b687-7db732a9ce2e")
+	assert.Nil(t, err)
+	assert.NotEmpty(t, ossFile)
+
+	logs.GetLogger().Info(*ossFile)
+}
+
 func TestCreateFolder(t *testing.T) {
 	folderName, err := buketClient.CreateFolder("test", "", "0ef9c94d-9bb9-4ce9-b687-7db732a9ce2e")
 	assert.Nil(t, err)
@@ -32,16 +40,8 @@ func TestGetFileInfo(t *testing.T) {
 	logs.GetLogger().Info(*fileInfo)
 }
 
-func TestGetFileInfoByObjectName(t *testing.T) {
-	ossFile, err := buketClient.GetFileInfoByObjectName("test/duration22", "0ef9c94d-9bb9-4ce9-b687-7db732a9ce2e")
-	assert.Nil(t, err)
-	assert.NotEmpty(t, ossFile)
-
-	logs.GetLogger().Info(*ossFile)
-}
-
-func TestGetFileInfoByName(t *testing.T) {
-	ossFile, err := buketClient.GetFileInfoByName("aaa", "abc")
+func TestGetFileByName(t *testing.T) {
+	ossFile, err := buketClient.GetFileByName("aaa", "abc")
 	assert.Nil(t, err)
 	assert.NotEmpty(t, ossFile)
 
@@ -54,24 +54,19 @@ func TestDeleteFile(t *testing.T) {
 }
 
 func TestPinFiles2Ipfs(t *testing.T) {
-	ossFile, err := buketClient.PinFiles2Ipfs("abc", "aaa", "/Users/dorachen/work/test2")
+	ossFile, err := buketClient.UploadIpfsFolder("abc", "aaa", "/Users/dorachen/work/test2")
 	assert.Nil(t, err)
 	assert.NotEmpty(t, ossFile)
 
 	logs.GetLogger().Info(*ossFile)
 }
 
-func TestDownloadIpfsFolder(t *testing.T) {
-	err := buketClient.DownloadIpfsFolder("abc", "aaa", "./dd")
-	assert.Nil(t, err)
-}
-
-func TestIpfsFolderDownload1(t *testing.T) {
+func TestDownloadFile(t *testing.T) {
 	path, err := os.Getwd()
 	if err != nil {
 		logs.GetLogger().Fatal(err)
 	}
 	fmt.Println(path)
-	err = buketClient.DownloadFilesInIpfsFolder("abc", "aaa", path)
+	err = buketClient.DownloadFile("abc", "aaa", path)
 	assert.Nil(t, err)
 }

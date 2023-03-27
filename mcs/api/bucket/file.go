@@ -40,9 +40,9 @@ type OssFile struct {
 	gorm.Model
 }
 
-func (bucketClient *BucketClient) GetFileInfo(fileId int) (*OssFile, error) {
-	apiUrl := utils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_GET_FILE_INFO)
-	apiUrl = apiUrl + "?file_id=" + strconv.Itoa(fileId)
+func (bucketClient *BucketClient) GetFile(objectName, bucketUid string) (*OssFile, error) {
+	apiUrl := utils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_GET_FILE_INFO_BY_OBJECT_NAME)
+	apiUrl = apiUrl + "?bucket_uid=" + bucketUid + "&object_name=" + objectName
 
 	var fileInfo OssFile
 	err := web.HttpGet(apiUrl, bucketClient.JwtToken, nil, &fileInfo)
@@ -52,19 +52,6 @@ func (bucketClient *BucketClient) GetFileInfo(fileId int) (*OssFile, error) {
 	}
 
 	return &fileInfo, nil
-}
-
-func (bucketClient *BucketClient) DeleteFile(fileId int) error {
-	apiUrl := utils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_DELETE_FILE)
-	apiUrl = apiUrl + "?file_id=" + strconv.Itoa(fileId)
-
-	err := web.HttpGet(apiUrl, bucketClient.JwtToken, nil, nil)
-	if err != nil {
-		log.Println(err)
-		return err
-	}
-
-	return nil
 }
 
 func (bucketClient *BucketClient) CreateFolder(fileName, prefix, bucketUid string) (*string, error) {
@@ -90,61 +77,30 @@ func (bucketClient *BucketClient) CreateFolder(fileName, prefix, bucketUid strin
 	return &folderName, nil
 }
 
-func (bucketClient *BucketClient) getBucketUid(bucketName string) (*string, error) {
-	bucket, err := bucketClient.GetBucket(bucketName, "")
+func (bucketClient *BucketClient) DeleteFile(fileId int) error {
+	apiUrl := utils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_DELETE_FILE)
+	apiUrl = apiUrl + "?file_id=" + strconv.Itoa(fileId)
+
+	err := web.HttpGet(apiUrl, bucketClient.JwtToken, nil, nil)
 	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
+		log.Println(err)
+		return err
 	}
 
-	if bucket != nil {
-		return &bucket.BucketUid, nil
-	}
-
-	return nil, nil
+	return nil
 }
 
-func (bucketClient *BucketClient) GetFileInfoByObjectName(objectName, bucketUid string) (*OssFile, error) {
-	apiUrl := utils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_GET_FILE_INFO_BY_OBJECT_NAME)
-	apiUrl = apiUrl + "?bucket_uid=" + bucketUid + "&object_name=" + objectName
+func (bucketClient *BucketClient) ListFiles(fileUid, limit, offset string) ([]*OssFile, error) {
+	apiUrl := utils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_GET_FILE_LIST) + fileUid + "&limit=" + limit + "&offset=" + offset
 
-	var fileInfo OssFile
-	err := web.HttpGet(apiUrl, bucketClient.JwtToken, nil, &fileInfo)
+	var files []*OssFile
+	err := web.HttpGet(apiUrl, bucketClient.JwtToken, nil, &files)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
-	return &fileInfo, nil
-}
-
-func (bucketClient *BucketClient) GetFileInfoByName(objectName, bucketName string) (*OssFile, error) {
-	bucketUid, err := bucketClient.getBucketUid(bucketName)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	fileInfo, err := bucketClient.GetFileInfoByObjectName(objectName, *bucketUid)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	return fileInfo, nil
-}
-
-func getPrefixFileName(objectName string) (string, string) {
-	lastIndex := strings.LastIndex(objectName, "/")
-
-	if lastIndex == -1 {
-		return "", objectName
-	}
-
-	prefix := objectName[0:lastIndex]
-	fileName := objectName[lastIndex+1:]
-
-	return prefix, fileName
+	return files, nil
 }
 
 func (bucketClient *BucketClient) UploadFile(bucketName, objectName, filePath string, replace bool) error {
@@ -185,7 +141,7 @@ func (bucketClient *BucketClient) UploadFile(bucketName, objectName, filePath st
 	if ossFileInfo.FileIsExist && replace {
 		fileId := ossFileInfo.FileId
 		if fileId == 0 {
-			ossFile, err := bucketClient.GetFileInfoByObjectName(objectName, *bucketUid)
+			ossFile, err := bucketClient.GetFile(objectName, *bucketUid)
 			if err != nil {
 				logs.GetLogger().Error(err)
 				return err
@@ -239,7 +195,7 @@ func (bucketClient *BucketClient) UploadFile(bucketName, objectName, filePath st
 				wg.Add(1)
 				go func() {
 					logs.GetLogger().Info("file name:", partFileName, ", chunk size:", chunkSize)
-					_, err = bucketClient.UploadFileChunk(fileHashMd5, partFileName, chunk)
+					_, err = bucketClient.uploadFileChunk(fileHashMd5, partFileName, chunk)
 					if err != nil {
 						logs.GetLogger().Error(err)
 					}
@@ -257,6 +213,63 @@ func (bucketClient *BucketClient) UploadFile(bucketName, objectName, filePath st
 	}
 
 	return nil
+}
+
+func (bucketClient *BucketClient) GetFileInfo(fileId int) (*OssFile, error) {
+	apiUrl := utils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_GET_FILE_INFO)
+	apiUrl = apiUrl + "?file_id=" + strconv.Itoa(fileId)
+
+	var fileInfo OssFile
+	err := web.HttpGet(apiUrl, bucketClient.JwtToken, nil, &fileInfo)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	return &fileInfo, nil
+}
+
+func (bucketClient *BucketClient) getBucketUid(bucketName string) (*string, error) {
+	bucket, err := bucketClient.GetBucket(bucketName, "")
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	if bucket != nil {
+		return &bucket.BucketUid, nil
+	}
+
+	return nil, nil
+}
+
+func (bucketClient *BucketClient) GetFileByName(objectName, bucketName string) (*OssFile, error) {
+	bucketUid, err := bucketClient.getBucketUid(bucketName)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	fileInfo, err := bucketClient.GetFile(objectName, *bucketUid)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	return fileInfo, nil
+}
+
+func getPrefixFileName(objectName string) (string, string) {
+	lastIndex := strings.LastIndex(objectName, "/")
+
+	if lastIndex == -1 {
+		return "", objectName
+	}
+
+	prefix := objectName[0:lastIndex]
+	fileName := objectName[lastIndex+1:]
+
+	return prefix, fileName
 }
 
 type OssFileInfo struct {
@@ -294,7 +307,7 @@ func (bucketClient *BucketClient) checkFile(bucketUid, prefix, fileHash, fileNam
 	return &ossFileInfo, nil
 }
 
-func (bucketClient *BucketClient) UploadFileChunk(fileHash, fileName string, chunk []byte) ([]string, error) {
+func (bucketClient *BucketClient) uploadFileChunk(fileHash, fileName string, chunk []byte) ([]string, error) {
 	apiUrl := utils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_UPLOAD_CHUNK)
 
 	body := &bytes.Buffer{}
@@ -408,26 +421,13 @@ func (bucketClient *BucketClient) mergeFile(bucketUid, fileHash, fileName, prefi
 	return &ossFileInfo, nil
 }
 
-func (bucketClient *BucketClient) GetFileList(fileUid, limit, offset string) ([]*OssFile, error) {
-	apiUrl := utils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_FILE_GET_FILE_LIST) + fileUid + "&limit=" + limit + "&offset=" + offset
-
-	var files []*OssFile
-	err := web.HttpGet(apiUrl, bucketClient.JwtToken, nil, &files)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	return files, nil
-}
-
 type PinFiles2IpfsResponse struct {
 	Status  string  `json:"status"`
 	Message string  `json:"message"`
 	Data    OssFile `json:"data"`
 }
 
-func (bucketClient *BucketClient) PinFiles2Ipfs(bucketName, objectName, folderPath string) (*OssFile, error) {
+func (bucketClient *BucketClient) UploadIpfsFolder(bucketName, objectName, folderPath string) (*OssFile, error) {
 	folderName := filepath.Base(objectName)
 	prefix := strings.TrimRight(objectName, folderName)
 
@@ -533,64 +533,8 @@ func (bucketClient *BucketClient) PinFiles2Ipfs(bucketName, objectName, folderPa
 	return &pinFiles2IpfsResponse.Data, nil
 }
 
-func (bucketClient *BucketClient) DownloadIpfsFolder(buketName, objectName, destFilepath string) error {
-	ossFile, err := bucketClient.GetFileInfoByName(objectName, buketName)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return err
-	}
-
-	gateway, err := bucketClient.GetGateway()
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return err
-	}
-
-	apiUrl := utils.UrlJoin(*gateway, "/api/v0/get?arg="+ossFile.PayloadCid+"&create=true")
-	logs.GetLogger().Info(*gateway)
-
-	request, err := http.NewRequest(http.MethodGet, apiUrl, nil)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return err
-	}
-
-	response, err := http.DefaultClient.Do(request)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return err
-	}
-
-	defer response.Body.Close()
-
-	f, _ := os.OpenFile(destFilepath, os.O_CREATE|os.O_WRONLY, 0644)
-	defer f.Close()
-
-	buf := make([]byte, 32*1024)
-	var downloaded int64
-	for {
-		n, err := response.Body.Read(buf)
-		if err != nil {
-			if err == io.EOF {
-				break
-			}
-			err := fmt.Errorf("error while downloading: %v", err)
-			logs.GetLogger().Error(err)
-			return err
-		}
-		if n > 0 {
-			f.Write(buf[:n])
-			downloaded += int64(n)
-			msg := fmt.Sprintf("Downloading... %.2f%%", float64(downloaded)/float64(response.ContentLength)*100)
-			logs.GetLogger().Info(msg)
-		}
-	}
-
-	return nil
-}
-
-func (bucketClient *BucketClient) DownloadFilesInIpfsFolder(buketName, objectName, destFileDir string) error {
-	ossFile, err := bucketClient.GetFileInfoByName(objectName, buketName)
+func (bucketClient *BucketClient) DownloadFile(buketName, objectName, destFileDir string) error {
+	ossFile, err := bucketClient.GetFileByName(objectName, buketName)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return err
