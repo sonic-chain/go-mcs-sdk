@@ -83,7 +83,7 @@ func (bucketClient *BucketClient) CreateFolder(fileName, prefix, bucketUid strin
 	var folderName string
 	err := web.HttpPost(apiUrl, bucketClient.JwtToken, &params, &folderName)
 	if err != nil {
-		log.Println(err)
+		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
@@ -91,16 +91,14 @@ func (bucketClient *BucketClient) CreateFolder(fileName, prefix, bucketUid strin
 }
 
 func (bucketClient *BucketClient) getBucketUid(bucketName string) (*string, error) {
-	buckets, err := bucketClient.GetBuckets()
+	bucket, err := bucketClient.GetBucket(bucketName, "")
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return nil, err
 	}
 
-	for _, bucket := range buckets {
-		if bucket.BucketName == bucketName {
-			return &bucket.BucketUid, nil
-		}
+	if bucket != nil {
+		return &bucket.BucketUid, nil
 	}
 
 	return nil, nil

@@ -22,6 +22,31 @@ func GetBucketClient(mcsClient user.McsClient) *BucketClient {
 	return bucketClient
 }
 
+type Bucket struct {
+	BucketUid  string `json:"bucket_uid"`
+	Address    string `json:"address"`
+	MaxSize    int64  `json:"max_size"`
+	Size       int64  `json:"size"`
+	IsFree     bool   `json:"is_free"`
+	PaymentTx  string `json:"payment_tx"`
+	IsActive   bool   `json:"is_active"`
+	IsDeleted  bool   `json:"is_deleted"`
+	BucketName string `json:"bucket_name"`
+	FileNumber int64  `json:"file_number"`
+}
+
+func (bucketClient *BucketClient) ListBuckets() ([]*Bucket, error) {
+	apiUrl := utils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_GET_BUCKET_LIST)
+
+	var buckets []*Bucket
+	err := web.HttpGet(apiUrl, bucketClient.JwtToken, nil, &buckets)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	return buckets, nil
+}
 func (bucketClient *BucketClient) CreateBucket(bucketName string) (*string, error) {
 	apiUrl := utils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_CREATE_BUCKET)
 
@@ -38,32 +63,6 @@ func (bucketClient *BucketClient) CreateBucket(bucketName string) (*string, erro
 	}
 
 	return &bucketUid, nil
-}
-
-type Bucket struct {
-	BucketUid  string `json:"bucket_uid"`
-	Address    string `json:"address"`
-	MaxSize    int64  `json:"max_size"`
-	Size       int64  `json:"size"`
-	IsFree     bool   `json:"is_free"`
-	PaymentTx  string `json:"payment_tx"`
-	IsActive   bool   `json:"is_active"`
-	IsDeleted  bool   `json:"is_deleted"`
-	BucketName string `json:"bucket_name"`
-	FileNumber int64  `json:"file_number"`
-}
-
-func (bucketClient *BucketClient) GetBuckets() ([]*Bucket, error) {
-	apiUrl := utils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_GET_BUCKET_LIST)
-
-	var buckets []*Bucket
-	err := web.HttpGet(apiUrl, bucketClient.JwtToken, nil, &buckets)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	return buckets, nil
 }
 
 func (bucketClient *BucketClient) DeleteBucket(bucketUid string) error {
@@ -97,6 +96,23 @@ func (bucketClient *BucketClient) RenameBucket(newBucketName string, bucketUid s
 	}
 
 	return nil
+}
+
+func (bucketClient *BucketClient) GetBucket(bucketName, bucketUid string) (*Bucket, error) {
+	buckets, err := bucketClient.ListBuckets()
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	for _, bucket := range buckets {
+		if (bucketName == "" || bucketName != "" && bucket.BucketName == bucketName) &&
+			(bucketUid == "" || bucketUid != "" && bucket.BucketUid == bucketUid) {
+			return bucket, nil
+		}
+	}
+
+	return nil, nil
 }
 
 func (bucketClient *BucketClient) GetTotalStorageSize() (*int64, error) {

@@ -16,8 +16,8 @@ func TestCreateBucket(t *testing.T) {
 	logs.GetLogger().Info(*bucketUid)
 }
 
-func TestGetBuckets(t *testing.T) {
-	buckets, err := buketClient.GetBuckets()
+func TestListBuckets(t *testing.T) {
+	buckets, err := buketClient.ListBuckets()
 	assert.Nil(t, err)
 	assert.NotEmpty(t, buckets)
 
