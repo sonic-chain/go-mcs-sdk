@@ -1,6 +1,7 @@
 package bucket
 
 import (
+	"fmt"
 	"go-mcs-sdk/mcs/api/common/constants"
 	"go-mcs-sdk/mcs/api/common/utils"
 	"go-mcs-sdk/mcs/api/common/web"
@@ -65,31 +66,17 @@ func (bucketClient *BucketClient) CreateBucket(bucketName string) (*string, erro
 	return &bucketUid, nil
 }
 
-func (bucketClient *BucketClient) DeleteBucket(bucketUid string) error {
-	apiUrl := utils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_DELETE_BUCKET)
-	apiUrl = apiUrl + "?bucket_uid=" + bucketUid
-
-	err := web.HttpGet(apiUrl, bucketClient.JwtToken, nil, nil)
+func (bucketClient *BucketClient) DeleteBucket(bucketName string) error {
+	bucketUid, err := bucketClient.GetBucketUid(bucketName)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return err
 	}
 
-	return nil
-}
+	apiUrl := utils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_DELETE_BUCKET)
+	apiUrl = apiUrl + "?bucket_uid=" + *bucketUid
 
-func (bucketClient *BucketClient) RenameBucket(newBucketName string, bucketUid string) error {
-	apiUrl := utils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_RENAME_BUCKET)
-
-	var params struct {
-		BucketName string `json:"bucket_name"`
-		BucketUid  string `json:"bucket_uid"`
-	}
-	params.BucketName = newBucketName
-	params.BucketUid = bucketUid
-
-	var result string
-	err := web.HttpPost(apiUrl, bucketClient.JwtToken, &params, &result)
+	err = web.HttpGet(apiUrl, bucketClient.JwtToken, nil, nil)
 	if err != nil {
 		logs.GetLogger().Error(err)
 		return err
@@ -112,7 +99,39 @@ func (bucketClient *BucketClient) GetBucket(bucketName, bucketUid string) (*Buck
 		}
 	}
 
-	return nil, nil
+	err = fmt.Errorf("bucket not exists")
+
+	return nil, err
+}
+
+func (bucketClient *BucketClient) GetBucketUid(bucketName string) (*string, error) {
+	bucket, err := bucketClient.GetBucket(bucketName, "")
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	return &bucket.BucketUid, nil
+}
+
+func (bucketClient *BucketClient) RenameBucket(newBucketName string, bucketUid string) error {
+	apiUrl := utils.UrlJoin(bucketClient.BaseUrl, constants.API_URL_BUCKET_RENAME_BUCKET)
+
+	var params struct {
+		BucketName string `json:"bucket_name"`
+		BucketUid  string `json:"bucket_uid"`
+	}
+	params.BucketName = newBucketName
+	params.BucketUid = bucketUid
+
+	var result string
+	err := web.HttpPost(apiUrl, bucketClient.JwtToken, &params, &result)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return err
+	}
+
+	return nil
 }
 
 func (bucketClient *BucketClient) GetTotalStorageSize() (*int64, error) {

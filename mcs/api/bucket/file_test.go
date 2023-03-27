@@ -49,7 +49,7 @@ func TestGetFileByName(t *testing.T) {
 }
 
 func TestDeleteFile(t *testing.T) {
-	err := buketClient.DeleteFile(6674)
+	err := buketClient.DeleteFile("", "")
 	assert.Nil(t, err)
 }
 
