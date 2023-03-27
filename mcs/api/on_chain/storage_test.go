@@ -2,7 +2,6 @@ package api
 
 import (
 	"go-mcs-sdk/mcs/api/common/constants"
-	"go-mcs-sdk/mcs/config"
 	"testing"
 
 	"go-mcs-sdk/mcs/api/common/logs"
@@ -11,7 +10,7 @@ import (
 )
 
 func TestUpload(t *testing.T) {
-	uploadFile, err := onChainClient.Upload(config.GetConfig().File2Upload, constants.SOURCE_FILE_TYPE_NORMAL)
+	uploadFile, err := onChainClient.Upload("", constants.SOURCE_FILE_TYPE_NORMAL)
 	assert.Nil(t, err)
 	assert.NotEmpty(t, uploadFile)
 

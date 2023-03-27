@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"go-mcs-sdk/mcs/api/common/logs"
-	"go-mcs-sdk/mcs/config"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -28,7 +27,7 @@ func TestCreateFolder(t *testing.T) {
 }
 
 func TestUploadFileChunk(t *testing.T) {
-	err := buketClient.UploadFile("abc", "test/duration22", config.GetConfig().File2Upload, true)
+	err := buketClient.UploadFile("abc", "test/duration22", "", true)
 	assert.Nil(t, err)
 }
 

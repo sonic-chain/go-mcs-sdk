@@ -1,10 +1,10 @@
 package user
 
 import (
-	"go-mcs-sdk/mcs/config"
 	"strings"
 	"testing"
 
+	"go-mcs-sdk/mcs/api/common/constants"
 	"go-mcs-sdk/mcs/api/common/logs"
 
 	"github.com/stretchr/testify/assert"
@@ -17,9 +17,9 @@ func init() {
 		return
 	}
 
-	apikey := config.GetConfig().Apikey
-	accessToken := config.GetConfig().AccessToken
-	network := config.GetConfig().Network
+	apikey := ""
+	accessToken := ""
+	network := constants.PAYMENT_CHAIN_NAME_POLYGON_MUMBAI
 
 	var err error
 	mcsClient, err = LoginByApikey(apikey, accessToken, network)
@@ -33,7 +33,7 @@ func TestCheckLogin(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotEmpty(t, networkName)
 	assert.NotEmpty(t, walletAddress)
-	assert.Equal(t, config.GetConfig().Network, *networkName)
+	assert.Equal(t, constants.PAYMENT_CHAIN_NAME_POLYGON_MUMBAI, *networkName)
 	assert.Contains(t, strings.ToUpper(*walletAddress), "0X")
 }
 

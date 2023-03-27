@@ -1,7 +1,6 @@
 package api
 
 import (
-	"go-mcs-sdk/mcs/config"
 	"testing"
 
 	"go-mcs-sdk/mcs/api/common/logs"
@@ -46,7 +45,7 @@ func TestGetBillingHistory(t *testing.T) {
 }
 
 func TestPayForFile(t *testing.T) {
-	txHash, err := onChainClient.Pay(148234, config.GetConfig().PrivateKey, config.GetConfig().RpcUrl)
+	txHash, err := onChainClient.Pay(148234, "", "")
 	assert.Nil(t, err)
 	assert.NotEmpty(t, txHash)
 
