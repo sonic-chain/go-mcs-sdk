@@ -11,6 +11,7 @@ import (
 )
 
 var buketClient *BucketClient
+var network = constants.PAYMENT_CHAIN_NAME_POLYGON_MUMBAI
 
 func init() {
 	if buketClient != nil {
@@ -19,7 +20,6 @@ func init() {
 
 	apikey := ""
 	accessToken := ""
-	network := constants.PAYMENT_CHAIN_NAME_POLYGON_MUMBAI
 
 	mcsClient, err := user.LoginByApikey(apikey, accessToken, network)
 	if err != nil {

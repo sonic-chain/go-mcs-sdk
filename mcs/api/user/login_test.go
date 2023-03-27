@@ -3,7 +3,6 @@ package user
 import (
 	"testing"
 
-	"go-mcs-sdk/mcs/api/common/constants"
 	"go-mcs-sdk/mcs/api/common/logs"
 
 	"github.com/stretchr/testify/assert"
@@ -12,7 +11,6 @@ import (
 func TestLoginByApikey(t *testing.T) {
 	apikey := ""
 	accessToken := ""
-	network := constants.PAYMENT_CHAIN_NAME_POLYGON_MUMBAI
 
 	mcsClient, err := LoginByApikey(apikey, accessToken, network)
 	assert.Nil(t, err)
@@ -22,8 +20,6 @@ func TestLoginByApikey(t *testing.T) {
 }
 
 func TestRegister(t *testing.T) {
-	network := constants.PAYMENT_CHAIN_NAME_POLYGON_MUMBAI
-
 	nonce, err := Register("0xbE14Eb1ffcA54861D3081560110a45F4A1A9e9c5", network)
 	assert.Nil(t, err)
 	assert.NotEmpty(t, nonce)
@@ -31,8 +27,6 @@ func TestRegister(t *testing.T) {
 }
 
 func TestLoginByPublicKeySignature(t *testing.T) {
-	network := constants.PAYMENT_CHAIN_NAME_POLYGON_MUMBAI
-
 	mcsClient, err := LoginByPublicKeySignature(
 		"1067049846399020981103631740110767813482",
 		"0xbE14Eb1ffcA54861D3081560110a45F4A1A9e9c5",

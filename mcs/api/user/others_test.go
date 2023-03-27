@@ -11,6 +11,7 @@ import (
 )
 
 var mcsClient *McsClient
+var network = constants.PAYMENT_CHAIN_NAME_POLYGON_MUMBAI
 
 func init() {
 	if mcsClient != nil {
@@ -19,7 +20,6 @@ func init() {
 
 	apikey := ""
 	accessToken := ""
-	network := constants.PAYMENT_CHAIN_NAME_POLYGON_MUMBAI
 
 	var err error
 	mcsClient, err = LoginByApikey(apikey, accessToken, network)
@@ -33,7 +33,7 @@ func TestCheckLogin(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotEmpty(t, networkName)
 	assert.NotEmpty(t, walletAddress)
-	assert.Equal(t, constants.PAYMENT_CHAIN_NAME_POLYGON_MUMBAI, *networkName)
+	assert.Equal(t, network, *networkName)
 	assert.Contains(t, strings.ToUpper(*walletAddress), "0X")
 }
 
