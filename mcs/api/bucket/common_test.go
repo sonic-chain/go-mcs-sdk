@@ -12,14 +12,13 @@ import (
 
 var buketClient *BucketClient
 var network = constants.PAYMENT_CHAIN_NAME_POLYGON_MUMBAI
+var apikey = "9EO9I6rzlfYkcltzOo0ayp"
+var accessToken = "hmvYOnAv9JAtXqzi5NWDfuRYMJXY6LDG"
 
 func init() {
 	if buketClient != nil {
 		return
 	}
-
-	apikey := ""
-	accessToken := ""
 
 	mcsClient, err := user.LoginByApikey(apikey, accessToken, network)
 	if err != nil {
