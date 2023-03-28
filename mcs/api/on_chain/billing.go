@@ -20,116 +20,7 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-func (onChainClient *OnChainClient) GetFileCoinPrice() (*float64, error) {
-	apiUrl := utils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_BILLING_FILECOIN_PRICE)
-	params := url.Values{}
-
-	var price float64
-	err := web.HttpGet(apiUrl, onChainClient.JwtToken, strings.NewReader(params.Encode()), &price)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	return &price, nil
-}
-
-type LockPaymentInfo struct {
-	WCid         string `json:"w_cid"`
-	PayAmount    string `json:"pay_amount"`
-	PayTxHash    string `json:"pay_tx_hash"`
-	TokenAddress string `json:"token_address"`
-}
-
-func (client *OnChainClient) GetLockPaymentInfo(fileUploadId int64) (*LockPaymentInfo, error) {
-	apiUrl := utils.UrlJoin(client.BaseUrl, constants.API_URL_BILLING_GET_PAYMENT_INFO)
-	apiUrl = apiUrl + "?source_file_upload_id=" + fmt.Sprintf("%d", fileUploadId)
-	params := url.Values{}
-
-	var lockPaymentInfo LockPaymentInfo
-	err := web.HttpGet(apiUrl, client.JwtToken, strings.NewReader(params.Encode()), &lockPaymentInfo)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, err
-	}
-
-	return &lockPaymentInfo, nil
-}
-
-type BillingHistory struct {
-	PayId        int64  `json:"pay_id"`
-	PayTxHash    string `json:"pay_tx_hash"`
-	PayAmount    string `json:"pay_amount"`
-	UnlockAmount string `json:"unlock_amount"`
-	FileName     string `json:"file_name"`
-	PayloadCid   string `json:"payload_cid"`
-	PayAt        int64  `json:"pay_at"`
-	UnlockAt     int64  `json:"unlock_at"`
-	Deadline     int64  `json:"deadline"`
-	NetworkName  string `json:"network_name"`
-	TokenName    string `json:"token_name"`
-}
-
-type BillingHistoryParams struct {
-	PageNumber *int    `json:"page_number"`
-	PageSize   *int    `json:"page_size"`
-	FileName   *string `json:"file_name"`
-	TxHash     *string `json:"tx_hash"`
-	OrderBy    *string `json:"order_by"`
-	IsAscend   *string `json:"is_ascend"`
-}
-
-func (onChainClient *OnChainClient) GetBillingHistory(billingHistoryParams BillingHistoryParams) ([]*BillingHistory, *int64, error) {
-	apiUrl := utils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_BILLING_HISTORY)
-	paramItems := []string{}
-	if billingHistoryParams.PageNumber != nil {
-		paramItems = append(paramItems, "page_number="+fmt.Sprintf("%d", *billingHistoryParams.PageNumber))
-	}
-
-	if billingHistoryParams.PageSize != nil {
-		paramItems = append(paramItems, "page_size="+fmt.Sprintf("%d", *billingHistoryParams.PageSize))
-	}
-
-	if billingHistoryParams.FileName != nil {
-		paramItems = append(paramItems, "file_name="+*billingHistoryParams.FileName)
-	}
-
-	if billingHistoryParams.TxHash != nil {
-		paramItems = append(paramItems, "tx_hash="+*billingHistoryParams.TxHash)
-	}
-
-	if billingHistoryParams.OrderBy != nil {
-		paramItems = append(paramItems, "order_by="+*billingHistoryParams.OrderBy)
-	}
-
-	if billingHistoryParams.IsAscend != nil {
-		paramItems = append(paramItems, "is_ascend="+*billingHistoryParams.IsAscend)
-	}
-
-	if len(paramItems) > 0 {
-		apiUrl = apiUrl + "?"
-		for _, paramItem := range paramItems {
-			apiUrl = apiUrl + paramItem + "&"
-		}
-
-		apiUrl = strings.TrimRight(apiUrl, "&")
-	}
-
-	var billings struct {
-		Billing          []*BillingHistory `json:"billing"`
-		TotalRecordCount int64             `json:"total_record_count"`
-	}
-
-	err := web.HttpGet(apiUrl, onChainClient.JwtToken, nil, &billings)
-	if err != nil {
-		logs.GetLogger().Error(err)
-		return nil, nil, err
-	}
-
-	return billings.Billing, &billings.TotalRecordCount, nil
-}
-
-func (onChainClient *OnChainClient) PayForFile(sourceFileUploadId int64, privateKeyStr string, rpcUrl string) (*string, error) {
+func (onChainClient *OnChainClient) Pay(sourceFileUploadId int64, privateKeyStr string, rpcUrl string) (*string, error) {
 	sourceFileUpload, err := onChainClient.GetSourceFileUpload(sourceFileUploadId)
 	if err != nil {
 		logs.GetLogger().Error(err)
@@ -223,6 +114,115 @@ func (onChainClient *OnChainClient) PayForFile(sourceFileUploadId int64, private
 	txHash := tx.Hash().String()
 
 	return &txHash, nil
+}
+
+type LockPaymentInfo struct {
+	WCid         string `json:"w_cid"`
+	PayAmount    string `json:"pay_amount"`
+	PayTxHash    string `json:"pay_tx_hash"`
+	TokenAddress string `json:"token_address"`
+}
+
+func (client *OnChainClient) GetPaymentInfo(fileUploadId int64) (*LockPaymentInfo, error) {
+	apiUrl := utils.UrlJoin(client.BaseUrl, constants.API_URL_BILLING_GET_PAYMENT_INFO)
+	apiUrl = apiUrl + "?source_file_upload_id=" + fmt.Sprintf("%d", fileUploadId)
+	params := url.Values{}
+
+	var lockPaymentInfo LockPaymentInfo
+	err := web.HttpGet(apiUrl, client.JwtToken, strings.NewReader(params.Encode()), &lockPaymentInfo)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	return &lockPaymentInfo, nil
+}
+
+func (onChainClient *OnChainClient) GetFileCoinPrice() (*float64, error) {
+	apiUrl := utils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_BILLING_FILECOIN_PRICE)
+	params := url.Values{}
+
+	var price float64
+	err := web.HttpGet(apiUrl, onChainClient.JwtToken, strings.NewReader(params.Encode()), &price)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+
+	return &price, nil
+}
+
+type BillingHistory struct {
+	PayId        int64  `json:"pay_id"`
+	PayTxHash    string `json:"pay_tx_hash"`
+	PayAmount    string `json:"pay_amount"`
+	UnlockAmount string `json:"unlock_amount"`
+	FileName     string `json:"file_name"`
+	PayloadCid   string `json:"payload_cid"`
+	PayAt        int64  `json:"pay_at"`
+	UnlockAt     int64  `json:"unlock_at"`
+	Deadline     int64  `json:"deadline"`
+	NetworkName  string `json:"network_name"`
+	TokenName    string `json:"token_name"`
+}
+
+type BillingHistoryParams struct {
+	PageNumber *int    `json:"page_number"`
+	PageSize   *int    `json:"page_size"`
+	FileName   *string `json:"file_name"`
+	TxHash     *string `json:"tx_hash"`
+	OrderBy    *string `json:"order_by"`
+	IsAscend   *string `json:"is_ascend"`
+}
+
+func (onChainClient *OnChainClient) GetBillingHistory(billingHistoryParams BillingHistoryParams) ([]*BillingHistory, *int64, error) {
+	apiUrl := utils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_BILLING_HISTORY)
+	paramItems := []string{}
+	if billingHistoryParams.PageNumber != nil {
+		paramItems = append(paramItems, "page_number="+fmt.Sprintf("%d", *billingHistoryParams.PageNumber))
+	}
+
+	if billingHistoryParams.PageSize != nil {
+		paramItems = append(paramItems, "page_size="+fmt.Sprintf("%d", *billingHistoryParams.PageSize))
+	}
+
+	if billingHistoryParams.FileName != nil {
+		paramItems = append(paramItems, "file_name="+*billingHistoryParams.FileName)
+	}
+
+	if billingHistoryParams.TxHash != nil {
+		paramItems = append(paramItems, "tx_hash="+*billingHistoryParams.TxHash)
+	}
+
+	if billingHistoryParams.OrderBy != nil {
+		paramItems = append(paramItems, "order_by="+*billingHistoryParams.OrderBy)
+	}
+
+	if billingHistoryParams.IsAscend != nil {
+		paramItems = append(paramItems, "is_ascend="+*billingHistoryParams.IsAscend)
+	}
+
+	if len(paramItems) > 0 {
+		apiUrl = apiUrl + "?"
+		for _, paramItem := range paramItems {
+			apiUrl = apiUrl + paramItem + "&"
+		}
+
+		apiUrl = strings.TrimRight(apiUrl, "&")
+	}
+
+	var billings struct {
+		Billing          []*BillingHistory `json:"billing"`
+		TotalRecordCount int64             `json:"total_record_count"`
+	}
+
+	err := web.HttpGet(apiUrl, onChainClient.JwtToken, nil, &billings)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, nil, err
+	}
+
+	return billings.Billing, &billings.TotalRecordCount, nil
 }
 
 func approve(rpcUrl string, systemParams *SystemParam, privateKey *ecdsa.PrivateKey, amount *big.Int) (*string, error) {

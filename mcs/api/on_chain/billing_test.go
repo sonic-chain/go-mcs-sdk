@@ -1,7 +1,6 @@
 package api
 
 import (
-	"go-mcs-sdk/mcs/config"
 	"testing"
 
 	"go-mcs-sdk/mcs/api/common/logs"
@@ -18,8 +17,8 @@ func TestGetFileCoinPrice(t *testing.T) {
 	logs.GetLogger().Info(*filecoinPrice)
 }
 
-func TestGetLockPaymentInfo(t *testing.T) {
-	lockPaymentInfo, err := onChainClient.GetLockPaymentInfo(148234)
+func TestGetPaymentInfo(t *testing.T) {
+	lockPaymentInfo, err := onChainClient.GetPaymentInfo(148234)
 	assert.Nil(t, err)
 	assert.NotEmpty(t, lockPaymentInfo)
 
@@ -46,7 +45,7 @@ func TestGetBillingHistory(t *testing.T) {
 }
 
 func TestPayForFile(t *testing.T) {
-	txHash, err := onChainClient.PayForFile(148234, config.GetConfig().PrivateKey, config.GetConfig().RpcUrl)
+	txHash, err := onChainClient.Pay(148234, "", "")
 	assert.Nil(t, err)
 	assert.NotEmpty(t, txHash)
 

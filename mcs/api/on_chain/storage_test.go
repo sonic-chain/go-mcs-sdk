@@ -2,7 +2,6 @@ package api
 
 import (
 	"go-mcs-sdk/mcs/api/common/constants"
-	"go-mcs-sdk/mcs/config"
 	"testing"
 
 	"go-mcs-sdk/mcs/api/common/logs"
@@ -10,22 +9,22 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestUploadFile(t *testing.T) {
-	uploadFile, err := onChainClient.UploadFile(config.GetConfig().File2Upload, constants.SOURCE_FILE_TYPE_NORMAL)
+func TestUpload(t *testing.T) {
+	uploadFile, err := onChainClient.Upload("", constants.SOURCE_FILE_TYPE_NORMAL)
 	assert.Nil(t, err)
 	assert.NotEmpty(t, uploadFile)
 
 	logs.GetLogger().Info(uploadFile)
 }
 
-func TestGetDeals(t *testing.T) {
+func TestGetUserTaskDeals(t *testing.T) {
 	pageNumber := 1
 	pageSize := 10
 	dealsParams := DealsParams{
 		PageNumber: &pageNumber,
 		PageSize:   &pageSize,
 	}
-	sourceFileUploads, recCnt, err := onChainClient.GetDeals(dealsParams)
+	sourceFileUploads, recCnt, err := onChainClient.GetUserTaskDeals(dealsParams)
 	assert.Nil(t, err)
 	assert.NotNil(t, sourceFileUploads)
 	assert.NotNil(t, recCnt)

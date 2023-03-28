@@ -1,26 +1,55 @@
 package bucket
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
 	"go-mcs-sdk/mcs/api/common/logs"
-	"go-mcs-sdk/mcs/config"
 
 	"github.com/stretchr/testify/assert"
 )
 
+func TestGetFile(t *testing.T) {
+	ossFile, err := buketClient.GetFile("aaa", "duration6")
+	assert.Nil(t, err)
+	assert.NotEmpty(t, ossFile)
+
+	logs.GetLogger().Info(*ossFile)
+}
+
 func TestCreateFolder(t *testing.T) {
-	folderName, err := buketClient.CreateFolder("test", "", "0ef9c94d-9bb9-4ce9-b687-7db732a9ce2e")
+	folderName, err := buketClient.CreateFolder("aaa", "test", "")
 	assert.Nil(t, err)
 	assert.NotEmpty(t, folderName)
 
 	logs.GetLogger().Info(*folderName)
 }
 
-func TestUploadFileChunk(t *testing.T) {
-	err := buketClient.UploadFile("abc", "test/duration22", config.GetConfig().File2Upload, true)
+func TestDeleteFile(t *testing.T) {
+	err := buketClient.DeleteFile("aaa", "duration6")
+	assert.Nil(t, err)
+}
+
+func TestListFiles(t *testing.T) {
+	ossFiles, count, err := buketClient.ListFiles("aaa", "", 10, 0)
+	assert.Nil(t, err)
+	assert.NotNil(t, ossFiles)
+	assert.NotNil(t, count)
+
+	for _, ossFile := range ossFiles {
+		logs.GetLogger().Info(*ossFile)
+	}
+
+	logs.GetLogger().Info(*count)
+}
+
+func TestUploadFile(t *testing.T) {
+	err := buketClient.UploadFile("aaa", "test/duration23", file2Upload, true)
+	assert.Nil(t, err)
+}
+
+func TestUploadFolder(t *testing.T) {
+	err := buketClient.UploadFolder("aaa", folder2Upload, "")
 	assert.Nil(t, err)
 }
 
@@ -32,46 +61,19 @@ func TestGetFileInfo(t *testing.T) {
 	logs.GetLogger().Info(*fileInfo)
 }
 
-func TestGetFileInfoByObjectName(t *testing.T) {
-	ossFile, err := buketClient.GetFileInfoByObjectName("test/duration22", "0ef9c94d-9bb9-4ce9-b687-7db732a9ce2e")
+func TestUploadIpfsFolder(t *testing.T) {
+	ossFile, err := buketClient.UploadIpfsFolder("aaa", "aaa", folder2Upload)
 	assert.Nil(t, err)
 	assert.NotEmpty(t, ossFile)
 
 	logs.GetLogger().Info(*ossFile)
 }
 
-func TestGetFileInfoByName(t *testing.T) {
-	ossFile, err := buketClient.GetFileInfoByName("aaa", "abc")
-	assert.Nil(t, err)
-	assert.NotEmpty(t, ossFile)
-
-	logs.GetLogger().Info(*ossFile)
-}
-
-func TestDeleteFile(t *testing.T) {
-	err := buketClient.DeleteFile(6674)
-	assert.Nil(t, err)
-}
-
-func TestPinFiles2Ipfs(t *testing.T) {
-	ossFile, err := buketClient.PinFiles2Ipfs("abc", "aaa", "/Users/dorachen/work/test2")
-	assert.Nil(t, err)
-	assert.NotEmpty(t, ossFile)
-
-	logs.GetLogger().Info(*ossFile)
-}
-
-func TestDownloadIpfsFolder(t *testing.T) {
-	err := buketClient.DownloadIpfsFolder("abc", "aaa", "./dd")
-	assert.Nil(t, err)
-}
-
-func TestIpfsFolderDownload1(t *testing.T) {
+func TestDownloadFile(t *testing.T) {
 	path, err := os.Getwd()
 	if err != nil {
 		logs.GetLogger().Fatal(err)
 	}
-	fmt.Println(path)
-	err = buketClient.DownloadFilesInIpfsFolder("abc", "aaa", path)
+	err = buketClient.DownloadFile("aaa", "aaa", path)
 	assert.Nil(t, err)
 }

@@ -1,6 +1,8 @@
 package utils
 
-import "strings"
+import (
+	"strings"
+)
 
 func UrlJoin(root string, parts ...string) string {
 	url := root

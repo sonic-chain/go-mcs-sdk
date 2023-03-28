@@ -2,24 +2,24 @@ package api
 
 import (
 	"go-mcs-sdk/mcs/api/user"
-	"go-mcs-sdk/mcs/config"
 	"testing"
 
+	"go-mcs-sdk/mcs/api/common/constants"
 	"go-mcs-sdk/mcs/api/common/logs"
 
 	"github.com/stretchr/testify/assert"
 )
 
 var onChainClient *OnChainClient
+var network = constants.PAYMENT_CHAIN_NAME_POLYGON_MUMBAI
 
 func init() {
 	if onChainClient != nil {
 		return
 	}
 
-	apikey := config.GetConfig().Apikey
-	accessToken := config.GetConfig().AccessToken
-	network := config.GetConfig().Network
+	apikey := ""
+	accessToken := ""
 
 	mcsClient, err := user.LoginByApikey(apikey, accessToken, network)
 	if err != nil {

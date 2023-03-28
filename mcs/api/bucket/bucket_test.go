@@ -8,16 +8,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCreateBucket(t *testing.T) {
-	bucketUid, err := buketClient.CreateBucket("test23")
-	assert.Nil(t, err)
-	assert.NotEmpty(t, bucketUid)
-
-	logs.GetLogger().Info(*bucketUid)
-}
-
-func TestGetBuckets(t *testing.T) {
-	buckets, err := buketClient.GetBuckets()
+func TestListBuckets(t *testing.T) {
+	buckets, err := buketClient.ListBuckets()
 	assert.Nil(t, err)
 	assert.NotEmpty(t, buckets)
 
@@ -26,13 +18,36 @@ func TestGetBuckets(t *testing.T) {
 	}
 }
 
+func TestCreateBucket(t *testing.T) {
+	bucketUid, err := buketClient.CreateBucket("test23")
+	assert.Nil(t, err)
+	assert.NotEmpty(t, bucketUid)
+
+	logs.GetLogger().Info(*bucketUid)
+}
+
 func TestDeleteBucket(t *testing.T) {
-	err := buketClient.DeleteBucket("a7303d2a-acd2-48ac-a062-8454bbf148d2")
+	err := buketClient.DeleteBucket("abc")
 	assert.Nil(t, err)
 }
 
+func TestGetBucket(t *testing.T) {
+	bucket, err := buketClient.GetBucket("test23", "")
+	assert.Nil(t, err)
+	assert.NotNil(t, bucket)
+	logs.GetLogger().Info(*bucket)
+}
+
+func TestGetBucketUid(t *testing.T) {
+	bucketUid, err := buketClient.GetBucketUid("test23")
+	assert.Nil(t, err)
+	assert.NotNil(t, bucketUid)
+	assert.NotEmpty(t, bucketUid)
+	logs.GetLogger().Info(*bucketUid)
+}
+
 func TestRenameBucket(t *testing.T) {
-	err := buketClient.RenameBucket("abc", "0ef9c94d-9bb9-4ce9-b687-7db732a9ce2e")
+	err := buketClient.RenameBucket("aaa", "31a04949-1e3f-494b-8285-516d2a048322")
 	assert.Nil(t, err)
 }
 

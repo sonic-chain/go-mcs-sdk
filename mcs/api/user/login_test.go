@@ -1,7 +1,6 @@
 package user
 
 import (
-	"go-mcs-sdk/mcs/config"
 	"testing"
 
 	"go-mcs-sdk/mcs/api/common/logs"
@@ -10,9 +9,8 @@ import (
 )
 
 func TestLoginByApikey(t *testing.T) {
-	apikey := config.GetConfig().Apikey
-	accessToken := config.GetConfig().AccessToken
-	network := config.GetConfig().Network
+	apikey := ""
+	accessToken := ""
 
 	mcsClient, err := LoginByApikey(apikey, accessToken, network)
 	assert.Nil(t, err)
@@ -22,8 +20,6 @@ func TestLoginByApikey(t *testing.T) {
 }
 
 func TestRegister(t *testing.T) {
-	network := config.GetConfig().Network
-
 	nonce, err := Register("0xbE14Eb1ffcA54861D3081560110a45F4A1A9e9c5", network)
 	assert.Nil(t, err)
 	assert.NotEmpty(t, nonce)
@@ -31,8 +27,6 @@ func TestRegister(t *testing.T) {
 }
 
 func TestLoginByPublicKeySignature(t *testing.T) {
-	network := config.GetConfig().Network
-
 	mcsClient, err := LoginByPublicKeySignature(
 		"1067049846399020981103631740110767813482",
 		"0xbE14Eb1ffcA54861D3081560110a45F4A1A9e9c5",
