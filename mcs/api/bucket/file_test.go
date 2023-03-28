@@ -11,7 +11,7 @@ import (
 )
 
 func TestGetFile(t *testing.T) {
-	ossFile, err := buketClient.GetFile("test/duration22", "0ef9c94d-9bb9-4ce9-b687-7db732a9ce2e")
+	ossFile, err := buketClient.GetFile("aaa", "duration6")
 	assert.Nil(t, err)
 	assert.NotEmpty(t, ossFile)
 
@@ -19,15 +19,33 @@ func TestGetFile(t *testing.T) {
 }
 
 func TestCreateFolder(t *testing.T) {
-	folderName, err := buketClient.CreateFolder("test", "", "0ef9c94d-9bb9-4ce9-b687-7db732a9ce2e")
+	folderName, err := buketClient.CreateFolder("aaa", "test", "")
 	assert.Nil(t, err)
 	assert.NotEmpty(t, folderName)
 
 	logs.GetLogger().Info(*folderName)
 }
 
-func TestUploadFileChunk(t *testing.T) {
-	err := buketClient.UploadFile("abc", "test/duration22", "", true)
+func TestDeleteFile(t *testing.T) {
+	err := buketClient.DeleteFile("aaa", "duration6")
+	assert.Nil(t, err)
+}
+
+func TestListFiles(t *testing.T) {
+	ossFiles, count, err := buketClient.ListFiles("aaa", "", 10, 0)
+	assert.Nil(t, err)
+	assert.NotNil(t, ossFiles)
+	assert.NotNil(t, count)
+
+	for _, ossFile := range ossFiles {
+		logs.GetLogger().Info(*ossFile)
+	}
+
+	logs.GetLogger().Info(*count)
+}
+
+func UploadFile(t *testing.T) {
+	err := buketClient.UploadFile("aaa", "test/duration22", file2Upload, true)
 	assert.Nil(t, err)
 }
 
@@ -37,19 +55,6 @@ func TestGetFileInfo(t *testing.T) {
 	assert.NotEmpty(t, fileInfo)
 
 	logs.GetLogger().Info(*fileInfo)
-}
-
-func TestGetFileByName(t *testing.T) {
-	ossFile, err := buketClient.GetFileByName("aaa", "abc")
-	assert.Nil(t, err)
-	assert.NotEmpty(t, ossFile)
-
-	logs.GetLogger().Info(*ossFile)
-}
-
-func TestDeleteFile(t *testing.T) {
-	err := buketClient.DeleteFile("", "")
-	assert.Nil(t, err)
 }
 
 func TestPinFiles2Ipfs(t *testing.T) {
