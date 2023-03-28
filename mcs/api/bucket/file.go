@@ -253,7 +253,9 @@ func (bucketClient *BucketClient) UploadFolder(bucketName, folderPath, prefix st
 			continue
 		}
 
-		err := bucketClient.UploadFile(bucketName, file.Name(), "", false)
+		filePath := filepath.Join(folderPath, file.Name())
+		objectName := folderName + "/" + file.Name()
+		err := bucketClient.UploadFile(bucketName, objectName, filePath, false)
 		if err != nil {
 			logs.GetLogger().Error(err)
 			return err

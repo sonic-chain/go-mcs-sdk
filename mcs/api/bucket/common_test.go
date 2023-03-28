@@ -15,6 +15,7 @@ var network = constants.PAYMENT_CHAIN_NAME_POLYGON_MUMBAI
 var apikey = "9EO9I6rzlfYkcltzOo0ayp"
 var accessToken = "hmvYOnAv9JAtXqzi5NWDfuRYMJXY6LDG"
 var file2Upload = "/Users/dorachen/work/test2/duration6"
+var folder2Upload = "/Users/dorachen/work/test3"
 
 func init() {
 	if buketClient != nil {

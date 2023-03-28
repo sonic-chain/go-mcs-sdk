@@ -1,7 +1,6 @@
 package bucket
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
@@ -44,8 +43,13 @@ func TestListFiles(t *testing.T) {
 	logs.GetLogger().Info(*count)
 }
 
-func UploadFile(t *testing.T) {
-	err := buketClient.UploadFile("aaa", "test/duration22", file2Upload, true)
+func TestUploadFile(t *testing.T) {
+	err := buketClient.UploadFile("aaa", "test/duration23", file2Upload, true)
+	assert.Nil(t, err)
+}
+
+func TestUploadFolder(t *testing.T) {
+	err := buketClient.UploadFolder("aaa", folder2Upload, "")
 	assert.Nil(t, err)
 }
 
@@ -57,8 +61,8 @@ func TestGetFileInfo(t *testing.T) {
 	logs.GetLogger().Info(*fileInfo)
 }
 
-func TestPinFiles2Ipfs(t *testing.T) {
-	ossFile, err := buketClient.UploadIpfsFolder("abc", "aaa", "/Users/dorachen/work/test2")
+func TestUploadIpfsFolder(t *testing.T) {
+	ossFile, err := buketClient.UploadIpfsFolder("aaa", "aaa", folder2Upload)
 	assert.Nil(t, err)
 	assert.NotEmpty(t, ossFile)
 
@@ -70,7 +74,6 @@ func TestDownloadFile(t *testing.T) {
 	if err != nil {
 		logs.GetLogger().Fatal(err)
 	}
-	fmt.Println(path)
-	err = buketClient.DownloadFile("abc", "aaa", path)
+	err = buketClient.DownloadFile("aaa", "aaa", path)
 	assert.Nil(t, err)
 }
