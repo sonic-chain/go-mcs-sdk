@@ -1,3 +1,25 @@
+* [GetOnChainClient](#GetOnChainClient)
+* [GetSystemParam](#GetSystemParam)
+* [GetHistoricalAveragePriceVerified](#GetHistoricalAveragePriceVerified)
+* [GetAmount](#GetAmount)
+* [Upload](#Upload)
+* [GetMintInfo](#GetMintInfo)
+* [GetUserTaskDeals](#GetUserTaskDeals)
+* [GetDealDetail](#GetDealDetail)
+* [GetDealLogs](#GetDealLogs)
+* [GetSourceFileUpload](#GetSourceFileUpload)
+* [UnpinSourceFile](#UnpinSourceFile)
+* [WriteNftCollection](#WriteNftCollection)
+* [GetNftCollections](#GetNftCollections)
+* [RecordMintInfo](#RecordMintInfo)
+* [Pay](#Pay)
+* [Pay](#Pay)
+* [GetPaymentInfo](#GetPaymentInfo)
+* [GetFileCoinPrice](#GetFileCoinPrice)
+* [GetBillingHistory](#GetBillingHistory)
+* [GetDeals2PreSign](#GetDeals2PreSign)
+* [GetDeals2Sign](#GetDeals2Sign)
+* [GetDeals2SignHash](#GetDeals2SignHash)
 
 ## GetOnChainClient
 
@@ -328,17 +350,3 @@ Outputs:
 []*Deal2Sign # deals to sign hash
 error        # error or nil
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
