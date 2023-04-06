@@ -13,7 +13,6 @@
 * [GetNftCollections](#GetNftCollections)
 * [RecordMintInfo](#RecordMintInfo)
 * [Pay](#Pay)
-* [Pay](#Pay)
 * [GetPaymentInfo](#GetPaymentInfo)
 * [GetFileCoinPrice](#GetFileCoinPrice)
 * [GetBillingHistory](#GetBillingHistory)
@@ -228,21 +227,6 @@ Outputs:
 ```shell
 *SourceFileMint   # Mint info
 error             # error or nil
-```
-
-## Pay
-
-Definition:
-
-```shell
-func (onChainClient *OnChainClient) Pay(sourceFileUploadId int64, privateKeyStr string, rpcUrl string) (*string, error)
-```
-
-Outputs:
-
-```shell
-*string   # payment transaction hash
-error     # error or nil
 ```
 
 ## Pay
