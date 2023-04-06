@@ -208,6 +208,129 @@ Outputs:
 error             # error or nil
 ```
 
+## Pay
+
+Definition:
+
+```shell
+func (onChainClient *OnChainClient) Pay(sourceFileUploadId int64, privateKeyStr string, rpcUrl string) (*string, error)
+```
+
+Outputs:
+
+```shell
+*string   # payment transaction hash
+error     # error or nil
+```
+
+## Pay
+
+Definition:
+
+```shell
+func (onChainClient *OnChainClient) Pay(sourceFileUploadId int64, privateKeyStr string, rpcUrl string) (*string, error)
+```
+
+Outputs:
+
+```shell
+*string   # payment transaction hash
+error     # error or nil
+```
+
+## GetPaymentInfo
+
+Definition:
+
+```shell
+func (client *OnChainClient) GetPaymentInfo(fileUploadId int64) (*LockPaymentInfo, error)
+```
+
+Outputs:
+
+```shell
+*LockPaymentInfo # payment information
+error            # error or nil
+```
+
+## GetFileCoinPrice
+
+Definition:
+
+```shell
+func (onChainClient *OnChainClient) GetFileCoinPrice() (*float64, error)
+```
+
+Outputs:
+
+```shell
+*float64 # filecoin price
+error    # error or nil
+```
+
+## GetBillingHistory
+
+Definition:
+
+```shell
+func (onChainClient *OnChainClient) GetBillingHistory(billingHistoryParams BillingHistoryParams) ([]*BillingHistory, *int64, error)
+```
+
+Outputs:
+
+```shell
+[]*BillingHistory # billing list
+*int64            # total record number
+error             # error or nil
+```
+
+## GetDeals2PreSign
+
+Definition:
+
+```shell
+func (onChainClient *OnChainClient) GetDeals2PreSign() ([]*Deal2PreSign, error)
+```
+
+Outputs:
+
+```shell
+[]*Deal2PreSign # deals to pre sign
+error           # error or nil
+```
+
+## GetDeals2Sign
+
+Definition:
+
+```shell
+func (onChainClient *OnChainClient) GetDeals2Sign() ([]*Deal2Sign, error)
+```
+
+Outputs:
+
+```shell
+[]*Deal2Sign # deals to sign
+error           # error or nil
+```
+
+## GetDeals2SignHash
+
+Definition:
+
+```shell
+func (onChainClient *OnChainClient) GetDeals2SignHash() ([]*Deal2Sign, error)
+```
+
+Outputs:
+
+```shell
+[]*Deal2Sign # deals to sign hash
+error        # error or nil
+```
+
+
+
 
 
 
