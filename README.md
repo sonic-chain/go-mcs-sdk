@@ -16,7 +16,7 @@
 
 # Groups
 
-* [List all buckets](#List all buckets)
+* [List all buckets](#List-all-buckets)
 * [CreateGoCarFiles](#CreateGoCarFiles)
 * [CreateIpfsCarFiles](#CreateIpfsCarFiles)
 * [CreateIpfsCmdCarFiles](#CreateIpfsCmdCarFiles)
