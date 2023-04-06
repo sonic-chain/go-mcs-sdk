@@ -1,3 +1,21 @@
+* [GetBucketClient](#GetBucketClient)
+* [ListBuckets](#ListBuckets)
+* [CreateBucket](#CreateBucket)
+* [DeleteBucket](#DeleteBucket)
+* [GetBucket](#GetBucket)
+* [GetBucketUid](#GetBucketUid)
+* [RenameBucket](#RenameBucket)
+* [GetTotalStorageSize](#GetTotalStorageSize)
+* [GetGateway](#GetGateway)
+* [GetFile](#GetFile)
+* [CreateFolder](#CreateFolder)
+* [DeleteFile](#DeleteFile)
+* [ListFiles](#ListFiles)
+* [UploadFile](#UploadFile)
+* [UploadFolder](#UploadFolder)
+* [GetFileInfo](#GetFileInfo)
+* [UploadIpfsFolder](#UploadIpfsFolder)
+* [DownloadFile](#DownloadFile)
 
 ## GetBucketClient
 
@@ -263,11 +281,3 @@ Outputs:
 *OssFile   # file info
 error      # error or nil
 ```
-
-
-
-
-
-
-
-
