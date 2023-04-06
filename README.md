@@ -22,12 +22,11 @@ convenient interface for working with the MCS API. This SDK has the following fu
 Buckets Functions:
 - **List all buckets**
 - **Create a bucket**
-- **GET** bucket id by bucket name
-- **GET** file id by bucket name and file name
-- **PUT** create bucket
-- **DELETE** bucket by bucket name
-- **PUT** create upload session
-- **POST** upload file to bucket
+- **Delete a bucket**
+- **Get a bucket by bucket name or UID**
+- **Get bucket Uid by its name**
+- **Rename a bucket**
+- **Get total storage size**
 
 On-chain files Functions:
 - **POST** upload file to Filswan IPFS gate way
