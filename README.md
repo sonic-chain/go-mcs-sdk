@@ -19,6 +19,16 @@
 A go software development kit for the Multi-Chain Storage (MCS) https://mcs.filswan.com service. It provides a
 convenient interface for working with the MCS API. This SDK has the following functionalities:
 
+Buckets Functions:
+- **List all buckets**
+- **Create a bucket**
+- **GET** bucket id by bucket name
+- **GET** file id by bucket name and file name
+- **PUT** create bucket
+- **DELETE** bucket by bucket name
+- **PUT** create upload session
+- **POST** upload file to bucket
+
 On-chain files Functions:
 - **POST** upload file to Filswan IPFS gate way
 - **POST** make payment to swan filecoin storage gate way
@@ -26,16 +36,6 @@ On-chain files Functions:
 - **GET** list of files uploaded
 - **GET** files by cid
 - **GET** status from filecoin
-
-Buckets Functions:
-- **GET** all bucket list
-- **GET** bucket info by bucket name
-- **GET** bucket id by bucket name
-- **GET** file id by bucket name and file name
-- **PUT** create bucket
-- **DELETE** bucket by bucket name
-- **PUT** create upload session
-- **POST** upload file to bucket
 
 ## Prequisites
 
