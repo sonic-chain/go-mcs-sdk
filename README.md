@@ -14,7 +14,13 @@
     - [Documentation](#documentation)
 - [Contributing](#contributing)
 
-# Groups
+## User
+
+### Login By Apikey
+```
+func LoginByApikey(apikey, accessToken, network string) (*McsClient, error)
+```
+# Bucket
 
 * [List all buckets](#List-all-buckets)
 * [CreateGoCarFiles](#CreateGoCarFiles)
@@ -32,7 +38,7 @@
 Definition:
 
 ```shell
-func (cmdCar *CmdCar) CreateCarFiles() ([]*libmodel.FileDesc, error)
+func (bucketClient *BucketClient) ListBuckets() ([]*Bucket, error)
 ```
 
 Outputs:
