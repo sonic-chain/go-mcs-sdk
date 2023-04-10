@@ -61,6 +61,7 @@ mcsClient: result including the information to access the other API(s)
 err: when err generated while accessing this api, the error info will store in err
 ```
 ```
+step 1.
 nonce, err := Register(publicKeyAddress, network)
 publicKeyAddress: your wallet public key address
 network: defined in constants
@@ -68,7 +69,7 @@ network: defined in constants
 nonce: MCS generated nonce for the related parameters
 err: when err generated while accessing this api, the error info will store in err
 
-----------------
+step 2.
 mcsClient, err := LoginByPublicKeySignature(nonce, publicKeyAddress, publicKeySignature, network)
 
 nonce: MCS generated nonce from last step
