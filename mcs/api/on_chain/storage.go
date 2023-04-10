@@ -27,12 +27,6 @@ type UploadFile struct {
 	Status             string `json:"status"`
 }
 
-type UploadFileResponse struct {
-	Status  string     `json:"status"`
-	Message string     `json:"message"`
-	Data    UploadFile `json:"data"`
-}
-
 func (onChainClient *OnChainClient) Upload(filePath string, fileType int) (*UploadFile, error) {
 	if fileType != constants.SOURCE_FILE_TYPE_NORMAL && fileType != constants.SOURCE_FILE_TYPE_MINT {
 		err := fmt.Errorf("invalid source file type:%d", fileType)
@@ -102,7 +96,11 @@ func (onChainClient *OnChainClient) Upload(filePath string, fileType int) (*Uplo
 		return nil, err
 	}
 
-	var uploadFileResponse UploadFileResponse
+	var uploadFileResponse struct {
+		Status  string     `json:"status"`
+		Message string     `json:"message"`
+		Data    UploadFile `json:"data"`
+	}
 	err = json.Unmarshal(body, &uploadFileResponse)
 	if err != nil {
 		logs.GetLogger().Error(err)
@@ -271,17 +269,15 @@ type DaoSignature struct {
 	CreateAt     *int64  `json:"create_at"`
 }
 
-type GetDealDetailResponseData struct {
-	SourceFileUploadDeal SourceFileUploadDeal `json:"source_file_upload_deal"`
-	DaoThreshold         int                  `json:"dao_threshold"`
-	DaoSignatures        []*DaoSignature      `json:"dao_signature"`
-}
-
 func (onChainClient *OnChainClient) GetDealDetail(sourceFileUploadId, dealId int64) (*SourceFileUploadDeal, []*DaoSignature, *int, error) {
 	params := strconv.FormatInt(dealId, 10) + "?source_file_upload_id=" + strconv.FormatInt(sourceFileUploadId, 10)
 	apiUrl := utils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_STORAGE_GET_DEAL_DETAIL, params)
 
-	var dealDetail GetDealDetailResponseData
+	var dealDetail struct {
+		SourceFileUploadDeal SourceFileUploadDeal `json:"source_file_upload_deal"`
+		DaoThreshold         int                  `json:"dao_threshold"`
+		DaoSignatures        []*DaoSignature      `json:"dao_signature"`
+	}
 	err := web.HttpGet(apiUrl, onChainClient.JwtToken, nil, &dealDetail)
 	if err != nil {
 		logs.GetLogger().Error(err)

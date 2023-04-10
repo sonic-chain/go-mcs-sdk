@@ -6,94 +6,120 @@
 # Table of Contents <!-- omit in toc -->
 
 - [Introduction](#introduction)
-    - [Prerequisites](#prerequisites)
-- [MCS API](#mcs-api)
+    - [Functions](#Functions)
+    - [Data Structures](#Data-Structures)
+    - [Constants](#Constants)
+- [Prerequisites](#Prerequisites)
 - [Usage](#usage)
-    - [Installation](#installation)
-    - [Getting Started](#getting-started)
+    - [Download SDK](#Download-SDK)
+    - [Call SDK](#Call-SDK)
     - [Documentation](#documentation)
+- [MCS API](#mcs-api)
 - [Contributing](#contributing)
+- [Sponsors](#Sponsors)
 
-# Introduction
+## Introduction
 
-A go software development kit for the Multi-Chain Storage (MCS) https://mcs.filswan.com service. It provides a
-convenient interface for working with the MCS API. This SDK has the following functionalities:
+A Golang software development kit for the [Multi-Chain Storage (MCS) Service](https://mcs.filswan.com) . It provides a
+convenient interface for working with the MCS API. 
 
-- **POST** upload file to Filswan IPFS gate way
-- **POST** make payment to swan filecoin storage gate way
-- **POST** mint asset as NFT
-- **GET** list of files uploaded
-- **GET** files by cid
-- **GET** status from filecoin
-  Buckets Functions:
-- **GET** all bucket list
-- **GET** bucket info by bucket name
-- **GET** bucket id by bucket name
-- **GET** file id by bucket name and file name
-- **PUT** create bucket
-- **DELETE** bucket by bucket name
-- **PUT** create upload session
-- **POST** upload file to bucket
+### Functions:
 
-## Prequisites
+- [User Functions](https://github.com/filswan/go-mcs-sdk/blob/dev/mcs/api/docs/user.md)
+- [Bucket Functions](https://github.com/filswan/go-mcs-sdk/blob/dev/mcs/api/docs/bucket.md)
+- [On-chain Functions](https://github.com/filswan/go-mcs-sdk/blob/dev/mcs/api/docs/on-chain.md)
 
-Polygon Mumbai Testnet Wallet
+### Data Structures:
+- [Struct](https://github.com/filswan/go-mcs-sdk/blob/dev/mcs/api/docs/struct.md)
 
-- [Metamask Tutorial](https://docs.filswan.com/getting-started/beginner-walkthrough/public-testnet/setup-metamask) \
-  Polygon Mumbai Testnet RPC - [Signup via Alchemy](https://www.alchemy.com/) \
-  You will also need Testnet USDC and MATIC balance to use this
-  SDK. [Swan Faucet Tutorial](https://docs.filswan.com/development-resource/swan-token-contract/acquire-testnet-usdc-and-matic-tokens)
+### Constants:
+- [Constants](https://github.com/filswan/go-mcs-sdk/blob/dev/mcs/api/common/constants/constants.go)
 
-# MCS API
+## Prerequisites
+- [Metamask Wallet](https://docs.filswan.com/getting-started/beginner-walkthrough/public-testnet/setup-metamask)
+- [Polygon Mumbai Testnet RPC](https://www.alchemy.com/)
+- [Testnet USDC and MATIC balance](https://docs.filswan.com/development-resource/swan-token-contract/acquire-testnet-usdc-and-matic-tokens)
+- [Optional: apikey](https://calibration-mcs.filswan.com/) -> Setting -> Create API Key
+
+## Usage
+
+### Download SDK
+```
+go get go-mcs-sdk
+```
+
+
+### Call SDK
+1. Login using either of the below way:
+```
+mcsClient, err := LoginByApikey(apikey, accessToken, network)
+apikey: your apikey
+accessToken: the access token for your apikey
+network: defined in constants
+
+mcsClient: result including the information to access the other API(s)
+err: when err generated while accessing this api, the error info will store in err
+```
+```
+step 1.
+nonce, err := Register(publicKeyAddress, network)
+publicKeyAddress: your wallet public key address
+network: defined in constants
+
+nonce: MCS generated nonce for the related parameters
+err: when err generated while accessing this api, the error info will store in err
+
+step 2.
+mcsClient, err := LoginByPublicKeySignature(nonce, publicKeyAddress, publicKeySignature, network)
+
+nonce: MCS generated nonce from last step
+publicKeyAddress: your wallet public key address
+publicKeySignature: public key signature generated from meta mask wallet
+network: defined in constants
+
+mcsClient: result including the information to access the other API(s)
+err: when err generated while accessing this api, the error info will store in err
+```
+- See [Constants](#Constants) to show optional network
+- You can get the public key signature from [Public Key Signature](https://ibuxj.csb.app/)
+
+2. Call `user` related api(s) using `mcsClient` got from last step, such as:
+```
+wallet, err := mcsClient.GetWallet()
+wallet: the wallet that the apikey belong to
+err: when err generated while accessing this api, the error info will store in err
+```
+3. If you want to call `bucket` related api(s), you need change `McsClient` to `BucketClient` first:
+```
+buketClient := GetBucketClient(*mcsClient)
+```
+then call `bucket` related api(s) using `buketClient` got from above, such as:
+```
+buckets, err := buketClient.ListBuckets()
+buckets: bucket list
+err: when err generated while accessing this api, the error info will store in err
+```
+4. If you want to call `on-chain` related api(s), you need change `McsClient` to `OnChainClient` first:
+```
+onChainClient = GetOnChainClient(*mcsClient)
+```
+then call `on-chain` related api(s) using `onChainClient` got from above, such as:
+```
+filecoinPrice, err := onChainClient.GetFileCoinPrice()
+filecoinPrice: filecoin price
+err: when err generated while accessing this api, the error info will store in err
+```
+
+### Documentation
+
+For more examples please see the [SDK documentation](https://docs.filswan.com/multi-chain-storage/developer-quickstart/sdk)
+
+## MCS API
 
 For more information about the API usage, check out the MCS API
 documentation (https://docs.filswan.com/development-resource/mcp-api).
 
-# Usage
-
-Instructions for developers working with MCS SDK and API.
-
-## Installation
-
-```
-go mod tidy
-go mod download
-```
-
-## Getting Started
-
-### generate .env file
-
-```
-cd go-mcs-sdk/mcs
-mv .env.example .env
-```
-
-### environment variable in .env file
-USER_WALLET_ADDRESS_FOR_REGISTER_MCS: The wallet address used to log in to mcs <br>
-USER_WALLET_ADDRESS_PK: The private key of the wallet address used to log in to mcs <br> 
-CHAIN_NAME_FOR_REGISTER_ON_MCS: polygon network name: polygon.mumbai/polygon.mainnet <br>
-MCS_BACKEND_BASE_URL: mcs backend url: http://127.0.0.1:8888/api/ <br>
-META_SPACE_URL: meta-space backend url: http://127.0.0.1:9999/api/ <br>
-### How to test 
-Run the test method in **_test.go and enter the parameters <br>
-The parameters are placed at the top of the test script file as constants <br>
-List of test scripts:
-```
-go-mcs-sdk/mcs/bucket_api_test.go
-go-mcs-sdk/mcs/mcs_api_test.go
-```
-#### Run the test method, take the test upload file method as an example:
-1. Set the full path of the file you want to upload to the constant at the top of the test file <br>
-   FilePathForUpload = <your file full path>
-2. Run the upload file test api   <br>
-   go test -v -run TestMcsUploadFile
-
-## Documentation
-
-For more examples please see the [SDK documentation](https://docs.filswan.com/multi-chain-storage/developer-quickstart/sdk)
-
-# Contributing
+## Contributing
 
 Feel free to join in and discuss. Suggestions are welcome! [Open an issue](https://github.com/filswan/python-mcs-sdk/issues) or [Join the Discord](https://discord.com/invite/KKGhy8ZqzK)!
 
