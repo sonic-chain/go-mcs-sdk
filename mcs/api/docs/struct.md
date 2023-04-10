@@ -158,4 +158,72 @@ type Deal struct {
 }
 ```
 
+## DealsParams
+```
+type DealsParams struct {
+	PageNumber *int    `json:"page_number"`
+	PageSize   *int    `json:"page_size"`
+	FileName   *string `json:"file_name"`
+	Status     *string `json:"status"`
+	IsMinted   *string `json:"is_minted"`
+	OrderBy    *string `json:"order_by"`
+	IsAscend   *string `json:"is_ascend"`
+}
+```
+
+## SourceFileUploadDeal
+```
+type SourceFileUploadDeal struct {
+	DealID                   *int    `json:"deal_id"`
+	DealCid                  *string `json:"deal_cid"`
+	MessageCid               *string `json:"message_cid"`
+	Height                   *int    `json:"height"`
+	PieceCid                 *string `json:"piece_cid"`
+	VerifiedDeal             *bool   `json:"verified_deal"`
+	StoragePricePerEpoch     *int    `json:"storage_price_per_epoch"`
+	Signature                *string `json:"signature"`
+	SignatureType            *string `json:"signature_type"`
+	CreatedAt                *int    `json:"created_at"`
+	PieceSizeFormat          *string `json:"piece_size_format"`
+	StartHeight              *int    `json:"start_height"`
+	EndHeight                *int    `json:"end_height"`
+	Client                   *string `json:"client"`
+	ClientCollateralFormat   *string `json:"client_collateral_format"`
+	Provider                 *string `json:"provider"`
+	ProviderTag              *string `json:"provider_tag"`
+	VerifiedProvider         *int    `json:"verified_provider"`
+	ProviderCollateralFormat *string `json:"provider_collateral_format"`
+	Status                   *int    `json:"status"`
+	NetworkName              *string `json:"network_name"`
+	StoragePrice             *int    `json:"storage_price"`
+	IpfsUrl                  string  `json:"ipfs_url"`
+	FileName                 string  `json:"file_name"`
+	WCid                     string  `json:"w_cid"`
+	CarFilePayloadCid        string  `json:"car_file_payload_cid"`
+	LockedAt                 int64   `json:"locked_at"`
+	LockedFee                string  `json:"locked_fee"`
+	Unlocked                 bool    `json:"unlocked"`
+}
+```
+
+## DaoSignature
+```
+type DaoSignature struct {
+	WalletSigner string  `json:"wallet_signer"`
+	TxHash       *string `json:"tx_hash"`
+	Status       *string `json:"status"`
+	CreateAt     *int64  `json:"create_at"`
+}
+```
+
+## OfflineDealLog
+```
+type OfflineDealLog struct {
+	Id             int64  `json:"id"`
+	OfflineDealId  int64  `json:"offline_deal_id"`
+	OnChainStatus  string `json:"on_chain_status"`
+	OnChainMessage string `json:"on_chain_message"`
+	CreateAt       int64  `json:"create_at"`
+}
+```
 

@@ -269,17 +269,15 @@ type DaoSignature struct {
 	CreateAt     *int64  `json:"create_at"`
 }
 
-type GetDealDetailResponseData struct {
-	SourceFileUploadDeal SourceFileUploadDeal `json:"source_file_upload_deal"`
-	DaoThreshold         int                  `json:"dao_threshold"`
-	DaoSignatures        []*DaoSignature      `json:"dao_signature"`
-}
-
 func (onChainClient *OnChainClient) GetDealDetail(sourceFileUploadId, dealId int64) (*SourceFileUploadDeal, []*DaoSignature, *int, error) {
 	params := strconv.FormatInt(dealId, 10) + "?source_file_upload_id=" + strconv.FormatInt(sourceFileUploadId, 10)
 	apiUrl := utils.UrlJoin(onChainClient.BaseUrl, constants.API_URL_STORAGE_GET_DEAL_DETAIL, params)
 
-	var dealDetail GetDealDetailResponseData
+	var dealDetail struct {
+		SourceFileUploadDeal SourceFileUploadDeal `json:"source_file_upload_deal"`
+		DaoThreshold         int                  `json:"dao_threshold"`
+		DaoSignatures        []*DaoSignature      `json:"dao_signature"`
+	}
 	err := web.HttpGet(apiUrl, onChainClient.JwtToken, nil, &dealDetail)
 	if err != nil {
 		logs.GetLogger().Error(err)
