@@ -6,6 +6,8 @@
 # Table of Contents <!-- omit in toc -->
 
 - [Introduction](#introduction)
+    - [Functions](#Functions)
+    - [Data Structures](#Data-Structures)
 - [Prerequisites](#prerequisites)
 - [Usage](#usage)
     - [Download SDK](#Download-SDK)
@@ -18,11 +20,16 @@
 ## Introduction
 
 A Golang software development kit for the [Multi-Chain Storage (MCS) Service](https://mcs.filswan.com) . It provides a
-convenient interface for working with the MCS API. This SDK has the following functionalities:
+convenient interface for working with the MCS API. 
+
+### Functions:
 
 - [User Functions](https://github.com/filswan/go-mcs-sdk/blob/new/mcs/api/docs/user.md)
 - [Bucket Functions](https://github.com/filswan/go-mcs-sdk/blob/new/mcs/api/docs/bucket.md)
 - [On-chain Functions](https://github.com/filswan/go-mcs-sdk/blob/new/mcs/api/docs/on-chain.md)
+
+### Data Structures:
+[Struct](https://github.com/filswan/go-mcs-sdk/blob/new/mcs/api/docs/struct.md)
 
 ## Prequisites
 
