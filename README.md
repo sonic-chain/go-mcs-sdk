@@ -25,15 +25,15 @@ convenient interface for working with the MCS API.
 
 ### Functions:
 
-- [User Functions](https://github.com/filswan/go-mcs-sdk/blob/new/mcs/api/docs/user.md)
-- [Bucket Functions](https://github.com/filswan/go-mcs-sdk/blob/new/mcs/api/docs/bucket.md)
-- [On-chain Functions](https://github.com/filswan/go-mcs-sdk/blob/new/mcs/api/docs/on-chain.md)
+- [User Functions](https://github.com/filswan/go-mcs-sdk/blob/dev/mcs/api/docs/user.md)
+- [Bucket Functions](https://github.com/filswan/go-mcs-sdk/blob/dev/mcs/api/docs/bucket.md)
+- [On-chain Functions](https://github.com/filswan/go-mcs-sdk/blob/dev/mcs/api/docs/on-chain.md)
 
 ### Data Structures:
-- [Struct](https://github.com/filswan/go-mcs-sdk/blob/new/mcs/api/docs/struct.md)
+- [Struct](https://github.com/filswan/go-mcs-sdk/blob/dev/mcs/api/docs/struct.md)
 
 ### Constants:
-- [Constants](https://github.com/filswan/go-mcs-sdk/blob/new/mcs/api/common/constants/constants.go)
+- [Constants](https://github.com/filswan/go-mcs-sdk/blob/dev/mcs/api/common/constants/constants.go)
 
 ## Prerequisites
 - [Metamask Wallet](https://docs.filswan.com/getting-started/beginner-walkthrough/public-testnet/setup-metamask)
