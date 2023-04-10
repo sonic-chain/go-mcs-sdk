@@ -8,6 +8,7 @@
 - [Introduction](#introduction)
     - [Functions](#Functions)
     - [Data Structures](#Data-Structures)
+    - [Constants](#Constants)
 - [Prerequisites](#prerequisites)
 - [Usage](#usage)
     - [Download SDK](#Download-SDK)
