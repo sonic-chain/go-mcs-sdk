@@ -29,7 +29,7 @@ convenient interface for working with the MCS API.
 - [On-chain Functions](https://github.com/filswan/go-mcs-sdk/blob/new/mcs/api/docs/on-chain.md)
 
 ### Data Structures:
-[Struct](https://github.com/filswan/go-mcs-sdk/blob/new/mcs/api/docs/struct.md)
+- [Struct](https://github.com/filswan/go-mcs-sdk/blob/new/mcs/api/docs/struct.md)
 
 ## Prequisites
 
