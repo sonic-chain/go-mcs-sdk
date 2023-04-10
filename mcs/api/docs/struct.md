@@ -236,3 +236,74 @@ type SourceFileUpload struct {
 	FileSize int64  `json:"file_size"`
 }
 ```
+
+## NftCollectionParams
+```
+type NftCollectionParams struct {
+	Name            string  `json:"name"`
+	Description     *string `json:"description"`
+	ImageUrl        *string `json:"image_url"`
+	ExternalLink    *string `json:"external_link"`
+	SellerFee       *int    `json:"seller_fee"`
+	WalletRecipient *string `json:"wallet_recipient"`
+	TxHash          string  `json:"tx_hash"`
+}
+```
+
+## NftCollection
+```
+type NftCollection struct {
+	ID                int64   `json:"id"`
+	Address           *string `json:"address"`
+	WalletId          int64   `json:"wallet_id"`
+	Name              string  `json:"name"`
+	Description       *string `json:"description"`
+	ImageUrl          *string `json:"image_url"`
+	ExternalLink      *string `json:"external_link"`
+	SellerFee         *int    `json:"seller_fee"`
+	WalletIdRecipient *int64  `json:"wallet_id_recipient"`
+	TxHash            string  `json:"tx_hash"`
+	CreateAt          int64   `json:"create_at"`
+	UpdateAt          int64   `json:"update_at"`
+	WalletRecipient   string  `json:"wallet_recipient"`
+	IsDefault         bool    `json:"is_default"`
+}
+```
+
+## RecordMintInfoParams
+```
+type RecordMintInfoParams struct {
+	SourceFileUploadId int64   `json:"source_file_upload_id"`
+	NftCollectionId    int64   `json:"nft_collection_id"`
+	TxHash             string  `json:"tx_hash"`
+	TokenId            int64   `json:"token_id"`
+	Name               *string `json:"name"`
+	Description        *string `json:"description"`
+}
+```
+
+## SourceFileMint
+```
+type SourceFileMint struct {
+	ID                 int64   `json:"id"`
+	SourceFileUploadId int64   `json:"source_file_upload_id"`
+	NftTxHash          string  `json:"nft_tx_hash"`
+	MintAddress        string  `json:"mint_address"`
+	NftCollectionId    int64   `json:"nft_collection_id"`
+	TokenId            int64   `json:"token_id"`
+	Name               *string `json:"name"`
+	Description        *string `json:"description"`
+	CreateAt           int64   `json:"create_at"`
+	UpdateAt           int64   `json:"update_at"`
+}
+```
+
+## SourceFileMintOut
+```
+type SourceFileMintOut struct {
+	SourceFileMint
+	NftCollectionAddress  string  `json:"nft_collection_address"`
+	NftCollectionName     *string `json:"nft_collection_name"`
+	NftCollectionImageUrl *string `json:"nft_collection_image_url"`
+}
+```
