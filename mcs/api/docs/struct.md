@@ -33,3 +33,44 @@ type Wallet struct {
 }
 ```
 
+## BucketClient
+```
+type BucketClient struct {
+	user.McsClient
+}
+```
+
+## Bucket
+```
+type Bucket struct {
+	BucketUid  string `json:"bucket_uid"`
+	Address    string `json:"address"`
+	MaxSize    int64  `json:"max_size"`
+	Size       int64  `json:"size"`
+	IsFree     bool   `json:"is_free"`
+	PaymentTx  string `json:"payment_tx"`
+	IsActive   bool   `json:"is_active"`
+	IsDeleted  bool   `json:"is_deleted"`
+	BucketName string `json:"bucket_name"`
+	FileNumber int64  `json:"file_number"`
+}
+```
+
+## OssFile
+```
+type OssFile struct {
+	Name       string `json:"name"`
+	Address    string `json:"address"`
+	Prefix     string `json:"prefix"`
+	BucketUid  string `json:"bucket_uid"`
+	FileHash   string `json:"file_hash"`
+	Size       int64  `json:"size"`
+	PayloadCid string `json:"payload_cid"`
+	PinStatus  string `json:"pin_status"`
+	IsDeleted  bool   `json:"is_deleted"`
+	IsFolder   bool   `json:"is_folder"`
+	ObjectName string `json:"object_name"`
+	Type       int    `json:"type"`
+	gorm.Model
+}
+```
