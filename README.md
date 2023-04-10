@@ -17,7 +17,7 @@
 
 ## Introduction
 
-A golang software development kit for the [Multi-Chain Storage (MCS) Service](https://mcs.filswan.com) . It provides a
+A Golang software development kit for the [Multi-Chain Storage (MCS) Service](https://mcs.filswan.com) . It provides a
 convenient interface for working with the MCS API. This SDK has the following functionalities:
 
 - [User Functions](https://github.com/filswan/go-mcs-sdk/blob/new/mcs/api/docs/user.md)
