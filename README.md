@@ -15,7 +15,7 @@
 - [Contributing](#contributing)
 - [Sponsors](#Sponsors)
 
-# Introduction
+## Introduction
 
 A go software development kit for the Multi-Chain Storage (MCS) https://mcs.filswan.com service. It provides a
 convenient interface for working with the MCS API. This SDK has the following functionalities:
@@ -47,7 +47,7 @@ Polygon Mumbai Testnet Wallet
   SDK. [Swan Faucet Tutorial](https://docs.filswan.com/development-resource/swan-token-contract/acquire-testnet-usdc-and-matic-tokens)
 
 
-# Usage
+## Usage
 
 Instructions for developers working with MCS SDK and API.
 
