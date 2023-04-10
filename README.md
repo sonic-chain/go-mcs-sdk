@@ -62,20 +62,6 @@ go mod download
 ```
 
 ## Getting Started
-
-### generate .env file
-
-```
-cd go-mcs-sdk/mcs
-mv .env.example .env
-```
-
-### environment variable in .env file
-USER_WALLET_ADDRESS_FOR_REGISTER_MCS: The wallet address used to log in to mcs <br>
-USER_WALLET_ADDRESS_PK: The private key of the wallet address used to log in to mcs <br> 
-CHAIN_NAME_FOR_REGISTER_ON_MCS: polygon network name: polygon.mumbai/polygon.mainnet <br>
-MCS_BACKEND_BASE_URL: mcs backend url: http://127.0.0.1:8888/api/ <br>
-META_SPACE_URL: meta-space backend url: http://127.0.0.1:9999/api/ <br>
 ### How to test 
 Run the test method in **_test.go and enter the parameters <br>
 The parameters are placed at the top of the test script file as constants <br>
