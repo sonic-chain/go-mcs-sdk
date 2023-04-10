@@ -59,17 +59,10 @@ go mod download
 ```
 
 ### Getting Started
-### How to test 
-Run the test method in **_test.go and enter the parameters <br>
-The parameters are placed at the top of the test script file as constants <br>
-List of test scripts:
-```
-go-mcs-sdk/mcs/bucket_api_test.go
-go-mcs-sdk/mcs/mcs_api_test.go
-```
-#### Run the test method, take the test upload file method as an example:
-1. Set the full path of the file you want to upload to the constant at the top of the test file <br>
-   FilePathForUpload = <your file full path>
+1. Login: `mcsClient, err := LoginByApikey(apikey, accessToken, network)`
+   `apikey: your apikey`
+   `accessToken: the access token for your apikey`
+   `network: defined in constants`
 2. Run the upload file test api   <br>
    go test -v -run TestMcsUploadFile
 
