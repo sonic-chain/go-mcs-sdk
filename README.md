@@ -8,8 +8,8 @@
 - [Introduction](#introduction)
 - [Prerequisites](#prerequisites)
 - [Usage](#usage)
-    - [Installation](#installation)
-    - [Getting Started](#getting-started)
+    - [Download SDK](#Download-SDK)
+    - [Call SDK](#Call-SDK)
 - [MCS API](#mcs-api)
 - [Documentation](#documentation)
 - [Contributing](#contributing)
@@ -49,13 +49,13 @@ Polygon Mumbai Testnet Wallet
 
 ## Usage
 
-### Get library to your project
+### Download SDK
 ```
 go get go-mcs-sdk
 ```
 
 
-### Write code using this SDK
+### Call SDK
 1. Login:
 ```
 mcsClient, err := LoginByApikey(apikey, accessToken, network)
