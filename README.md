@@ -59,13 +59,13 @@ go mod download
 ```
 
 ### Getting Started
-1. Login: `mcsClient, err := LoginByApikey(apikey, accessToken, network)`
-
-   `apikey: your apikey`
-
-   `accessToken: the access token for your apikey`
-   
-   `network: defined in constants`
+1. Login:
+```
+mcsClient, err := LoginByApikey(apikey, accessToken, network)
+apikey: your apikey
+accessToken: the access token for your apikey
+network: defined in constants`
+```
 2. Run the upload file test api   <br>
    go test -v -run TestMcsUploadFile
 
