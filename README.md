@@ -7,12 +7,13 @@
 
 - [Introduction](#introduction)
     - [Prerequisites](#prerequisites)
-- [MCS API](#mcs-api)
 - [Usage](#usage)
     - [Installation](#installation)
     - [Getting Started](#getting-started)
-    - [Documentation](#documentation)
+- [MCS API](#mcs-api)
+- [Documentation](#documentation)
 - [Contributing](#contributing)
+- [Sponsors](#Sponsors)
 
 # Introduction
 
@@ -45,10 +46,6 @@ Polygon Mumbai Testnet Wallet
   You will also need Testnet USDC and MATIC balance to use this
   SDK. [Swan Faucet Tutorial](https://docs.filswan.com/development-resource/swan-token-contract/acquire-testnet-usdc-and-matic-tokens)
 
-# MCS API
-
-For more information about the API usage, check out the MCS API
-documentation (https://docs.filswan.com/development-resource/mcp-api).
 
 # Usage
 
@@ -80,7 +77,12 @@ go-mcs-sdk/mcs/mcs_api_test.go
 
 For more examples please see the [SDK documentation](https://docs.filswan.com/multi-chain-storage/developer-quickstart/sdk)
 
-# Contributing
+## MCS API
+
+For more information about the API usage, check out the MCS API
+documentation (https://docs.filswan.com/development-resource/mcp-api).
+
+## Contributing
 
 Feel free to join in and discuss. Suggestions are welcome! [Open an issue](https://github.com/filswan/python-mcs-sdk/issues) or [Join the Discord](https://discord.com/invite/KKGhy8ZqzK)!
 
