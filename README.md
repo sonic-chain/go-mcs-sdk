@@ -14,40 +14,6 @@
     - [Documentation](#documentation)
 - [Contributing](#contributing)
 
-## User
-
-### Login By Apikey
-```
-func LoginByApikey(apikey, accessToken, network string) (*McsClient, error)
-```
-# Bucket
-
-* [List all buckets](#List-all-buckets)
-* [CreateGoCarFiles](#CreateGoCarFiles)
-* [CreateIpfsCarFiles](#CreateIpfsCarFiles)
-* [CreateIpfsCmdCarFiles](#CreateIpfsCmdCarFiles)
-* [UploadCarFiles](#UploadCarFiles)
-* [CreateTask](#CreateTask)
-* [SendDeals](#SendDeals)
-* [SendAutoBidDealsLoop](#SendAutoBidDealsLoop)
-* [SendAutoBidDeals](#SendAutoBidDeals)
-* [SendAutoBidDealsByTaskUuid](#SendAutoBidDealsByTaskUuid)
-
-## List all buckets
-
-Definition:
-
-```shell
-func (bucketClient *BucketClient) ListBuckets() ([]*Bucket, error)
-```
-
-Outputs:
-
-```shell
-[]*libmodel.FileDesc  # files description
-error                 # error or nil
-```
-
 # Introduction
 
 A go software development kit for the Multi-Chain Storage (MCS) https://mcs.filswan.com service. It provides a
