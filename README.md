@@ -80,6 +80,8 @@ network: defined in constants
 mcsClient: result including the information to access the other API(s)
 err: when err generated while accessing this api, the error info will store in err
 ```
+- You can get the public key signature from [Public Key Signature](https://ibuxj.csb.app/)
+
 2. Call `user` related api(s) using `mcsClient` got from last step, such as:
 ```
 wallet, err := mcsClient.GetWallet()
