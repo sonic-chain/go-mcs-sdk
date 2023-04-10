@@ -50,12 +50,34 @@ go get go-mcs-sdk
 
 
 ### Call SDK
-1. Login:
+1. Login using either of the below way:
 ```
 mcsClient, err := LoginByApikey(apikey, accessToken, network)
 apikey: your apikey
 accessToken: the access token for your apikey
-network: defined in constants`
+network: defined in constants
+
+mcsClient: result including the information to access the other API(s)
+err: when err generated while accessing this api, the error info will store in err
+```
+```
+nonce, err := Register(publicKeyAddress, network)
+publicKeyAddress: your wallet public key address
+network: defined in constants
+
+nonce: MCS generated nonce for the related parameters
+err: when err generated while accessing this api, the error info will store in err
+
+----------------
+mcsClient, err := LoginByPublicKeySignature(nonce, publicKeyAddress, publicKeySignature, network)
+
+nonce: MCS generated nonce from last step
+publicKeyAddress: your wallet public key address
+publicKeySignature: public key signature generated from meta mask wallet
+network: defined in constants
+
+mcsClient: result including the information to access the other API(s)
+err: when err generated while accessing this api, the error info will store in err
 ```
 2. Call `user` related api(s) using `mcsClient` got from last step, such as:
 ```
