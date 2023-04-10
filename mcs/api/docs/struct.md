@@ -103,3 +103,59 @@ type SystemParam struct {
 }
 ```
 
+## UploadFile
+```
+type UploadFile struct {
+	SourceFileUploadId int64  `json:"source_file_upload_id"`
+	PayloadCid         string `json:"payload_cid"`
+	IpfsUrl            string `json:"ipfs_url"`
+	FileSize           int64  `json:"file_size"`
+	WCid               string `json:"w_cid"`
+	Status             string `json:"status"`
+}
+```
+
+## OfflineDeal
+```
+type OfflineDeal struct {
+	Id             int64   `json:"id"`
+	CarFileId      int64   `json:"car_file_id"`
+	DealCid        string  `json:"deal_cid"`
+	MinerId        int64   `json:"miner_id"`
+	Verified       bool    `json:"verified"`
+	StartEpoch     int     `json:"start_epoch"`
+	SenderWalletId int64   `json:"sender_wallet_id"`
+	Status         string  `json:"status"`
+	DealId         *int64  `json:"deal_id"`
+	OnChainStatus  *string `json:"on_chain_status"`
+	UnlockTxHash   *string `json:"unlock_tx_hash"`
+	UnlockAt       *int64  `json:"unlock_at"`
+	Note           *string `json:"note"`
+	NetworkId      int64   `json:"network_id"`
+	MinerFid       string  `json:"miner_fid"`
+	CreateAt       int64   `json:"create_at"`
+	UpdateAt       int64   `json:"update_at"`
+}
+```
+
+## Deal
+```
+type Deal struct {
+	SourceFileUploadId int64          `json:"source_file_upload_id"`
+	FileName           string         `json:"file_name"`
+	FileSize           int64          `json:"file_size"`
+	UploadAt           int64          `json:"upload_at"`
+	Duration           int            `json:"duration"`
+	IpfsUrl            string         `json:"ipfs_url"`
+	PinStatus          string         `json:"pin_status"`
+	PayAmount          string         `json:"pay_amount"`
+	Status             string         `json:"status"`
+	Note               string         `json:"note"`
+	IsFree             bool           `json:"is_free"`
+	IsMinted           bool           `json:"is_minted"`
+	RefundedBySelf     bool           `json:"refunded_by_self"`
+	OfflineDeals       []*OfflineDeal `json:"offline_deal"`
+}
+```
+
+

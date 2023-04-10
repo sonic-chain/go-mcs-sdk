@@ -27,12 +27,6 @@ type UploadFile struct {
 	Status             string `json:"status"`
 }
 
-type UploadFileResponse struct {
-	Status  string     `json:"status"`
-	Message string     `json:"message"`
-	Data    UploadFile `json:"data"`
-}
-
 func (onChainClient *OnChainClient) Upload(filePath string, fileType int) (*UploadFile, error) {
 	if fileType != constants.SOURCE_FILE_TYPE_NORMAL && fileType != constants.SOURCE_FILE_TYPE_MINT {
 		err := fmt.Errorf("invalid source file type:%d", fileType)
@@ -102,7 +96,11 @@ func (onChainClient *OnChainClient) Upload(filePath string, fileType int) (*Uplo
 		return nil, err
 	}
 
-	var uploadFileResponse UploadFileResponse
+	var uploadFileResponse struct {
+		Status  string     `json:"status"`
+		Message string     `json:"message"`
+		Data    UploadFile `json:"data"`
+	}
 	err = json.Unmarshal(body, &uploadFileResponse)
 	if err != nil {
 		logs.GetLogger().Error(err)
