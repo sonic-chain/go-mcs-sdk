@@ -72,7 +72,7 @@ wallet, err := mcsClient.GetWallet()
 wallet: the wallet that the apikey belong to
 err: when err generated while accessing this api, the error info will store in err
 ```
-3. If you want to call `bucket` related api(s), you need change McsClient to BucketClient first:
+3. If you want to call `bucket` related api(s), you need change `McsClient` to `BucketClient` first:
 ```
 buketClient := GetBucketClient(*mcsClient)
 ```
@@ -80,6 +80,16 @@ then call `bucket` related api(s) using `buketClient` got from above, such as:
 ```
 buckets, err := buketClient.ListBuckets()
 buckets: bucket list
+err: when err generated while accessing this api, the error info will store in err
+```
+4. If you want to call `on-chain` related api(s), you need change `McsClient` to `OnChainClient` first:
+```
+onChainClient = GetOnChainClient(*mcsClient)
+```
+then call `on-chain` related api(s) using `onChainClient` got from above, such as:
+```
+filecoinPrice, err := onChainClient.GetFileCoinPrice()
+filecoinPrice: filecoin price
 err: when err generated while accessing this api, the error info will store in err
 ```
 
