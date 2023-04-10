@@ -74,3 +74,32 @@ type OssFile struct {
 	gorm.Model
 }
 ```
+
+## OnChainClient
+```
+type OnChainClient struct {
+	BaseUrl  string `json:"base_url"`
+	JwtToken string `json:"jwt_token"`
+}
+```
+
+## SystemParam
+```
+type SystemParam struct {
+	ChainName                   string  `json:"chain_name"`
+	PaymentContractAddress      string  `json:"payment_contract_address"`
+	PaymentRecipientAddress     string  `json:"payment_recipient_address"`
+	DaoContractAddress          string  `json:"dao_contract_address"`
+	DexAddress                  string  `json:"dex_address"`
+	UsdcWFilPoolContract        string  `json:"usdc_wFil_pool_contract"`
+	DefaultNftCollectionAddress string  `json:"default_nft_collection_address"`
+	NftCollectionFactoryAddress string  `json:"nft_collection_factory_address"`
+	UsdcAddress                 string  `json:"usdc_address"`
+	GasLimit                    uint64  `json:"gas_limit"`
+	LockTime                    int     `json:"lock_time"`
+	PayMultiplyFactor           float32 `json:"pay_multiply_factor"`
+	DaoThreshold                int     `json:"dao_threshold"`
+	FilecoinPrice               float64 `json:"filecoin_price"`
+}
+```
+
