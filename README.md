@@ -10,8 +10,8 @@
 - [Usage](#usage)
     - [Download SDK](#Download-SDK)
     - [Call SDK](#Call-SDK)
+    - [Documentation](#documentation)
 - [MCS API](#mcs-api)
-- [Documentation](#documentation)
 - [Contributing](#contributing)
 - [Sponsors](#Sponsors)
 
@@ -90,7 +90,7 @@ filecoinPrice: filecoin price
 err: when err generated while accessing this api, the error info will store in err
 ```
 
-## Documentation
+### Documentation
 
 For more examples please see the [SDK documentation](https://docs.filswan.com/multi-chain-storage/developer-quickstart/sdk)
 
