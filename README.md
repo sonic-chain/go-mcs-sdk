@@ -6,7 +6,7 @@
 # Table of Contents <!-- omit in toc -->
 
 - [Introduction](#introduction)
-    - [Prerequisites](#prerequisites)
+- [Prerequisites](#prerequisites)
 - [Usage](#usage)
     - [Installation](#installation)
     - [Getting Started](#getting-started)
