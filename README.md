@@ -9,7 +9,7 @@
     - [Functions](#Functions)
     - [Data Structures](#Data-Structures)
     - [Constants](#Constants)
-- [Prerequisites](#prerequisites)
+- [Prerequisites](#Prerequisites)
 - [Usage](#usage)
     - [Download SDK](#Download-SDK)
     - [Call SDK](#Call-SDK)
