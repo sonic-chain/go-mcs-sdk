@@ -66,8 +66,12 @@ apikey: your apikey
 accessToken: the access token for your apikey
 network: defined in constants`
 ```
-2. Run the upload file test api   <br>
-   go test -v -run TestMcsUploadFile
+2. Call user related api(s) using `mcsClient` got from last step, such as:
+```
+wallet, err := mcsClient.GetWallet()
+wallet: the wallet that the apikey belong to
+err: when err generated while accessing this api, the error info will store in err
+```
 
 ## Documentation
 
