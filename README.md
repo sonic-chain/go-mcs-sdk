@@ -51,14 +51,14 @@ Polygon Mumbai Testnet Wallet
 
 Instructions for developers working with MCS SDK and API.
 
-## Installation
+### Installation
 
 ```
 go mod tidy
 go mod download
 ```
 
-## Getting Started
+### Getting Started
 ### How to test 
 Run the test method in **_test.go and enter the parameters <br>
 The parameters are placed at the top of the test script file as constants <br>
