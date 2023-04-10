@@ -17,7 +17,7 @@
 
 ## Introduction
 
-A go software development kit for the Multi-Chain Storage (MCS) https://mcs.filswan.com service. It provides a
+A go software development kit for the [Multi-Chain Storage (MCS) Service](https://mcs.filswan.com) . It provides a
 convenient interface for working with the MCS API. This SDK has the following functionalities:
 
 **Buckets Functions:**
