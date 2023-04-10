@@ -35,7 +35,7 @@ convenient interface for working with the MCS API.
 ### Constants:
 - [Constants](https://github.com/filswan/go-mcs-sdk/blob/new/mcs/api/common/constants/constants.go)
 
-## Prequisites
+## Prerequisites
 - [Metamask Wallet](https://docs.filswan.com/getting-started/beginner-walkthrough/public-testnet/setup-metamask)
 - [Polygon Mumbai Testnet RPC](https://www.alchemy.com/)
 - [Testnet USDC and MATIC balance](https://docs.filswan.com/development-resource/swan-token-contract/acquire-testnet-usdc-and-matic-tokens)
