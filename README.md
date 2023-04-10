@@ -31,6 +31,9 @@ convenient interface for working with the MCS API.
 ### Data Structures:
 - [Struct](https://github.com/filswan/go-mcs-sdk/blob/new/mcs/api/docs/struct.md)
 
+### Constants:
+- [Constants](https://github.com/filswan/go-mcs-sdk/blob/new/mcs/api/common/constants/constants.go)
+
 ## Prequisites
 
 Polygon Mumbai Testnet Wallet
