@@ -39,7 +39,7 @@ convenient interface for working with the MCS API.
 - [Metamask Wallet](https://docs.filswan.com/getting-started/beginner-walkthrough/public-testnet/setup-metamask)
 - [Polygon Mumbai Testnet RPC](https://www.alchemy.com/)
 - [Testnet USDC and MATIC balance](https://docs.filswan.com/development-resource/swan-token-contract/acquire-testnet-usdc-and-matic-tokens)
-
+- [Optional: apikey](https://calibration-mcs.filswan.com/) -> Setting -> Create API Key
 
 ## Usage
 
