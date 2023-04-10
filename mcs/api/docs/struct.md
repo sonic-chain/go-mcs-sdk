@@ -227,3 +227,12 @@ type OfflineDealLog struct {
 }
 ```
 
+## SourceFileUpload
+```
+type SourceFileUpload struct {
+	WCid     string `json:"w_cid"`
+	Status   string `json:"status"`
+	IsFree   bool   `json:"is_free"`
+	FileSize int64  `json:"file_size"`
+}
+```
