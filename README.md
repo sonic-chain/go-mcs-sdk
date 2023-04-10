@@ -49,16 +49,13 @@ Polygon Mumbai Testnet Wallet
 
 ## Usage
 
-Instructions for developers working with MCS SDK and API.
-
-### Installation
-
+### Get library to your project
 ```
-go mod tidy
-go mod download
+go get go-mcs-sdk
 ```
 
-### Getting Started
+
+### Write code using this SDK
 1. Login:
 ```
 mcsClient, err := LoginByApikey(apikey, accessToken, network)
