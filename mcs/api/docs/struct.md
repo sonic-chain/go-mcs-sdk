@@ -307,3 +307,67 @@ type SourceFileMintOut struct {
 	NftCollectionImageUrl *string `json:"nft_collection_image_url"`
 }
 ```
+
+## LockPaymentInfo
+```
+type LockPaymentInfo struct {
+	WCid         string `json:"w_cid"`
+	PayAmount    string `json:"pay_amount"`
+	PayTxHash    string `json:"pay_tx_hash"`
+	TokenAddress string `json:"token_address"`
+}
+```
+
+## BillingHistory
+```
+type BillingHistory struct {
+	PayId        int64  `json:"pay_id"`
+	PayTxHash    string `json:"pay_tx_hash"`
+	PayAmount    string `json:"pay_amount"`
+	UnlockAmount string `json:"unlock_amount"`
+	FileName     string `json:"file_name"`
+	PayloadCid   string `json:"payload_cid"`
+	PayAt        int64  `json:"pay_at"`
+	UnlockAt     int64  `json:"unlock_at"`
+	Deadline     int64  `json:"deadline"`
+	NetworkName  string `json:"network_name"`
+	TokenName    string `json:"token_name"`
+}
+```
+
+## BillingHistoryParams
+```
+type BillingHistoryParams struct {
+	PageNumber *int    `json:"page_number"`
+	PageSize   *int    `json:"page_size"`
+	FileName   *string `json:"file_name"`
+	TxHash     *string `json:"tx_hash"`
+	OrderBy    *string `json:"order_by"`
+	IsAscend   *string `json:"is_ascend"`
+}
+```
+
+## Deal2PreSign
+```
+type Deal2PreSign struct {
+	DealId              int64 `json:"deal_id"`
+	SourceFileUploadCnt int   `json:"source_file_upload_cnt"`
+	BatchCount          int   `json:"batch_count"`
+}
+```
+
+## Deal2SignBatchInfo
+type Deal2SignBatchInfo struct {
+	BatchNo int      `json:"batch_no"`
+	WCid    []string `json:"w_cid"`
+}
+
+## Deal2Sign
+type Deal2Sign struct {
+	OfflineDealId int64                 `json:"offline_deal_id"`
+	CarFileId     int64                 `json:"car_file_id"`
+	DealId        int64                 `json:"deal_id"`
+	BatchCount    int                   `json:"batch_count"`
+	BatchSizeMax  int                   `json:"batch_size_max"`
+	BatchInfo     []*Deal2SignBatchInfo `json:"batch_info"`
+}
