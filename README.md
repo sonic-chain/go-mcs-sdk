@@ -50,7 +50,7 @@ go get go-mcs-sdk
 
 
 ### Call SDK
-1. Login using either of the below way:
+1. Login using either of the below ways:
 ```
 mcsClient, err := LoginByApikey(apikey, accessToken, network)
 apikey: your apikey
