@@ -20,7 +20,7 @@
 
 ## Introduction
 
-A Golang software development kit for the [Multi-Chain Storage (MCS) Service](https://mcs.filswan.com) . It provides a
+A Golang software development kit for the [Multi-Chain Storage (MCS) Service](https://multichain.storage/) . It provides a
 convenient interface for working with the MCS API. 
 
 ### Functions:
