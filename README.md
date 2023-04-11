@@ -50,7 +50,7 @@ go get go-mcs-sdk
 
 
 ### Call SDK
-1. Login using either of the below ways:
+1. Login using apikey/accessToken
 ```
 mcsClient, err := LoginByApikey(apikey, accessToken, network)
 apikey: your apikey
@@ -60,36 +60,10 @@ network: defined in constants
 mcsClient: result including the information to access the other API(s)
 err: when err generated while accessing this api, the error info will store in err
 ```
-```
-//step 1.
-nonce, err := Register(publicKeyAddress, network)
-publicKeyAddress: your wallet public key address
-network: defined in constants
-
-nonce: MCS generated nonce for the related parameters
-err: when err generated while accessing this api, the error info will store in err
-
-//step 2.
-mcsClient, err := LoginByPublicKeySignature(nonce, publicKeyAddress, publicKeySignature, network)
-
-nonce: MCS generated nonce from last step
-publicKeyAddress: your wallet public key address
-publicKeySignature: public key signature generated from meta mask wallet
-network: defined in constants
-
-mcsClient: result including the information to access the other API(s)
-err: when err generated while accessing this api, the error info will store in err
-```
 - See [Constants](#Constants) to show optional network
-- You can get the public key signature from [Public Key Signature](https://ibuxj.csb.app/)
 
-2. Call `user` related api(s) using `mcsClient` got from last step, such as:
-```
-wallet, err := mcsClient.GetWallet()
-wallet: the wallet that the apikey belong to
-err: when err generated while accessing this api, the error info will store in err
-```
-3. If you want to call `bucket` related api(s), you need change `McsClient` to `BucketClient` first:
+2. Call `bucket` related api(s)
+Step :one: Change `McsClient` to `BucketClient`
 ```
 buketClient := GetBucketClient(*mcsClient)
 ```
@@ -97,16 +71,6 @@ then call `bucket` related api(s) using `buketClient` got from above, such as:
 ```
 buckets, err := buketClient.ListBuckets()
 buckets: bucket list
-err: when err generated while accessing this api, the error info will store in err
-```
-4. If you want to call `on-chain` related api(s), you need change `McsClient` to `OnChainClient` first:
-```
-onChainClient = GetOnChainClient(*mcsClient)
-```
-then call `on-chain` related api(s) using `onChainClient` got from above, such as:
-```
-filecoinPrice, err := onChainClient.GetFileCoinPrice()
-filecoinPrice: filecoin price
 err: when err generated while accessing this api, the error info will store in err
 ```
 
