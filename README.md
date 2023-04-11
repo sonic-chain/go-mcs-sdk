@@ -63,7 +63,7 @@ err: when err generated while accessing this api, the error info will store in e
 - See [Constants](#Constants) to show optional network
 
 2. Call `bucket` related api(s)
-Step :one: Change `McsClient` to `BucketClient`
+- Step :one: Change `McsClient` to `BucketClient`
 ```
 buketClient := GetBucketClient(*mcsClient)
 ```
