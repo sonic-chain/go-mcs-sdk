@@ -67,10 +67,15 @@ err: when err generated while accessing this api, the error info will store in e
 ```
 buketClient := GetBucketClient(*mcsClient)
 ```
-then call `bucket` related api(s) using `buketClient` got from above, such as:
+- Step :two: Create a bucket
 ```
-buckets, err := buketClient.ListBuckets()
-buckets: bucket list
+bucketUid, err := buketClient.CreateBucket("bucket_1")
+bucketUid: the new created bucket UID
+err: when err generated while accessing this api, the error info will store in err
+```
+- Step :three: Upload a file to the bucket
+```
+err := buketClient.UploadFile("bucket_1", [YOUR_FILE_NAME], [YOUR_FILE_PATH], true)
 err: when err generated while accessing this api, the error info will store in err
 ```
 
