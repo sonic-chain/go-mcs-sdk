@@ -69,13 +69,13 @@ buketClient := GetBucketClient(*mcsClient)
 ```
 - Step :two: Create a bucket
 ```
-bucketUid, err := buketClient.CreateBucket("bucket_1")
+bucketUid, err := buketClient.CreateBucket([BUCKET_NAME])
 bucketUid: the new created bucket UID
 err: when err generated while accessing this api, the error info will store in err
 ```
 - Step :three: Upload a file to the bucket
 ```
-err := buketClient.UploadFile("bucket_1", [YOUR_FILE_NAME], [YOUR_FILE_PATH], true)
+err := buketClient.UploadFile([BUCKET_NAME], [YOUR_FILE_NAME], [YOUR_FILE_PATH], true)
 err: when err generated while accessing this api, the error info will store in err
 ```
 
