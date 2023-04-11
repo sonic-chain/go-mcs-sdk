@@ -37,9 +37,9 @@ convenient interface for working with the MCS API.
 
 ## Prerequisites
 - [Metamask Wallet](https://docs.filswan.com/getting-started/beginner-walkthrough/public-testnet/setup-metamask)
-- [Polygon Mumbai Testnet RPC](https://www.alchemy.com/)
-- [Testnet USDC and MATIC balance](https://docs.filswan.com/development-resource/swan-token-contract/acquire-testnet-usdc-and-matic-tokens)
-- [Optional: apikey](https://calibration-mcs.filswan.com/) -> Setting -> Create API Key
+- [Polygon RPC](https://www.alchemy.com/)
+- [USDC and MATIC balance]
+- [Optional: apikey](https://multichain.storage/) -> Setting -> Create API Key
 
 ## Usage
 
@@ -61,7 +61,7 @@ mcsClient: result including the information to access the other API(s)
 err: when err generated while accessing this api, the error info will store in err
 ```
 ```
-step 1.
+//step 1.
 nonce, err := Register(publicKeyAddress, network)
 publicKeyAddress: your wallet public key address
 network: defined in constants
@@ -69,7 +69,7 @@ network: defined in constants
 nonce: MCS generated nonce for the related parameters
 err: when err generated while accessing this api, the error info will store in err
 
-step 2.
+//step 2.
 mcsClient, err := LoginByPublicKeySignature(nonce, publicKeyAddress, publicKeySignature, network)
 
 nonce: MCS generated nonce from last step
@@ -121,7 +121,7 @@ documentation (https://docs.filswan.com/development-resource/mcp-api).
 
 ## Contributing
 
-Feel free to join in and discuss. Suggestions are welcome! [Open an issue](https://github.com/filswan/python-mcs-sdk/issues) or [Join the Discord](https://discord.com/invite/KKGhy8ZqzK)!
+Feel free to join in and discuss. Suggestions are welcome! [Open an issue](https://github.com/filswan/go-mcs-sdk/issues) or [Join the Discord](https://discord.com/invite/KKGhy8ZqzK)!
 
 ## Sponsors
 
