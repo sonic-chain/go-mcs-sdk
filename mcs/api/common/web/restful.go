@@ -5,8 +5,6 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
-	"go-mcs-sdk/mcs/api/common/constants"
-	"go-mcs-sdk/mcs/api/common/utils"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -15,7 +13,10 @@ import (
 	"strings"
 	"time"
 
-	"go-mcs-sdk/mcs/api/common/logs"
+	"github.com/filswan/go-mcs-sdk/mcs/api/common/constants"
+	"github.com/filswan/go-mcs-sdk/mcs/api/common/utils"
+
+	"github.com/filswan/go-mcs-sdk/mcs/api/common/logs"
 )
 
 const HTTP_CONTENT_TYPE_FORM = "application/x-www-form-urlencoded"
