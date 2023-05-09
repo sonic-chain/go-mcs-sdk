@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"go-mcs-sdk/mcs/api/common/constants"
-	"go-mcs-sdk/mcs/api/common/logs"
+	"github.com/filswan/go-mcs-sdk/mcs/api/common/constants"
+	"github.com/filswan/go-mcs-sdk/mcs/api/common/logs"
 
 	"github.com/stretchr/testify/assert"
 )

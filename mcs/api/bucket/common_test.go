@@ -1,11 +1,13 @@
 package bucket
 
 import (
-	"go-mcs-sdk/mcs/api/user"
 	"testing"
 
-	"go-mcs-sdk/mcs/api/common/constants"
-	"go-mcs-sdk/mcs/api/common/logs"
+	"github.com/filswan/go-mcs-sdk/mcs/api/user"
+
+	"github.com/filswan/go-mcs-sdk/mcs/api/common/logs"
+
+	"github.com/filswan/go-mcs-sdk/mcs/api/common/constants"
 
 	"github.com/stretchr/testify/assert"
 )
