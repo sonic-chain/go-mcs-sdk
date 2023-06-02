@@ -45,39 +45,47 @@ convenient interface for working with the MCS API.
 
 ### Download SDK
 ```
-go get go-mcs-sdk
+go get github.com/filswan/go-mcs-sdk
 ```
 
 
 ### Call SDK
 1. Login using apikey/accessToken
-```
-mcsClient, err := LoginByApikey(apikey, accessToken, network)
-apikey: your apikey
-accessToken: the access token for your apikey
-network: defined in constants
+```go
+import (
+	"github.com/filswan/go-mcs-sdk/mcs/api/user"
+)
 
-mcsClient: result including the information to access the other API(s)
-err: when err generated while accessing this api, the error info will store in err
+mcsClient, err := user.LoginByApikey(apikey, accessToken, network)
+// apikey: your apikey
+// accessToken: the access token for your apikey
+// network: defined in constants
+
+// mcsClient: result including the information to access the other API(s)
+// err: when err generated while accessing this api, the error info will store in err
 ```
 - See [Constants](#Constants) to show optional network
 
 2. Call `bucket` related api(s)
 - Step :one: Change `McsClient` to `BucketClient`
-```
-buketClient := GetBucketClient(*mcsClient)
+```go
+import (
+	"github.com/filswan/go-mcs-sdk/mcs/api/bucket"
+)
+bucketClient := bucket.GetBucketClient(*mcsClient)
 ```
 - Step :two: Create a bucket
-```
+```go
 bucketUid, err := buketClient.CreateBucket([BUCKET_NAME])
-bucketUid: the new created bucket UID
-err: when err generated while accessing this api, the error info will store in err
+// bucketUid: the new created bucket UID
+// err: when err generated while accessing this api, the error info will store in err
 ```
 - Step :three: Upload a file to the bucket
+```go
+// err := buketClient.UploadFile([BUCKET_NAME], [YOUR_FILE_NAME], [YOUR_FILE_PATH], true)
+// err: when err generated while accessing this api, the error info will store in err
 ```
-err := buketClient.UploadFile([BUCKET_NAME], [YOUR_FILE_NAME], [YOUR_FILE_PATH], true)
-err: when err generated while accessing this api, the error info will store in err
-```
+
 
 ### Documentation
 
