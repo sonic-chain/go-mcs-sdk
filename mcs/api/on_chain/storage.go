@@ -4,9 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"go-mcs-sdk/mcs/api/common/constants"
-	"go-mcs-sdk/mcs/api/common/utils"
-	"go-mcs-sdk/mcs/api/common/web"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -15,7 +12,11 @@ import (
 	"strconv"
 	"strings"
 
-	"go-mcs-sdk/mcs/api/common/logs"
+	"github.com/filswan/go-mcs-sdk/mcs/api/common/constants"
+	"github.com/filswan/go-mcs-sdk/mcs/api/common/utils"
+	"github.com/filswan/go-mcs-sdk/mcs/api/common/web"
+
+	"github.com/filswan/go-mcs-sdk/mcs/api/common/logs"
 )
 
 type UploadFile struct {

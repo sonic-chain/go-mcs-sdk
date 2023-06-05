@@ -4,15 +4,16 @@ import (
 	"context"
 	"crypto/ecdsa"
 	"fmt"
-	"go-mcs-sdk/mcs/api/common/constants"
-	"go-mcs-sdk/mcs/api/common/utils"
-	"go-mcs-sdk/mcs/api/common/web"
-	"go-mcs-sdk/mcs/contract"
 	"math/big"
 	"net/url"
 	"strings"
 
-	"go-mcs-sdk/mcs/api/common/logs"
+	"github.com/filswan/go-mcs-sdk/mcs/api/common/constants"
+	"github.com/filswan/go-mcs-sdk/mcs/api/common/utils"
+	"github.com/filswan/go-mcs-sdk/mcs/api/common/web"
+	"github.com/filswan/go-mcs-sdk/mcs/contract"
+
+	"github.com/filswan/go-mcs-sdk/mcs/api/common/logs"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"

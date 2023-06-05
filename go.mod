@@ -1,9 +1,8 @@
-module go-mcs-sdk
+module github.com/filswan/go-mcs-sdk
 
 go 1.17
 
 require (
-	github.com/BurntSushi/toml v1.1.0
 	github.com/codingsince1985/checksum v1.2.6
 	github.com/ethereum/go-ethereum v1.10.21
 	github.com/ipfs/go-ipfs-api v0.4.0
