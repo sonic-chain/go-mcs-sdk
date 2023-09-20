@@ -56,10 +56,9 @@ import (
 	"github.com/filswan/go-mcs-sdk/mcs/api/user"
 )
 
-mcsClient, err := user.LoginByApikey(apikey, accessToken, network)
+mcsClient, err := user.LoginByApikeyV2(apikey, network)
 // apikey: your apikey
-// accessToken: the access token for your apikey
-// network: defined in constants
+// network: (MCS mainnet: mainnet, MCS testnet: testnet . Default is the main network.)
 
 // mcsClient: result including the information to access the other API(s)
 // err: when err generated while accessing this api, the error info will store in err

@@ -1,9 +1,10 @@
 package constants
 
 const (
-	HTTP_STATUS_SUCCESS = "success"
-	HTTP_STATUS_ERROR   = "error"
-
+	HTTP_STATUS_SUCCESS                = "success"
+	HTTP_STATUS_ERROR                  = "error"
+	MCS_NETWORK_VERSION_TESTNET        = "testnet"
+	MCS_NETWORK_VERSION_MAINNET        = "mainnet"
 	PAYMENT_CHAIN_NAME_POLYGON_MUMBAI  = "polygon.mumbai"
 	PAYMENT_CHAIN_NAME_POLYGON_MAINNET = "polygon.mainnet"
 	PAYMENT_CHAIN_NAME_BSC_TESTNET     = "bsc.testnet"
@@ -15,6 +16,8 @@ const (
 	API_URL_FIL_PRICE_API       = "https://api.filswan.com/stats/storage"
 
 	// mcs api
+	API_URL_USER_LOGIN_BY_APIKEY_V2 = "/api/v2/user/login_by_api_key"
+
 	API_URL_MCS_GET_PARAMS = "/api/v1/common/system/params"
 
 	API_URL_USER_REGISTER        = "/api/v1/user/register"
