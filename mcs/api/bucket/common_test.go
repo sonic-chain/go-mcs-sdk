@@ -13,10 +13,9 @@ import (
 )
 
 var buketClient *BucketClient
-var network = constants.PAYMENT_CHAIN_NAME_POLYGON_MUMBAI
-var apikey = "9EO9I6rzlfYkcltzOo0ayp"
-var accessToken = "hmvYOnAv9JAtXqzi5NWDfuRYMJXY6LDG"
-var file2Upload = "/Users/dorachen/work/test2/duration6"
+var network = constants.MCS_NETWORK_VERSION_TESTNET
+var apikey = "MCS_28ede6fe0e753a331584d***"
+var file2Upload = "/Users/daniel/code/go-code/go-mcs-sdk/log_mcs.png"
 var folder2Upload = "/Users/dorachen/work/test3"
 
 func init() {
@@ -24,7 +23,7 @@ func init() {
 		return
 	}
 
-	mcsClient, err := user.LoginByApikey(apikey, accessToken, network)
+	mcsClient, err := user.LoginByApikeyV2(apikey, network)
 	if err != nil {
 		logs.GetLogger().Fatal(err)
 	}

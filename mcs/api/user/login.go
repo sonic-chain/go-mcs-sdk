@@ -2,10 +2,9 @@ package user
 
 import (
 	"github.com/filswan/go-mcs-sdk/mcs/api/common/constants"
+	"github.com/filswan/go-mcs-sdk/mcs/api/common/logs"
 	"github.com/filswan/go-mcs-sdk/mcs/api/common/utils"
 	"github.com/filswan/go-mcs-sdk/mcs/api/common/web"
-
-	"github.com/filswan/go-mcs-sdk/mcs/api/common/logs"
 )
 
 type McsClient struct {
@@ -119,5 +118,46 @@ func LoginByPublicKeySignature(nonce, publicKeyAddress, signature, network strin
 		JwtToken: response.JwtToken,
 	}
 
+	return &mcsClient, nil
+}
+
+func GetBaseApiUrlV2(network string) (apiUrlBase string) {
+	switch network {
+	case constants.MCS_NETWORK_VERSION_TESTNET:
+		apiUrlBase = constants.API_URL_MCS_POLYGON_MUMBAI
+	case constants.MCS_NETWORK_VERSION_MAINNET:
+		apiUrlBase = constants.API_URL_MCS_POLYGON_MAINNET
+	default:
+		apiUrlBase = constants.API_URL_MCS_POLYGON_MAINNET
+	}
+
+	return apiUrlBase
+}
+
+func LoginByApikeyV2(apikey string, network string) (*McsClient, error) {
+	apiUrlBase := GetBaseApiUrlV2(network)
+	var params struct {
+		Apikey string `json:"apikey" binding:"required,min=1,max=100"`
+	}
+
+	params.Apikey = apikey
+
+	apiUrl := utils.UrlJoin(apiUrlBase, constants.API_URL_USER_LOGIN_BY_APIKEY_V2)
+
+	var result string
+
+	err := web.HttpPost(apiUrl, "", params, &result)
+	if err != nil {
+		logs.GetLogger().Error(err)
+		return nil, err
+	}
+	//if loginByApikeyResponse.Status != "success" {
+	//	return nil, errors.Errorf("Login failed")
+	//}
+	//
+	mcsClient := McsClient{
+		BaseUrl:  apiUrlBase,
+		JwtToken: result,
+	}
 	return &mcsClient, nil
 }
