@@ -141,7 +141,11 @@ func (bucketClient *BucketClient) UploadFile(bucketName, objectName, filePath st
 	// second, check a/b exist, if not exist, create it
 	// third, check a/b/c exist, if not exist, create it
 	// Split the prefix by '/' to get all directories
+	// If the prefix is empty, then there are no directories to create
 	dirs := strings.Split(prefix, "/")
+	if len(dirs) == 1 && dirs[0] == "" {
+		dirs = []string{}
+	}
 
 	// Iterate over the directories, checking and creating each one
 	currentPath := ""
