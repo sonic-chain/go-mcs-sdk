@@ -18,7 +18,7 @@ func TestGetFile(t *testing.T) {
 }
 
 func TestCreateFolder(t *testing.T) {
-	folderName, err := buketClient.CreateFolder("aaa", "test", "")
+	folderName, err := buketClient.CreateFolder("aaa", "test2", "test1")
 	assert.Nil(t, err)
 	assert.NotEmpty(t, folderName)
 
@@ -44,7 +44,7 @@ func TestListFiles(t *testing.T) {
 }
 
 func TestUploadFile(t *testing.T) {
-	err := buketClient.UploadFile("aaa", "test/duration23", file2Upload, true)
+	err := buketClient.UploadFile("aaa", "test1/test2/test3/duration23", file2Upload, true)
 	assert.Nil(t, err)
 }
 

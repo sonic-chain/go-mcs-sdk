@@ -53,7 +53,7 @@ func (bucketClient *BucketClient) GetFile(bucketName, objectName string) (*OssFi
 	var fileInfo OssFile
 	err = web.HttpGet(apiUrl, bucketClient.JwtToken, nil, &fileInfo)
 	if err != nil {
-		logs.GetLogger().Error(err)
+		//logs.GetLogger().Error(err)
 		return nil, err
 	}
 
@@ -135,7 +135,34 @@ func (bucketClient *BucketClient) ListFiles(bucketName, prefix string, limit, of
 
 func (bucketClient *BucketClient) UploadFile(bucketName, objectName, filePath string, replace bool) error {
 	prefix, fileName := getPrefixFileName(objectName)
+	//todo check prefix exist,if not exist, create it
+	// for example, objectName is a/b/c/d.txt, then prefix is a/b/c, fileName is d.txt
+	// first, check a exist, if not exist, create it
+	// second, check a/b exist, if not exist, create it
+	// third, check a/b/c exist, if not exist, create it
+	// Split the prefix by '/' to get all directories
+	dirs := strings.Split(prefix, "/")
 
+	// Iterate over the directories, checking and creating each one
+	currentPath := ""
+	for _, dir := range dirs {
+		if currentPath != "" {
+			currentPath += "/"
+		}
+
+		// Create the directory if it does not exist
+		exists, err := bucketClient.GetFile(bucketName, currentPath+dir)
+		if exists != nil {
+			currentPath += dir
+			continue
+		}
+		_, err = bucketClient.CreateFolder(bucketName, dir, strings.TrimSuffix(currentPath, "/"))
+		currentPath += dir
+		if err != nil {
+			//logs.GetLogger().Error(err)
+			return err
+		}
+	}
 	bucketUid, err := bucketClient.GetBucketUid(bucketName)
 	if err != nil {
 		logs.GetLogger().Error(err)

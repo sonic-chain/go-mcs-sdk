@@ -14,7 +14,7 @@ import (
 
 var buketClient *BucketClient
 var network = constants.MCS_NETWORK_VERSION_TESTNET
-var apikey = "MCS_28ede6fe0e753a331584d***"
+var apikey = "MCS_28ede6fe0e753a331584d3a0"
 var file2Upload = "/Users/daniel/code/go-code/go-mcs-sdk/log_mcs.png"
 var folder2Upload = "/Users/dorachen/work/test3"
 
