@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/filswan/go-mcs-sdk/mcs/api/common/constants"
-	"github.com/filswan/go-mcs-sdk/mcs/api/common/utils"
-	"github.com/filswan/go-mcs-sdk/mcs/api/common/web"
+	"github.com/sonic-chain/go-mcs-sdk/mcs/api/common/constants"
+	"github.com/sonic-chain/go-mcs-sdk/mcs/api/common/utils"
+	"github.com/sonic-chain/go-mcs-sdk/mcs/api/common/web"
 
-	"github.com/filswan/go-mcs-sdk/mcs/api/common/logs"
+	"github.com/sonic-chain/go-mcs-sdk/mcs/api/common/logs"
 )
 
 func (bucketClient *BucketClient) GetGateway() (*string, error) {

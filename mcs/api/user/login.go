@@ -1,10 +1,10 @@
 package user
 
 import (
-	"github.com/filswan/go-mcs-sdk/mcs/api/common/constants"
-	"github.com/filswan/go-mcs-sdk/mcs/api/common/logs"
-	"github.com/filswan/go-mcs-sdk/mcs/api/common/utils"
-	"github.com/filswan/go-mcs-sdk/mcs/api/common/web"
+	"github.com/sonic-chain/go-mcs-sdk/mcs/api/common/constants"
+	"github.com/sonic-chain/go-mcs-sdk/mcs/api/common/logs"
+	"github.com/sonic-chain/go-mcs-sdk/mcs/api/common/utils"
+	"github.com/sonic-chain/go-mcs-sdk/mcs/api/common/web"
 )
 
 type McsClient struct {

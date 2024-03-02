@@ -3,7 +3,7 @@ package bucket
 import (
 	"testing"
 
-	"github.com/filswan/go-mcs-sdk/mcs/api/common/logs"
+	"github.com/sonic-chain/go-mcs-sdk/mcs/api/common/logs"
 
 	"github.com/stretchr/testify/assert"
 )
