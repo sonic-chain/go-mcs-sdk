@@ -1,4 +1,4 @@
-module github.com/filswan/go-mcs-sdk
+module github.com/sonic-chain/go-mcs-sdk
 
 go 1.17
 
